@@ -16,6 +16,41 @@ model: opus 4.5
 - **具體勝過抽象。** 「負責程式碼品質」是廢話，「review 每個 PR 的錯誤處理、命名規範和測試覆蓋率」才有用。
 - **Prompt 是寫給 AI 看的。** 用明確的指令語氣，避免散文式的描述。
 
+## 強制格式：YAML Frontmatter
+
+每個 agent .md 檔案的**第一行必須是 `---`**，開啟 YAML frontmatter 區塊。
+
+frontmatter 必須包含以下三個欄位：
+
+| 欄位 | 必填 | 說明 |
+|------|------|------|
+| `name` | 是 | Agent 名稱，英文 |
+| `description` | 是 | 一句話描述這個 agent 的核心職責 |
+| `model` | 是 | 固定填 `opus 4.5` |
+
+**違反判定**：檔案開頭不是 `---` 或缺少任一必填欄位 → 產出不合格，必須修正。
+
+### 正確範例
+
+```yaml
+---
+name: Illustrator
+description: 使用 AI 圖像生成工具創作兒童繪本插圖
+model: opus 4.5
+---
+```
+
+### 錯誤範例
+
+```markdown
+# Illustrator（插畫家）
+
+## 身份
+...
+```
+
+↑ 缺少 YAML frontmatter，不合格。
+
 ## Agent .md 檔案模板
 
 每個 agent .md 必須包含以下區塊，按此順序撰寫：
