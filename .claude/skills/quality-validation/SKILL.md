@@ -33,6 +33,7 @@ This skill belongs exclusively to `agents/team-architect.md`
 ✓ Coordinator .md additionally contains: Team Overview, Subordinate Agent List, Task Assignment Strategy, Quality Control Mechanism
 ✓ Each skill .md contains: Description, Users/Belongs To, Core Knowledge
 ✓ Each rule .md contains: Applicability, Rule Content, Violation Determination
+✓ Each external skill (Pattern A or B) contains a Source Attribution section with Origin, Integration, Retrieved, and Modifications fields
 ```
 
 ### Level 3: Reference Consistency
@@ -43,6 +44,8 @@ This skill belongs exclusively to `agents/team-architect.md`
 ✓ Users listed in skill .md correspond to actual existing agents
 ✓ Applicability scope in rule .md corresponds to actual existing agents
 ✓ Coordinator's subordinate list covers all non-coordinator agents
+✓ External skill Source Attribution URLs match the source recorded in the Phase 2 plan
+✓ External skill Integration type (Pattern A/B) is consistent between Source Attribution and the Phase 2 plan
 ```
 
 ### Level 4: Logical Consistency

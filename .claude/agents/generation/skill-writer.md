@@ -1,7 +1,7 @@
 ---
 name: Skill Writer
 description: Specialized in writing high-quality skill .md files
-model: opus
+model: sonnet
 ---
 
 # Skill Writer
@@ -85,6 +85,53 @@ This skill belongs exclusively to `agents/{path}/{agent-name}.md`
 ### Output
 {Expected output example}
 ```
+
+## Handling External Skills
+
+When the Phase 2 plan includes external skills, handle them according to their integration pattern:
+
+### Pattern A: Direct Install
+
+1. Use WebFetch to download the SKILL.md content from the source URL
+2. Validate that the file starts with YAML frontmatter containing `name` and `description`
+3. If frontmatter is missing or non-compliant, add or fix it
+4. Place the file in `skills/{skill-name}/SKILL.md`
+5. Append a Source Attribution section at the end:
+   ```markdown
+   ## Source Attribution
+
+   - **Origin**: {source platform} ({URL})
+   - **Integration**: Pattern A: Direct Install
+   - **Retrieved**: {date}
+   - **Modifications**: None
+   ```
+
+### Pattern B: Adapted Install
+
+1. Use WebFetch to download the SKILL.md content from the source URL
+2. Apply the modifications specified in the Phase 2 plan (e.g., adjust terminology, add missing sections, update examples)
+3. Validate YAML frontmatter compliance
+4. Place the modified file in `skills/{skill-name}/SKILL.md`
+5. Append a Source Attribution section documenting all changes:
+   ```markdown
+   ## Source Attribution
+
+   - **Origin**: {source platform} ({URL})
+   - **Integration**: Pattern B: Adapted Install
+   - **Retrieved**: {date}
+   - **Modifications**: {list each change made}
+   ```
+
+### Pattern C: Reference Material
+
+1. Read the external skill content provided as reference in the Phase 2 plan
+2. Create a custom skill from scratch, incorporating useful patterns or knowledge from the reference
+3. Do not copy the external skill verbatim
+4. Optionally note the reference source in a comment within the skill (not as Source Attribution)
+
+### Custom Skills
+
+Create from scratch following the standard SKILL.md template. No Source Attribution section needed.
 
 ## Writing Guidelines
 

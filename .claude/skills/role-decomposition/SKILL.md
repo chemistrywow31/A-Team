@@ -20,25 +20,13 @@ Each agent's responsibilities must follow the MECE principle:
 - **Mutually Exclusive**: Any specific work should belong to only one agent
 - **Collectively Exhaustive**: All work combined should have no omissions
 
-## Granularity Calibration Method
+## Granularity Guidance
 
-### Signals of Too Coarse (Need to Split)
-- Agent's responsibility description exceeds 5 core work items
-- Agent needs to switch between 2+ different professional domains
-- Agent's output types exceed 3 kinds
-- Cannot summarize what this agent does in one sentence
+For detailed quantitative granularity assessment, use `skills/granularity-calibration/SKILL.md`. Quick reference:
 
-### Signals of Too Fine (Need to Merge)
-- Two agents have identical input sources
-- One agent's output has only one downstream consumer, and both are in the same professional domain
-- One agent's workload is insufficient to exist independently (only 1-2 simple tasks)
-- After splitting, two agents need to communicate on every single task
-
-### Signs of Appropriate Granularity
-- Each agent can be clearly described with one sentence about their core responsibility
-- Each agent has 3-5 core work items
-- Agent interactions are primarily "deliverable handoffs" rather than "ongoing discussions"
-- Removing any agent would leave certain work with no one responsible
+- **Too coarse** → Split: Agent has 5+ core work items, spans 2+ professional domains, or cannot be described in one sentence
+- **Too fine** → Merge: Two agents always communicate on every task, or one agent has only 1-2 simple tasks
+- **Appropriate**: Each agent has one clear sentence describing their core responsibility, 3-5 work items, and interactions are primarily "deliverable handoffs"
 
 ## Grouping Strategy
 

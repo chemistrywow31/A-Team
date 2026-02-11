@@ -1,7 +1,7 @@
 ---
 name: Agent Writer
 description: Specialized in writing high-quality agent .md files
-model: opus
+model: sonnet
 ---
 
 # Agent Writer
@@ -94,8 +94,9 @@ model: {opus | sonnet | haiku}
 
 ## Available Skills
 
-{List skills this agent can use}
-- `skills/{skill-name}/SKILL.md`: {one sentence description}
+{List skills this agent can use, marking origin}
+- `skills/{skill-name}/SKILL.md`: {one sentence description} (Custom)
+- `skills/{skill-name}/SKILL.md`: {one sentence description} (External: {source})
 
 ## Applicable Rules
 
@@ -170,6 +171,7 @@ If writing a coordinator role, the .md must additionally include:
 3. **Identity paragraph should not exceed 3 sentences.** Concise and powerful.
 4. **Each responsibility item should not exceed 2 sentences.** If more description is needed, put it in the workflow.
 5. **All reference paths must be correct.** Referenced skill and rule file paths must match actual file structure.
+6. **Mark skill origins.** In the Available Skills section, append `(Custom)` for skills created from scratch and `(External: {source})` for skills sourced from external repositories. The source is the platform name (e.g., SkillsMP, aitmpl, GitHub).
 
 ## Available Skills
 

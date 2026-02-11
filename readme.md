@@ -7,7 +7,7 @@ A Team Designer agent system running on Claude Code. Through in-depth dialogue t
 
 ---
 
-## English
+## English 
 
 ### Problem Statement
 

@@ -1,0 +1,14 @@
+{
+  "sources": {
+    "skillsmp": { "enabled": true },
+    "aitmpl": { "enabled": true },
+    "github": {
+      "enabled": true,
+      "repos": ["anthropics/skills"]
+    }
+  },
+  "search": {
+    "max_results_per_source": 5,
+    "min_score_threshold": 3.5
+  }
+}

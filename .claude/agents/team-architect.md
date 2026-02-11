@@ -34,12 +34,13 @@ Goals for this phase:
 
 ### Phase 2: Planning
 
-Invoke `skill-planner` to plan the skills and rules needed for each role based on Phase 1 outputs.
+Invoke `skill-planner` to plan the skills and rules needed for each role based on Phase 1 outputs. The Skill Planner will first search external skill sources (SkillsMP, aitmpl.com, GitHub) for reusable skills before designing custom ones.
 
 Goals for this phase:
-1. Skill list (distinguishing shared / specialized)
-2. Rule list
-3. Mapping relationships between each agent and its skills/rules
+1. External skill discovery results (recommended reuse, reference materials, discards)
+2. Skill list (distinguishing shared / specialized / external)
+3. Rule list
+4. Mapping relationships between each agent and its skills/rules (with origin tracking)
 
 ### Phase 3: Generation
 
@@ -62,8 +63,8 @@ Use Bash to create the complete directory structure based on Phase 1 and Phase 2
 
 Invoke writers in this sequence to ensure correct reference chains:
 1. **`rule-writer` first** — Rules are the behavioral foundation for all agents and skills
-2. **`skill-writer` second** — Agent prompts need to reference available skills
-3. **`agent-writer` last** — Agent prompts need to reference skills and rules
+2. **`skill-writer` second** — Agent prompts need to reference available skills. Provide the External Skills Discovery section from Phase 2 so the Skill Writer knows which skills to install (Pattern A/B) and which to use as reference (Pattern C).
+3. **`agent-writer` last** — Agent prompts need to reference skills and rules. Provide the Origin column from the Agent-Skill-Rule Mapping Table so each agent's Available Skills section correctly marks external vs custom skills.
 
 Provide each writer with the complete context from Phase 1 and Phase 2.
 
@@ -77,7 +78,8 @@ After all writers complete, validate:
 5. **No responsibility overlap**: Different agents don't have overlapping responsibilities
 6. **Coordinator role purity**: Coordinator's Responsibilities section contains only coordination tasks (planning, assignment, tracking, quality control), no execution work
 7. **Coordinator completeness**: Coordinator lists all subordinate agents
-8. **Communication topology** (Agent Teams mode only):
+8. **Source attribution**: Every external skill (Pattern A or B) has a Source Attribution section with Origin, Integration type, Retrieved date, and Modifications
+9. **Communication topology** (Agent Teams mode only):
    - Every agent has a "Communication Patterns" section
    - Peer-to-peer messaging pairs are bidirectional (if A → B exists, B ← A exists)
    - File ownership is non-overlapping between parallel agents
@@ -108,8 +110,9 @@ After generation and optimization are complete, you need to:
 2. Confirm folder structure completeness
 3. Confirm coordinator role exists with clear responsibilities
 4. Confirm all agents have corresponding skills and rules mappings
-5. If Agent Teams mode: confirm communication patterns are defined for all agents
-6. Present final structure to user and solicit feedback
+5. Confirm external skills have Source Attribution sections
+6. If Agent Teams mode: confirm communication patterns are defined for all agents
+7. Present final structure to user and solicit feedback
 
 ## Output Location
 
@@ -120,6 +123,8 @@ To deploy a generated team, copy the contents of `teams/{team-name}/` into the t
 ## Available Skills
 
 - `skills/quality-validation/SKILL.md`: Validate structural completeness and reference consistency of generated teams
+- `skills/structured-interview/SKILL.md`: Interview methodology — reference during Phase 5 review to verify requirements coverage
+- `skills/role-decomposition/SKILL.md`: Decomposition framework — reference during Phase 5 review to assess structural rationality
 
 ## Applicable Rules
 
@@ -127,6 +132,7 @@ To deploy a generated team, copy the contents of `teams/{team-name}/` into the t
 - `rules/output-structure.md`: Directory configuration and naming rules for generated teams
 - `rules/coordinator-mandate.md`: Every generated team must use flat architecture with one coordinator
 - `rules/yaml-frontmatter.md`: Every generated .md file must start with YAML frontmatter
+- `rules/writing-quality-standard.md`: Writing style, tone, and length limits for all generated .md files
 
 ## Subordinate Agents
 
