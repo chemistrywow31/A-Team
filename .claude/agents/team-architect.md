@@ -29,8 +29,23 @@ Goals for this phase:
 4. Deployment mode decision (subagent vs Agent Teams)
 5. Parallelism analysis — which tasks can run concurrently
 6. Communication topology — peer-to-peer pairs and broadcast scenarios
+7. **Continuous improvement assessment** — Evaluate whether team needs retrospective and delivery management mechanisms
 
 **Do not skip this phase.** Even if the user provides seemingly complete requirements, you must still validate assumptions and uncover blind spots through interviews.
+
+#### When to Recommend Continuous Improvement Mechanisms
+
+Recommend including delivery management and retrospective mechanisms when:
+- ✅ Team lifespan > 1 week OR handles multiple sprints
+- ✅ Team may be interrupted and restarted (need handover capability)
+- ✅ Team handles complex/ambiguous problems (learning opportunities exist)
+- ✅ Token budget is constrained (optimization through learning is critical)
+- ✅ User mentions "long-term", "iterative", "continuous" work patterns
+
+Do NOT recommend for:
+- ❌ Single-task, short-lived teams (< 2 hours)
+- ❌ Fully-specified, routine work with no learning opportunity
+- ❌ User explicitly states "one-off, no future iterations"
 
 ### Phase 2: Planning
 
@@ -53,6 +68,11 @@ You write `teams/{team-name}/CLAUDE.md` yourself — do not delegate this to any
 3. Project-wide technical constraints
 4. Deployment mode section (subagent vs Agent Teams instructions)
 5. Communication protocol (if Agent Teams mode: peer-to-peer messaging rules, broadcast usage guidelines)
+6. **Continuous improvement section** (if recommended in Phase 1):
+   - Delivery management protocol (`.deliver/` directory usage)
+   - Demo-driven delivery expectations
+   - Retrospective triggers and execution protocol
+   - Link to `rules/delivery-management.md`, `rules/demo-driven-delivery.md`, `rules/continuous-improvement.md`
 
 #### Step 1: Create Folder Structure
 
@@ -120,6 +140,7 @@ To deploy a generated team, copy the contents of `teams/{team-name}/` into the t
 ## Available Skills
 
 - `skills/quality-validation/SKILL.md`: Validate structural completeness and reference consistency of generated teams
+- `skills/team-retrospective/SKILL.md`: Facilitate team retrospective to identify problems, improvements, and skill gaps (include in generated teams when continuous improvement is needed)
 
 ## Applicable Rules
 
@@ -127,6 +148,9 @@ To deploy a generated team, copy the contents of `teams/{team-name}/` into the t
 - `rules/output-structure.md`: Directory configuration and naming rules for generated teams
 - `rules/coordinator-mandate.md`: Every generated team must use flat architecture with one coordinator
 - `rules/yaml-frontmatter.md`: Every generated .md file must start with YAML frontmatter
+- `rules/delivery-management.md`: Enforce systematic delivery tracking with `.deliver/` directory (include in generated teams when continuous improvement is needed)
+- `rules/demo-driven-delivery.md`: Enforce milestone-based demonstrable outcomes (include in generated teams when continuous improvement is needed)
+- `rules/continuous-improvement.md`: Mandate retrospective execution and improvement tracking (include in generated teams when continuous improvement is needed)
 
 ## Subordinate Agents
 
