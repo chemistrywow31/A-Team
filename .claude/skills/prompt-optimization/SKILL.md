@@ -47,6 +47,10 @@ Remove words that don't add information value.
 
 Use imperative sentences, directly tell the AI what to do.
 
+### Principle 5: Computational Offloading
+
+Extract static, repetitive, or computable content from prompts into executable scripts. Replace verbose data with compact script-generated output.
+
 ## Common Problems and Optimization Patterns
 
 ### Problem 1: Vague Verbs
@@ -119,6 +123,16 @@ Use imperative sentences, directly tell the AI what to do.
 **After:**
 > Output format: JSON
 
+### Problem 8: Computable Content Embedded in Prompt
+
+**Symptom:** Prompt contains data tables, repetitive patterns, or reference lists exceeding 200 tokens that a script can generate deterministically
+
+**Before (≈40,000 tokens):**
+> Full API specification listing 127 endpoints with parameters, validation rules, response schemas, and examples... [thousands of lines of structured data]
+
+**After (≈1,500 tokens):**
+> `python extract_api_spec.py --summary` output: 127 endpoints across 5 categories. Per entry: method, path, required params, response type.
+
 ## Optimization Checklist
 
 For each .md file, check sequentially:
@@ -126,22 +140,20 @@ For each .md file, check sequentially:
 ### Structural Level
 - [ ] YAML frontmatter complete (name, description, model)
 - [ ] Only one h1 heading
-- [ ] Section order matches template requirements
-- [ ] Reference paths exist and are correct
+- [ ] Section order matches template; reference paths exist and are correct
 
 ### Language Level
 - [ ] Uses imperative sentences ("You must" not "should")
 - [ ] No prohibited vague words (try to, appropriately, reasonably, as needed)
 - [ ] Verbs are specific and actionable
-- [ ] No passive voice
-- [ ] No redundant modifiers
+- [ ] No passive voice or redundant modifiers
 
 ### Content Level
 - [ ] Role identity is clear (one paragraph explaining who they are)
 - [ ] Responsibilities are specific and actionable (each has a clear action)
 - [ ] Boundaries are explicit (lists things not done)
-- [ ] No repeated definitions
-- [ ] No implicit assumptions
+- [ ] No repeated definitions or implicit assumptions
+- [ ] No computable content that a script can generate (data tables, pattern expansions, file analysis)
 
 ### Consistency Level
 - [ ] Terminology is unified within the file
@@ -153,9 +165,9 @@ For each .md file, check sequentially:
 When time is limited, process in this priority order:
 
 1. **Fix errors**: Reference path errors, format non-compliance
-2. **Eliminate ambiguity**: Vague words, implicit assumptions
-3. **Strengthen instructions**: Passive→active, abstract→specific
-4. **Refine language**: Remove redundancy
+2. **Extract computables**: Offload data tables, lists, and repetitive content to scripts
+3. **Eliminate ambiguity**: Vague words, implicit assumptions
+4. **Strengthen and refine**: Passive→active, abstract→specific, remove redundancy
 
 ## Example
 
@@ -183,8 +195,6 @@ This role is mainly responsible for managing the team's daily work. They handle 
 
 | Original Problem | Optimization Method |
 |-----------------|---------------------|
-| "mainly responsible for managing" | Remove redundancy, directly list specific management actions |
-| "handle various task assignments" | Concretize into "receive→decompose→assign" process |
-| "ensure work can proceed smoothly" | Concretize into "track status" |
-| "if problems are encountered" | Specify condition as "when dependency conflicts exist" |
-| "coordinate appropriately" | Concretize into "adjust order or reassign" |
+| "mainly responsible for managing" | Remove redundancy, list specific actions |
+| "handle various task assignments" | Concretize into "receive→decompose→assign" |
+| "coordinate appropriately" | Replace vague word with specific: "adjust order or reassign" |
