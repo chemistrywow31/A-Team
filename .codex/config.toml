@@ -1,0 +1,8 @@
+# Project defaults for Codex in this repository.
+# A-Team is optimized for coordination-heavy sessions.
+
+model_reasoning_effort = "high"
+disable_response_storage = true
+
+# Prefer Codex-native project docs, but still load legacy teams that only ship CLAUDE.md.
+project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md"]

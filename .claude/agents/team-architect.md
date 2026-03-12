@@ -48,6 +48,20 @@ Goals for this phase:
 
 You directly coordinate file generation. Do not delegate coordination to a sub-coordinator.
 
+#### Pre-Generation: Environment Validation (Agent Teams mode only)
+
+When the deployment mode decision from Phase 1 is **Agent Teams**, verify the user's environment supports it before generating files:
+
+1. **Claude Code**: Read `~/.claude/settings.json` and check for `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` set to `"1"` or `"true"`. If the file does not exist or the key is missing/falsy, Agent Teams mode is not enabled.
+2. **Codex**: Check if the target project has a `.codex/` directory. Codex supports multi-agent natively (`spawn_agent`, `send_input`, `wait`) — no feature flag is required, but the directory must exist for Codex-native teams.
+3. **If Agent Teams is NOT enabled in any runtime**:
+   - Inform the user: "Agent Teams mode requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json` (under the `env` key) for Claude Code, or a `.codex/` directory for Codex."
+   - Present three options: (a) enable it now (you write the setting), (b) switch to subagent mode, (c) proceed anyway — the team will work once the user enables it later.
+   - Wait for the user's decision before continuing.
+4. **If Agent Teams IS enabled**: Log the result and proceed. Include the detected runtime(s) in the generated CLAUDE.md deployment mode section.
+
+Do not skip this step. Generating an Agent Teams mode team into an environment that does not support it wastes user effort.
+
 #### Step 0: Generate CLAUDE.md (Team Architect writes this directly)
 
 You write `teams/{team-name}/CLAUDE.md` yourself — do not delegate this to any writer agent. This file contains:
@@ -88,6 +102,7 @@ After all writers complete, validate:
     - File ownership is non-overlapping between parallel agents
     - Broadcast triggers are defined for critical events
 11. **Path-scoped rules**: Every rule about a specific file type or directory has `paths` frontmatter with valid glob patterns. Process/behavioral rules remain unconditional (no `paths`).
+12. **Environment readiness** (Agent Teams mode only): Confirm `~/.claude/settings.json` contains `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` set to a truthy value, or `.codex/` directory exists for Codex-native teams. If neither is present, the generated CLAUDE.md must include explicit setup instructions with the exact JSON to add.
 
 If issues are found, invoke the corresponding writer to correct.
 
@@ -116,7 +131,8 @@ After generation and optimization are complete, you need to:
 4. Confirm all agents have corresponding skills and rules mappings
 5. Confirm external skills have Source Attribution sections
 6. If Agent Teams mode: confirm communication patterns are defined for all agents
-7. Present final structure to user and solicit feedback
+7. If Agent Teams mode: confirm user's environment has Agent Teams enabled (`~/.claude/settings.json` → `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`), or CLAUDE.md includes explicit setup instructions for the user
+8. Present final structure to user and solicit feedback
 
 ### Phase 7: Team Restructuring (On-Demand)
 

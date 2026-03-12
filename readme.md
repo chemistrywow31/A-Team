@@ -1,374 +1,359 @@
-
 # A-Team
 
-A Team Designer agent system running on Claude Code. Through in-depth dialogue to clarify your requirements, automatically generates complete multi-agent team structures (agents / skills / rules) that support both subagent and Agent Teams deployment modes.
+A-Team is a multi-agent team designer. It interviews the user, decomposes responsibilities, plans skills and rules, and generates ready-to-run team structures.
 
-一組運行在 Claude Code 上的團隊設計師 agent 系統。透過深度對話釐清你的需求，自動產出完整的 multi-agent 團隊結構（agents / skills / rules），支援 subagent 與 Agent Teams 兩種部署模式。
+This repository now ships with a **Codex-native runtime layer**:
+
+- `AGENTS.md` for the project entrypoint
+- `.codex/` for prompts, rules, config, and authored skills
+- `.agents/skills/` for runtime-discoverable Codex skills
+
+The original `.claude/` tree is kept as the **legacy/source design** and migration reference.
 
 ---
 
-## English 
+## English
 
-### Problem Statement
+### What A-Team Does
 
-You know agents work better with proper division of labor, but manually planning roles and writing individual .md files is time-consuming and error-prone. A-Team transforms "team design" itself into a conversational, automatable process.
+A-Team is not the final agent team. It is a **team-design system** that generates agent teams.
 
-A-Team is **not** an Agent Team itself — it is a **tool for designing** agent teams. It generates team structures that can be deployed as either subagents (Task tool) or full Agent Teams (experimental).
+It takes a vague request such as:
 
-### Quick Start
+> "I need a content operations team for an education product"
 
-1. Copy this folder's contents to your project's `.claude/` directory
-2. Launch the `team-architect` agent in Claude Code
-3. Tell it what team you want to build, e.g., "I want to build a content production team for an online English teaching company"
-4. Follow the interview, answer questions
-5. When complete, the generated team structure appears in `teams/{team-name}/` directory
+and turns it into:
 
-### System Architecture
+- a coordinator role
+- grouped specialist roles
+- reusable skills
+- hard rules
+- a Codex-ready team folder under `teams/{team-name}/`
 
-```
-.claude/
-├── agents/
-│   ├── team-architect.md            ← Chief coordinator, leads entire process
-│   │
-│   ├── discovery/                   ← Phase 1: Discovery
-│   │   ├── requirements-analyst.md  ← In-depth interviews, extract requirements
-│   │   └── role-designer.md         ← Responsibility decomposition, define roles
-│   │
-│   ├── planning/                    ← Phase 2: Planning
-│   │   └── skill-planner.md         ← Plan skills and rules
-│   │
-│   ├── generation/                  ← Phase 3: Generation
-│   │   ├── agent-writer.md          ← Write agent .md files
-│   │   ├── skill-writer.md          ← Write skill .md files
-│   │   └── rule-writer.md           ← Write rule .md files
-│   │
-│   └── optimization/                ← Phase 4: Optimization
-│       └── prompt-optimizer.md      ← Review and optimize all .md prompts
-│
-├── skills/
-│   ├── structured-interview/        ← Structured interview methodology
-│   │   └── SKILL.md
-│   ├── role-decomposition/          ← Responsibility decomposition framework (MECE)
-│   │   └── SKILL.md
-│   ├── granularity-calibration/     ← Granularity calibration
-│   │   └── SKILL.md
-│   ├── team-topology-analysis/      ← Team topology analysis
-│   │   └── SKILL.md
-│   ├── md-generation-standard/      ← .md file format specifications
-│   │   └── SKILL.md
-│   ├── quality-validation/          ← Output quality validation
-│   │   └── SKILL.md
-│   └── prompt-optimization/         ← Prompt optimization methodology
-│       └── SKILL.md
-│
-└── rules/
-    ├── coordinator-mandate.md       ← Every team must have a coordinator
-    ├── output-structure.md          ← Output directory structure specification
-    ├── conversation-protocol.md     ← Conversation flow protocol
-    ├── writing-quality-standard.md  ← .md writing quality specification
-    └── yaml-frontmatter.md          ← YAML frontmatter requirements
-```
+### Dual-Platform Generation
 
-### Workflow
+A-Team now supports **dual-platform team generation**:
 
-```mermaid
-flowchart LR
- subgraph P1["Phase 1: Discovery"]
-    direction TB
-        RA["requirements-analyst <br> Interviews"]
-        RD["role-designer <br> Role design"]
-  end
- subgraph P2["Phase 2: Planning"]
-        SP["skill-planner <br> Skill plan"]
-  end
- subgraph P3["Phase 3: Generation"]
-    direction TB
-        RW["rule-writer"]
-        SW["skill-writer"]
-        AW["agent-writer"]
-  end
- subgraph P4["Phase 4: Optimization"]
-        PO["prompt-optimizer <br> Prompt optimize"]
-  end
- subgraph DIR["teams/name/"]
-    direction TB
-        claude_md["CLAUDE.md"]
-        agents["agents/"]
-        skills["skills/"]
-        rules["rules/"]
-  end
-    TA(["team-architect <br> Chief coordinator, spans entire process"]) -.-> P1
-    P1 --> P2
-    P2 --> P3
-    P3 --> P4
-    P4 --> RD_OUT{"Review & Deliver"}
-    TA ----> RD_OUT
-    RD_OUT --> DIR
+- Codex-native generation
+- Claude-compatible delivery planning
+- dual-format planning for teams that may need both runtimes
+
+The important constraint is that **Codex remains the canonical authored format**. During discovery, A-Team asks which delivery format the user wants. Even if the user wants Claude compatibility, A-Team generates the Codex package first and preserves mapping for later conversion.
+
+### Format Conversion Support
+
+A-Team also supports **future format conversion** between Codex and Claude-style team layouts.
+
+For each generated team, A-Team retains:
+
+- `.codex/docs/format-mapping.md` for human-readable bidirectional mapping
+- `.codex/docs/format-mapping.manifest.yaml` for machine-readable artifact mapping
+
+This makes these flows possible:
+
+- Claude -> Codex import into the canonical Codex layout
+- Codex -> Claude export from the canonical Codex layout
+- dual-format delivery where Codex is authored first and Claude-compatible output is derived afterward
+
+### Codex Quick Start
+
+1. Open this repo in Codex.
+2. Let Codex load the root `AGENTS.md`.
+3. Use the existing A-Team runtime directly at the repo root.
+4. Tell A-Team what kind of team you want to design.
+5. Follow the discovery interview.
+6. Review the generated output under `teams/{team-name}/`.
+
+### Codex Settings
+
+The project-level Codex settings live in `.codex/config.toml`:
+
+```toml
+model_reasoning_effort = "high"
+disable_response_storage = true
+project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md"]
 ```
 
-### Output Example
+What these settings are for:
 
-When you tell A-Team "I want to build an English teaching content team", it produces a structure like:
+- `model_reasoning_effort = "high"`: better fit for coordination-heavy and multi-step design work
+- `disable_response_storage = true`: reduces saved output overhead for multi-agent sessions
+- `project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md"]`: lets Codex open both new Codex teams and older Claude-only teams
 
-```
-teams/english-teaching-content/
-├── CLAUDE.md                          ← Team-wide rules (all agents must follow)
-└── .claude/
-    ├── agents/
-    │   ├── project-coordinator.md     ← Coordinator (mandatory)
-    │   ├── content-creation/
-    │   │   ├── curriculum-designer.md
-    │   │   ├── content-writer.md
-    │   │   └── illustrator.md
-    │   ├── quality/
-    │   │   ├── education-reviewer.md
-    │   │   └── language-editor.md
-    │   └── delivery/
-    │       ├── web-developer.md
-    │       └── seo-specialist.md
-    ├── skills/
-    │   ├── {skill-1}/
-    │   │   └── SKILL.md
-    │   └── ...
-    └── rules/
-        └── ...
+For Codex multi-agent itself, the user-level setting lives in `~/.codex/config.toml`:
+
+```toml
+[features]
+multi_agent = true
 ```
 
-### Deployment Modes
+A-Team checks this user-level file before generating a `multi-agent` team.
 
-A-Team generates teams that support two deployment modes:
+### How Multi-Agent Works In Codex Here
 
-**Subagent Mode (Default)** — Agents are invoked via the Task tool within a single Claude Code session. The coordinator manages all delegation. Best for sequential workflows with clear handoffs. Works out of the box.
+For this repo, the orchestration logic is driven by `AGENTS.md` and `.codex/agents/team-architect.md`, but Codex multi-agent still depends on the user-level feature flag in `~/.codex/config.toml`.
 
-**Agent Teams Mode (Experimental)** — Agents run as independent Claude Code instances with shared task lists and peer-to-peer messaging. Best for parallel workflows where agents need direct communication. Requires enabling:
+When a team or generation pass uses `multi-agent` mode, the coordinator:
 
-```json
-// settings.json
-{
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  }
-}
+- checks `~/.codex/config.toml` for `[features] multi_agent = true`
+- checks `~/.claude/settings.json` for `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` when Claude Code support also matters
+- delegates focused specialist work with `spawn_agent`
+- sends clarifications or follow-up tasks with `send_input`
+- joins work only at real synchronization points with `wait`
+
+Recommended rule of thumb:
+
+- use `single-agent` when the work is mostly sequential or tightly coupled
+- use `multi-agent` when role boundaries are clear and file ownership can stay non-overlapping
+
+### Skills In Codex
+
+Codex runtime skill discovery happens from `.agents/skills/`.
+
+That means:
+
+- `.codex/skills/` = authored/maintained mirror
+- `.agents/skills/` = runtime-discoverable mirror
+
+Do not rely on `.codex/skills/` alone if you want Codex to auto-discover project skills.
+
+### Repository Layout
+
+```text
+.
+├── AGENTS.md
+├── .codex/
+│   ├── config.toml
+│   ├── agents/
+│   ├── rules/
+│   ├── skills/
+│   └── docs/
+├── .agents/
+│   └── skills/
+├── .claude/                 # legacy/source design
+└── teams/
 ```
 
-Reference: https://code.claude.com/docs/en/agent-teams
+### Core Workflow
 
-### Design Principles
+1. Discovery
+   Clarify the requested delivery format, objectives, scope, workflow, role candidates, and whether `single-agent` or `multi-agent` is appropriate.
+2. Planning
+   Decide shared skills, specialist skills, external skill reuse, hard rules, and retained conversion requirements.
+3. Generation
+   Generate `AGENTS.md`, `.codex/`, `.agents/skills/`, and mapping artifacts for the target team.
+4. Optional optimization
+   Tighten prompts and reduce ambiguity.
+5. Review
+   Validate structure, paths, ownership, and execution mode consistency.
+6. Dialogue review
+   Audit the quality of the consultation itself.
 
-**Coordinator Mandate** — Every team must have a coordinator responsible for task planning and assignment. Coordinators do not perform execution work. Flat architecture only — no sub-coordinators.
+### Generated Team Output
 
-**Parallelism-Aware Design** — During requirements exploration, A-Team identifies which tasks can run in parallel and designs communication patterns (peer-to-peer messaging, broadcast) for Agent Teams deployment.
+Generated teams follow this structure:
 
-**Focus on Generation Quality** — The three writers in the generation phase each handle only one file type (agent / skill / rule), ensuring each .md is written with full attention.
+```text
+teams/{team-name}/
+├── AGENTS.md
+├── .codex/
+│   ├── config.toml
+│   ├── docs/
+│   │   ├── format-mapping.md
+│   │   └── format-mapping.manifest.yaml
+│   ├── agents/
+│   ├── rules/
+│   └── skills/
+└── .agents/
+    └── skills/
+```
 
-**Prompt Optimization** — After all .md files are generated, the prompt-optimizer reviews and optimizes them, improving instruction quality while preserving original characteristics, eliminating vague expressions, and enhancing actionability.
+### Migration Notes
 
-**Depth-First Dialogue** — Requirements exploration is not skipped. Even if you have clear ideas, A-Team still validates assumptions and uncovers blind spots through interviews.
+`CLAUDE.md` and `.claude/` were not deleted. They remain the source implementation and migration baseline.
 
-**CLAUDE.md as Team Contract** — Every generated team includes a `CLAUDE.md` containing team-wide instructions that all agents must follow. Role-specific rules go in `rules/`.
+The platform mapping is bidirectional:
 
-**Multi-Language Support** — All agents communicate in the user's language. Write in English, get responses in English. Write in Traditional Chinese, get responses in Traditional Chinese.
+| Claude layout | Codex layout | Direction |
+| --- | --- | --- |
+| `CLAUDE.md` | `AGENTS.md` | Bidirectional |
+| `.claude/agents/` | `.codex/agents/` | Bidirectional |
+| `.claude/rules/` | `.codex/rules/` | Bidirectional |
+| `.claude/skills/` | `.codex/skills/` + `.agents/skills/` | Bidirectional with runtime mirroring |
 
-### Customization and Extension
-
-A-Team produces an initial framework. You can:
-
-- Directly modify any .md file's prompt content
-- Add or remove roles
-- Adjust skill and rule details
-- Copy the generated `teams/{name}/` folder to your actual project root for use
+See `.codex/docs/claude-to-codex-mapping.md` for the conversion model and retained mapping artifact design.
 
 ---
 
 ## 繁體中文
 
-### 解決什麼問題
+### A-Team 是做什麼的
 
-你知道 agent 要適度分工效果才好，但每次手動規劃角色、逐一撰寫 .md 檔案既耗時又容易遺漏。A-Team 把「團隊設計」這件事本身變成一個可對話、可自動化的流程。
+A-Team 不是最終要執行工作的 agent team，本身是**用來設計 agent team 的系統**。
 
-A-Team **不是** Agent Team 本身——它是一個**設計 Agent Team 的工具**。它產出的團隊結構可以用 subagent（Task tool）或完整的 Agent Teams（實驗性功能）兩種模式部署。
+它會把像這樣的需求：
 
-### 快速開始
+>「我想做一個教育產品的內容營運團隊」
 
-1. 將本資料夾內容複製到你的專案 `.claude/` 目錄下
-2. 在 Claude Code 中啟動 `team-architect` agent
-3. 告訴它你想建什麼團隊，例如：「我想幫一個線上英語教學公司建立教材製作團隊」
-4. 跟著它的訪談走，回答問題即可
-5. 完成後，產出的團隊結構會出現在 `teams/{team-name}/` 目錄下
+轉成：
 
-### 系統架構
+- 一個 coordinator
+- 一組有清楚分工的 specialist agents
+- 可重用的 skills
+- 不可違反的 rules
+- 一個可直接拿去用的 `teams/{team-name}/` 輸出資料夾
 
-```
-.claude/
-├── agents/
-│   ├── team-architect.md            ← 總調度者，主導全流程
-│   │
-│   ├── discovery/                   ← Phase 1: 需求探索
-│   │   ├── requirements-analyst.md  ← 深度訪談，挖掘需求
-│   │   └── role-designer.md         ← 職責拆分，定義角色
-│   │
-│   ├── planning/                    ← Phase 2: 技能規劃
-│   │   └── skill-planner.md         ← 規劃 skills 與 rules
-│   │
-│   ├── generation/                  ← Phase 3: 結構生成
-│   │   ├── agent-writer.md          ← 專寫 agent .md
-│   │   ├── skill-writer.md          ← 專寫 skill .md
-│   │   └── rule-writer.md           ← 專寫 rule .md
-│   │
-│   └── optimization/                ← Phase 4: Prompt 優化
-│       └── prompt-optimizer.md      ← 審視並優化所有 .md 的 prompt
-│
-├── skills/
-│   ├── structured-interview/        ← 結構化訪談方法論
-│   │   └── SKILL.md
-│   ├── role-decomposition/          ← 職責拆解框架（MECE）
-│   │   └── SKILL.md
-│   ├── granularity-calibration/     ← 顆粒度校準
-│   │   └── SKILL.md
-│   ├── team-topology-analysis/      ← 團隊拓撲分析
-│   │   └── SKILL.md
-│   ├── md-generation-standard/      ← .md 檔案格式規範
-│   │   └── SKILL.md
-│   ├── quality-validation/          ← 產出品質驗證
-│   │   └── SKILL.md
-│   └── prompt-optimization/         ← Prompt 優化方法論
-│       └── SKILL.md
-│
-└── rules/
-    ├── coordinator-mandate.md       ← 每個團隊必須有調度者
-    ├── output-structure.md          ← 產出目錄結構規範
-    ├── conversation-protocol.md     ← 對話流程規範
-    ├── writing-quality-standard.md  ← .md 撰寫品質規範
-    └── yaml-frontmatter.md          ← YAML frontmatter 規範
-```
+### 支援雙平台生成
 
-### 工作流程
+A-Team 現在支援**雙平台團隊生成**：
 
-```mermaid
-flowchart LR
-    %% 總架構師
-    TA([團隊架構師 <br/> 首席協調員，橫跨整個流程])
+- 直接生成 Codex-native 團隊
+- 規劃 Claude-compatible 交付
+- 規劃同時面向兩邊 runtime 的 dual-format 輸出
 
-    %% 第一階段
-    subgraph P1 [第一階段：需求探索]
-        direction TB
-        RA[需求分析師 <br/> 訪談]
-        RD[角色設計師 <br/> 角色設計]
-    end
+但有一個核心原則：**Codex 永遠是 canonical authored format**。A-Team 會在 discovery 階段先問使用者要哪一種團隊格式；即使使用者要 Claude 相容格式，也會先把 Codex 套件生出來，再保留 mapping 供後續轉換。
 
-    %% 第二階段
-    subgraph P2 [第二階段：規劃]
-        SP[技能規劃師 <br/> 技能方案]
-    end
+### 支援格式轉換
 
-    %% 第三階段
-    subgraph P3 [第三階段：生成]
-        direction TB
-        RW[規則撰寫員]
-        SW[技能撰寫員]
-        AW[代理人撰寫員]
-    end
+A-Team 也支援 **Codex 與 Claude 團隊格式之間的後續轉換**。
 
-    %% 第四階段
-    subgraph P4 [第四階段：優化]
-        PO[提示詞優化師 <br/> 提示詞優化]
-    end
+每個生成團隊都會保留：
 
-    %% 最後交付
-    RD_OUT{審查與交付}
+- `.codex/docs/format-mapping.md`：給人看的雙向 mapping 說明
+- `.codex/docs/format-mapping.manifest.yaml`：給工具或流程用的 machine-readable artifact mapping
 
-    subgraph DIR [teams/名稱/]
-        direction TB
-        claude_md[CLAUDE.md]
-        agents[agents/ 代理人]
-        skills[skills/ 技能]
-        rules[rules/ 規則]
-    end
+因此可以支援：
 
-    %% 連線邏輯
-    TA -.-> P1
-    P1 --> P2
-    P2 --> P3
-    P3 --> P4
-    P4 --> RD_OUT
-    TA ----> RD_OUT
-    RD_OUT --> DIR
+- Claude -> Codex 匯入到 canonical Codex 結構
+- Codex -> Claude 從 canonical Codex 結構匯出
+- dual-format 交付，先寫 Codex，再導出 Claude-compatible 版本
+
+### Codex 快速開始
+
+1. 用 Codex 開啟這個 repo。
+2. 讓 Codex 讀取 root `AGENTS.md`。
+3. 直接在 repo root 使用 A-Team。
+4. 告訴它你想設計什麼團隊。
+5. 跟著 discovery 訪談把需求講清楚。
+6. 到 `teams/{team-name}/` 檢查產出的 Codex 版團隊結構。
+
+### Codex 設定放哪裡
+
+Codex 的專案設定放在 `.codex/config.toml`：
+
+```toml
+model_reasoning_effort = "high"
+disable_response_storage = true
+project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md"]
 ```
 
-### 產出範例
+這三個設定的用途：
 
-當你告訴 A-Team「我要建立一個英語教材製作團隊」，它會產出類似這樣的結構：
+- `model_reasoning_effort = "high"`：讓這種高協調、長鏈推理的 team design 工作更穩
+- `disable_response_storage = true`：降低多代理流程的回應儲存負擔
+- `project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md"]`：讓 Codex 既能讀新的 Codex team，也能讀舊的 Claude team
 
-```
-teams/english-teaching-content/
-├── CLAUDE.md                          ← 團隊全體規範（所有 agent 必須遵守）
-└── .claude/
-    ├── agents/
-    │   ├── project-coordinator.md     ← 調度者（強制存在）
-    │   ├── content-creation/
-    │   │   ├── curriculum-designer.md
-    │   │   ├── content-writer.md
-    │   │   └── illustrator.md
-    │   ├── quality/
-    │   │   ├── education-reviewer.md
-    │   │   └── language-editor.md
-    │   └── delivery/
-    │       ├── web-developer.md
-    │       └── seo-specialist.md
-    ├── skills/
-    │   ├── {skill-1}/
-    │   │   └── SKILL.md
-    │   └── ...
-    └── rules/
-        └── ...
+Codex 的 multi-agent 使用者層設定則放在 `~/.codex/config.toml`：
+
+```toml
+[features]
+multi_agent = true
 ```
 
-### 部署模式
+A-Team 在生成 `multi-agent` 團隊前，會先檢查這個使用者層設定檔。
 
-A-Team 產出的團隊支援兩種部署模式：
+### Codex 要怎麼「開啟 Multi-Agent」
 
-**Subagent 模式（預設）** — Agent 透過 Task tool 在單一 Claude Code session 中被調用。由 coordinator 管理所有委派。適合有明確交接的順序性工作流程。開箱即用。
+這個 repo 的多代理流程雖然由 `AGENTS.md` 和 `.codex/agents/team-architect.md` 驅動，但 Codex 端仍然要先在 `~/.codex/config.toml` 開啟 `[features] multi_agent = true`。
 
-**Agent Teams 模式（實驗性）** — Agent 作為獨立的 Claude Code 實例運行，具有共享任務清單和 peer-to-peer 訊息傳遞。適合需要直接溝通的並行工作流程。需要啟用：
+Codex 版 multi-agent 的做法是：
 
-```json
-// settings.json
-{
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  }
-}
+- 先檢查 `~/.codex/config.toml` 的 `[features] multi_agent = true`
+- 如果也要兼容 Claude Code，再檢查 `~/.claude/settings.json` 的 `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`
+- root `AGENTS.md` 定義 coordinator contract
+- `.codex/agents/team-architect.md` 定義整個多代理流程
+- coordinator 在需要時用 `spawn_agent` 拆給 specialist
+- 需要補充上下文時用 `send_input`
+- 只有在真正需要 join 的時候才用 `wait`
+
+簡單判斷方式：
+
+- `single-agent`：任務高度耦合、順序很重、拆了反而會多溝通成本
+- `multi-agent`：角色邊界清楚、可平行、而且檔案 ownership 能明確切開
+
+### Codex 的 Skills 放哪裡
+
+Codex runtime 會從 `.agents/skills/` 掃描 project skills，所以這裡分兩層：
+
+- `.codex/skills/`：作者維護用、設計來源
+- `.agents/skills/`：Codex runtime 真正會掃描的 skill surface
+
+也就是說，**只有 `.codex/skills/` 不夠**。如果你希望 Codex 自動發現技能，還是要同步到 `.agents/skills/`。
+
+### 目前 Repo 結構
+
+```text
+.
+├── AGENTS.md
+├── .codex/
+│   ├── config.toml
+│   ├── agents/
+│   ├── rules/
+│   ├── skills/
+│   └── docs/
+├── .agents/
+│   └── skills/
+├── .claude/                 # 保留作為 legacy/source 設計
+└── teams/
 ```
 
-參考文件：https://code.claude.com/docs/zh-TW/agent-teams
+### A-Team 的工作流程
 
-### 設計原則
+1. Discovery
+   先確認需要的團隊格式，再釐清目標、範圍、workflow、角色候選，以及到底該用 `single-agent` 還是 `multi-agent`
+2. Planning
+   規劃 shared skills、specialized skills、external skill reuse、rules，以及要保留哪些轉換資訊
+3. Generation
+   為目標團隊產出 `AGENTS.md`、`.codex/`、`.agents/skills/` 與 mapping artifacts
+4. Optional optimization
+   收斂 prompt、減少模糊與冗語
+5. Review
+   驗證結構、路徑、ownership 與 execution mode 是否一致
+6. Dialogue review
+   回頭審視整個諮詢對話品質
 
-**調度者強制存在** — 每個團隊必定有調度者負責任務規劃與分配，調度者不兼任執行工作。採用扁平架構——禁止子調度者。
+### 產出的團隊長什麼樣子
 
-**並行感知設計** — 在需求探索階段，A-Team 識別哪些任務可以並行執行，並為 Agent Teams 部署設計溝通模式（peer-to-peer 訊息、廣播）。
+```text
+teams/{team-name}/
+├── AGENTS.md
+├── .codex/
+│   ├── config.toml
+│   ├── docs/
+│   │   ├── format-mapping.md
+│   │   └── format-mapping.manifest.yaml
+│   ├── agents/
+│   ├── rules/
+│   └── skills/
+└── .agents/
+    └── skills/
+```
 
-**專注產生品質** — generation 階段的三個 writer 各自只負責一種檔案類型（agent / skill / rule），確保每個 .md 都被專心寫好。
+### 舊版 Claude 結構還在嗎
 
-**Prompt 優化** — 所有 .md 檔案生成後，由 prompt-optimizer 進行審視與優化，在保持原有特性的前提下提升指令品質、消除模糊表達、強化可執行性。
+還在。
 
-**深度對話優先** — 不跳過需求探索。即使你已經有明確想法，A-Team 仍會透過訪談驗證假設、挖掘盲點。
+- `CLAUDE.md` / `.claude/` 沒有刪掉
+- 它們現在是 legacy/source implementation
+- Codex 版則由 `AGENTS.md`、`.codex/`、`.agents/skills/` 承接
 
-**CLAUDE.md 作為團隊契約** — 每個生成的團隊都包含 `CLAUDE.md`，內含所有 agent 必須遵守的團隊級指令。角色專屬規則放在 `rules/`。
+這個對照現在是雙向保留的：
 
-**多語言支援** — 所有 agent 都使用用戶的語言溝通。用英文寫就用英文回覆，用繁體中文寫就用繁體中文回覆。
+| Claude 版 | Codex 版 | 方向 |
+| --- | --- | --- |
+| `CLAUDE.md` | `AGENTS.md` | 雙向 |
+| `.claude/agents/` | `.codex/agents/` | 雙向 |
+| `.claude/rules/` | `.codex/rules/` | 雙向 |
+| `.claude/skills/` | `.codex/skills/` + `.agents/skills/` | 雙向，外加 runtime mirror |
 
-### 自訂與擴展
-
-A-Team 產出的是初版框架。你可以：
-
-- 直接修改任何 .md 檔案的 prompt 內容
-- 增加或移除角色
-- 調整 skill 和 rule 的細節
-- 將產出的 `teams/{name}/` 資料夾複製到實際專案根目錄中使用
-
----
-
-## License
-
-MIT
+更完整的對照與轉換策略請看 `.codex/docs/claude-to-codex-mapping.md`。

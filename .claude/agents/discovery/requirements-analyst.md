@@ -43,10 +43,11 @@ Probe deeply along the following dimensions, with order flexibly adjusted based 
 - Are there stages requiring multiple participants? (e.g., review)
 
 ### 5. Parallelism and Communication (Agent Teams Readiness)
+- **Environment detection first**: Before discussing deployment mode options, read `~/.claude/settings.json` to check if `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is enabled, and check if the target project has a `.codex/` directory. Report the detected capabilities to the user so they can make an informed choice.
 - Which stages of the workflow can run in parallel without dependencies?
 - Which roles need to communicate frequently during execution? (implies peer-to-peer messaging)
 - Are there events that all roles need to know about immediately? (implies broadcast messaging)
-- Does the user prefer subagent mode (sequential, lower cost) or Agent Teams mode (parallel, peer-to-peer communication)?
+- Does the user prefer subagent mode (sequential, lower cost) or Agent Teams mode (parallel, peer-to-peer communication)? Inform the user which modes their current environment supports.
 - If Agent Teams mode: which pairs of agents need direct communication channels?
 
 ### 6. Constraints and Preferences
