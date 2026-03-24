@@ -32,12 +32,14 @@ The process reviewer must evaluate the following dimensions at minimum:
 3. **Collaboration efficiency** — Were there unnecessary back-and-forth cycles? Were blockers identified and resolved promptly?
 4. **Information completeness** — Did downstream agents receive all the context they needed from upstream agents?
 5. **Missed opportunities** — Were there improvements or risks that no agent surfaced during execution?
+6. **Scope drift detection** — Did each phase produce exactly what was requested — nothing more, nothing less? Compare stated requirements against actual deliverables. Flag both scope creep (unrequested additions) and requirements gaps (stated work not addressed). This dimension is informational, not blocking.
 
 ### Process Reviewer Output
 
 The process reviewer must produce a structured retrospective report after each project cycle. The report must include:
 - Scores or ratings for each evaluation dimension
 - Specific evidence (references to task IDs, messages, or deliverables) for every identified issue
+- Scope drift summary: `[CLEAN / DRIFT DETECTED / REQUIREMENTS MISSING]` with specific items
 - Actionable recommendations for process improvement
 - Positive highlights of what worked well
 

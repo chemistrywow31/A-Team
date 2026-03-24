@@ -87,8 +87,12 @@ Every generated CLAUDE.md must include a worklog and context management section 
 
 1. **Worklog structure**: `.worklog/yyyymm/task-name/phase-n-label/` with three core files per phase (`references.md`, `findings.md`, `decisions.md`)
 2. **Coordinator dispatch rules**: Every Task dispatch must include the worklog path and upstream reference paths
-3. **Agent return format**: Agents must return structured summaries; full detail goes to the worklog
+3. **Agent return format**: Agents must return structured summaries with completion status (`DONE` / `DONE_WITH_CONCERNS` / `BLOCKED` / `NEEDS_CONTEXT`); full detail goes to the worklog
 4. **Phase-end archival**: Coordinator verifies worklog completeness before phase transitions
+
+### Template Consistency for Mandatory Sections
+
+The worklog section, context management section, and deployment mode section in generated CLAUDE.md files must follow a standardized structure. Agent-writer must not rewrite these sections from scratch for each team. Instead, adapt the template defined in this rule and in `rules/context-management.md`, substituting only team-specific variables (team name, phase labels, agent names). This ensures consistency across generated teams and prevents drift.
 
 The generated team's `rules/` directory must also include:
 - A **worklog rule** defining the `.worklog/` structure and evidence chain requirements

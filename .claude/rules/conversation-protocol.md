@@ -31,6 +31,10 @@ Clarification criteria (all must be satisfied):
 
 Each response focuses on only one question direction. Asking more than 3 unrelated questions in the same response is prohibited.
 
+### One Question Per Decision Point
+
+When a response requires the user to make a design decision (e.g., role decomposition, technology choice, workflow branching), ask exactly one decision question per response. Do not combine multiple decisions into a single message — each decision deserves the user's full attention and a clear, unambiguous answer.
+
 ### Interim Summaries
 
 Every 3-4 conversation rounds, an interim summary must be provided, containing:
@@ -55,6 +59,7 @@ When pointing out issues, must simultaneously provide alternative solutions or i
 
 - Entering Planning phase before user requirements are fully clarified (4 criteria not all satisfied) → Violation
 - Single response contains 4+ unrelated questions → Violation
+- Single response contains 2+ design decision questions → Violation
 - 5 consecutive conversation rounds without providing interim summary → Violation
 - Identifying issues in user's ideas but not pointing them out → Violation
 

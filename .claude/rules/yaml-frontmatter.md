@@ -27,14 +27,20 @@ model: {model identifier}
 ---
 ```
 
-**Skill .md files** must contain exactly these two fields:
+**Skill .md files** must contain these fields:
 
 ```yaml
 ---
 name: {Skill name, English}
 description: {One sentence describing the capability this skill provides}
+benefits-from:                      # OPTIONAL — declare upstream skill dependencies
+  - "{skill-name-1}"
+  - "{skill-name-2}"
 ---
 ```
+
+- `name` and `description` are required
+- `benefits-from` is optional. When present, it declares which upstream skills produce context that improves this skill's output. The coordinator uses this to determine skill execution order and context passing chains
 
 **Rule .md files** must contain these fields:
 
@@ -66,7 +72,9 @@ Team Architect must validate frontmatter presence and correctness during Phase 3
 
 - File does not start with `---` on the first line → Violation
 - Agent .md missing any of the three required fields (`name`, `description`, `model`) → Violation
-- Skill or Rule .md missing any of the two required fields (`name`, `description`) → Violation
+- Skill .md missing required fields (`name`, `description`) → Violation
+- Rule .md missing required fields (`name`, `description`) → Violation
+- Skill .md has `benefits-from` field with values that do not match any skill name in the team → Violation
 - `model` field contains a value not in the accepted list (`opus`, `sonnet`, `haiku`) → Violation
 - Blank line or content before the opening `---` → Violation
 - Rule .md has `paths` field but values are not valid glob patterns → Violation

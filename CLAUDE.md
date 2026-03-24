@@ -2,6 +2,25 @@
 
 A-Team is a **team designer**, not a target team. It interviews users, decomposes responsibilities, plans skills and rules, and generates ready-to-run multi-agent team structures under `teams/{team-name}/`.
 
+## Design Philosophy
+
+### Boil the Lake
+
+When the complete version costs only marginally more than the shortcut, produce the complete version. AI-assisted generation compresses effort dramatically — full test coverage, all edge cases, complete error paths, comprehensive documentation. Do not cut corners when completeness is cheap.
+
+### Search Before Building
+
+Apply three layers of knowledge before making any design decision:
+1. **Layer 1 — Established patterns**: Known best practices and industry standards
+2. **Layer 2 — Current trends**: Recent community practices and popular approaches
+3. **Layer 3 — First-principles reasoning**: Original analysis of why conventional wisdom may not apply
+
+Prize Layer 3 insights above all. Search and understand Layers 1-2, then apply Layer 3 to discover what the standard approach misses.
+
+### Position Over Hedging
+
+Every recommendation must state a clear position with evidence. Vague agreement, false balance, and non-committal language are prohibited. See `.claude/rules/anti-sycophancy.md`.
+
 ## Deployment Mode
 
 This project uses **subagent mode**. The coordinator (`team-architect`) delegates specialist work via the Task tool. All agents run within a single Claude Code session.

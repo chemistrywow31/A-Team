@@ -28,7 +28,7 @@ When an agent completes a task and returns results to the coordinator, the retur
 ```markdown
 ## Task Completion: {task name}
 
-### Status: {Complete / Partial / Blocked}
+### Status: {DONE / DONE_WITH_CONCERNS / BLOCKED / NEEDS_CONTEXT}
 
 ### Key Outcomes
 - {Outcome 1}
@@ -49,6 +49,21 @@ When an agent completes a task and returns results to the coordinator, the retur
 ```
 
 Agents must not return full file contents, complete research dumps, or unstructured narratives. The worklog contains the detail; the return contains the summary.
+
+### Completion Status Protocol
+
+Every agent must end its task with exactly one of these statuses:
+
+- **DONE** — All steps completed successfully. Evidence of completion provided.
+- **DONE_WITH_CONCERNS** — Task completed, but issues exist that the coordinator must be aware of. List each concern with severity and recommended action.
+- **BLOCKED** — Cannot proceed. State what was attempted (up to 3 attempts), what failed, and what specific information or action is needed to unblock. Do not retry the same approach more than 3 times.
+- **NEEDS_CONTEXT** — Missing information required to begin or continue. List each missing item and where it might be found.
+
+The coordinator must handle each status:
+- **DONE**: Proceed to next task or phase.
+- **DONE_WITH_CONCERNS**: Evaluate concerns before proceeding. Log concerns in worklog.
+- **BLOCKED**: Resolve blocker before re-dispatching. Do not re-dispatch the same task without addressing the blocker.
+- **NEEDS_CONTEXT**: Provide the requested context and re-dispatch.
 
 ### Task Isolation via Subagents
 
