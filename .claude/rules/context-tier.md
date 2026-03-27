@@ -36,15 +36,31 @@ Include the following section in every generated agent file:
 ```markdown
 ## Context Tier: {1|2|3|4}
 
+Recommended effort: {low|medium|high|max}
+
 Startup context:
 - {Exactly what context this agent receives at dispatch}
 ```
 
+### Adaptive Thinking Effort Mapping
+
+Map each tier to Claude's adaptive thinking `effort` parameter to optimize reasoning depth versus speed:
+
+| Tier | Effort | Rationale |
+|------|--------|-----------|
+| 1 | `low` | Deterministic output, no judgment calls — fast execution preferred |
+| 2 | `medium` | Local decisions within defined scope — balanced reasoning |
+| 3 | `high` | Cross-agent decisions, broad context — deep reasoning needed |
+| 4 | `high` or `max` | Orchestration and cross-cutting audits — maximum reasoning depth |
+
+When dispatching tasks, the coordinator sets the `effort` parameter based on the target agent's tier. Include the recommended effort level in the Context Tier section of each generated agent.
+
 ### Coordinator Dispatch Rule
 
-The coordinator must match dispatch context to the agent's tier:
+The coordinator must match dispatch context and thinking effort to the agent's tier:
 - Do not send Tier 4 context to a Tier 1 agent (wastes context window)
 - Do not restrict a Tier 3+ agent to Tier 1 context (starves decision-making)
+- Match `effort` parameter to the agent's tier (see mapping table above)
 
 ## Violation Determination
 

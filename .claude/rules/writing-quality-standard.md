@@ -38,16 +38,29 @@ Prohibited words: "try to", "appropriately", "reasonably", "if needed", "as appr
 
 ### Example Requirements
 
-- Each skill .md must contain at least one input/output example
-- Each rule .md must contain at least one violation scenario description
+Every generated .md that contains examples must meet these standards:
+
+- Each **skill .md** must contain at least three examples: normal case, edge case, and rejection/failure case. Happy-path-only examples cause Claude to produce plausible output on invalid input.
+- Each **agent .md** must contain an Examples section with at least three cases: normal, edge, and rejection (demonstrating the Uncertainty Protocol).
+- Each **rule .md** must contain at least one violation scenario description.
+
+### Structural Over Instructional
+
+When a behavioral constraint can be enforced by prompt structure (dedicated sections, labeled output slots, fixed templates), use structure instead of instructions. Claude reliably follows structural boundaries but frequently ignores negative instructions like "do not X".
+
+- Use dedicated sections (`## Boundaries`, `## Uncertainty Protocol`) instead of inline prohibitions
+- Use output templates with labeled slots instead of "output in X format" instructions
+- Use escape hatch phrases (`INSUFFICIENT_DATA`, `BLOCKED`) instead of "don't guess"
 
 ## Violation Determination
 
 - Using descriptive tone instead of imperative sentences → Violation
 - Prohibited vague words appear without accompanying judgment criteria → Violation
 - File exceeds length limit → Violation
-- skill .md has no examples → Violation
-- rule .md has no violation determination → Violation
+- Skill .md has fewer than three examples (normal, edge, rejection) → Violation
+- Agent .md has no Examples section or fewer than three cases → Violation
+- Rule .md has no violation determination → Violation
+- Behavioral constraint enforced solely by instruction when a structural alternative exists → Violation
 
 ## Exceptions
 

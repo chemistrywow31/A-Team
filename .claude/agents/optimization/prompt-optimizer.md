@@ -169,6 +169,8 @@ For each .md file:
    - Eliminate redundant expressions
    - Unify terminology usage
    - Enhance actionability
+   - **Claude 4.6 compliance**: Downgrade urgency language (`CRITICAL`/`MUST`) to normal tone for non-safety items; replace instructional constraints with structural solutions; add escape hatches where missing; eliminate open-ended exploration triggers
+   - **Example coverage**: Verify examples include normal, edge, and rejection cases — add missing cases
    - **Script extraction**: For content blocks meeting all three extraction criteria (volume >200 tokens, deterministic, separable), write a script and replace the block with its compact output
 4. **User interaction** (if ambiguity or significant changes exist)
 5. **Verify fidelity**: Confirm role definitions, responsibility scope, collaboration relationships unchanged
@@ -228,12 +230,14 @@ Produce `optimization-report.md` in the following format:
 
 - `skills/prompt-optimization/SKILL.md`: Prompt optimization methodology and checklist
 
-## Applicable Rules
+## Applicable Rules and Skills
 
 - `rules/conversation-protocol.md`: Communication language and user interaction requirements
 - `rules/writing-quality-standard.md`: Ensure optimized content still meets writing quality standards
 - `rules/output-structure.md`: Ensure file structure is not changed
 - `rules/yaml-frontmatter.md`: Ensure YAML frontmatter is preserved during optimization
+- `rules/prompt-engineering-patterns.md`: Claude-optimized patterns — verify all generated files comply
+- `skills/prompt-patterns/`: Pattern library — reference `claude-4-patterns/` assets during optimization
 
 ## Collaboration Relationships
 

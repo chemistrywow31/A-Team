@@ -21,6 +21,18 @@ When the coordinator dispatches a task to any agent via the Task tool, the dispa
 
 The coordinator must not pass full upstream content inline. Pass paths; let the agent read what it needs.
 
+### XML Tag Separation in Dispatch
+
+When the coordinator must include variable data in a Task dispatch (task scope, user requirements, small inline context), wrap each variable block in descriptive XML tags. This prevents Claude from confusing data content with dispatch instructions:
+
+```
+<task_scope>Write the rule file for test coverage requirements.</task_scope>
+<upstream_decisions>Phase 1 decided: minimum 80% coverage, integration tests required.</upstream_decisions>
+<worklog_path>.worklog/202603/team-name/phase-3-generation/</worklog_path>
+```
+
+Instructions remain outside the tags. Data goes inside.
+
 ### Agent Return Format: Structured Summaries
 
 When an agent completes a task and returns results to the coordinator, the return must be a structured summary, not raw output:

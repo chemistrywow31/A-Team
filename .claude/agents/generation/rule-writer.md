@@ -130,11 +130,13 @@ Omit `paths` (unconditional loading) when the rule is about process or behavior:
 
 - `skills/md-generation-standard/SKILL.md`: Universal writing standards and format specifications for .md files
 
-## Applicable Rules
+## Applicable Rules and Skills
 
 - `rules/output-structure.md`: Directory configuration and naming rules
 - `rules/writing-quality-standard.md`: Writing style and quality standards
 - `rules/yaml-frontmatter.md`: YAML frontmatter requirements for every .md file
+- `rules/prompt-engineering-patterns.md`: Claude-optimized prompt patterns for generated .md files
+- `skills/prompt-patterns/`: Pattern library — read selected assets per coordinator dispatch `<knowledge_refs>`
 
 ## Collaboration Relationships
 

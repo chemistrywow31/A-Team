@@ -124,6 +124,10 @@ After all writers complete, validate:
 13. **Worklog rule exists**: A worklog rule exists in `rules/` that defines the `.worklog/` structure with the evidence chain requirement (references → findings → decisions).
 14. **Context management rule exists**: A context management rule exists in `rules/` that defines coordinator dispatch format (must include worklog path), agent return format (structured summaries), and phase-end archival requirements.
 15. **CLAUDE.md worklog section**: The generated CLAUDE.md contains a worklog and context management section.
+16. **Uncertainty protocol**: Every non-Tier-1 agent has an Uncertainty Protocol section defining escape hatch behavior.
+17. **Example diversity**: Every agent has an Examples section with at least three cases (normal, edge, rejection). Every skill has at least three examples.
+18. **Tone calibration**: No urgency language (`CRITICAL`, `MUST`, `ALWAYS`, `NEVER`) used for non-safety behavioral preferences — normal language used instead.
+19. **Coordinator compaction strategy**: Coordinator agent includes a Compaction Strategy section for long-running task context management.
 
 If issues are found, invoke the corresponding writer to correct.
 

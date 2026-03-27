@@ -73,25 +73,11 @@ Extract static, repetitive, or computable content from prompts into executable s
 **After:**
 > Review using the following process: 1. Check format completeness 2. Verify reference paths 3. Confirm terminology consistency
 
-### Problem 3: Redundant Modifiers
+### Problem 3: Redundant Modifiers and Passive Voice
 
-**Symptom:** Using adjectives or adverbs that don't add information value
+**Before:** "Carefully and thoroughly check every detail to ensure high-quality output" / "Tasks will be assigned to the corresponding executor"
 
-**Before:**
-> Carefully and thoroughly check every detail to ensure high-quality output
-
-**After:**
-> Check each field against template requirements
-
-### Problem 4: Passive Voice
-
-**Symptom:** Using passive structures like "is done by", "will be"
-
-**Before:**
-> Tasks will be assigned to the corresponding executor
-
-**After:**
-> Assign tasks to the corresponding executor
+**After:** "Check each field against template requirements" / "Assign tasks to the corresponding executor"
 
 ### Problem 5: Vague Conditions
 
@@ -103,25 +89,11 @@ Extract static, repetitive, or computable content from prompts into executable s
 **After:**
 > When input data comes from external sources, execute format validation
 
-### Problem 6: Repeated Definitions
+### Problem 6: Repeated Definitions and Over-explanation
 
-**Symptom:** Same thing described in multiple ways in different places
+**Before:** "You are a content reviewer. Your role is to review content. You are responsible for ensuring content quality." / "JSON is a data format that uses key-value pairs. You need to output results in JSON format."
 
-**Before:**
-> You are a content reviewer. Your role is to review content. You are responsible for ensuring content quality.
-
-**After:**
-> You are a content reviewer, responsible for checking and flagging non-compliant content according to quality standards.
-
-### Problem 7: Over-explanation
-
-**Symptom:** Explaining obvious things, or repeatedly explaining common knowledge the AI already knows
-
-**Before:**
-> JSON is a data format that uses key-value pairs to organize data. You need to output results in JSON format.
-
-**After:**
-> Output format: JSON
+**After:** "You are a content reviewer, responsible for checking and flagging non-compliant content according to quality standards." / "Output format: JSON"
 
 ### Problem 8: Computable Content Embedded in Prompt
 
@@ -132,6 +104,17 @@ Extract static, repetitive, or computable content from prompts into executable s
 
 **After (≈1,500 tokens):**
 > `python extract_api_spec.py --summary` output: 127 endpoints across 5 categories. Per entry: method, path, required params, response type.
+
+### Problem 9-12: Claude 4.6 Anti-patterns
+
+See `rules/prompt-engineering-patterns.md` for full rationale. Quick reference:
+
+| # | Pattern | Before | After |
+|---|---------|--------|-------|
+| 9 | Instructional-only constraint | "Do not guess when you don't know" | Add `## Uncertainty Protocol` section with `INSUFFICIENT_DATA` escape hatch |
+| 10 | Urgency over-triggering | "You MUST ALWAYS use the search tool" | "Use the search tool when the question requires information not in context" |
+| 11 | Missing escape hatch | "Produce a technical specification" | Add "When requirements are insufficient, report `INSUFFICIENT_DATA`" |
+| 12 | Exploration trap | "If in doubt, research further" | "Choose an approach and commit. Revisit only when new evidence contradicts" |
 
 ## Optimization Checklist
 
@@ -154,6 +137,14 @@ For each .md file, check sequentially:
 - [ ] Boundaries are explicit (lists things not done)
 - [ ] No repeated definitions or implicit assumptions
 - [ ] No computable content that a script can generate (data tables, pattern expansions, file analysis)
+
+### Claude 4.6 Optimization Level
+- [ ] No urgency language (`CRITICAL`, `MUST`, `ALWAYS`, `NEVER`) for non-safety preferences
+- [ ] Behavioral constraints use structural solutions (sections, templates) not just instructions
+- [ ] Agent has explicit escape hatch for insufficient data scenarios
+- [ ] No open-ended exploration triggers ("if in doubt, investigate further")
+- [ ] Examples cover normal, edge, and rejection cases (not just happy path)
+- [ ] Element ordering: identity/context first, instructions/output format last
 
 ### Consistency Level
 - [ ] Terminology is unified within the file

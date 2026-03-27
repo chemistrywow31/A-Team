@@ -83,7 +83,10 @@ model: {opus | sonnet | haiku}
 ## Input and Output
 
 ### Input
-{What this agent needs to receive to start work}
+{What this agent needs to receive to start work. Variable data must be wrapped in descriptive XML tags:}
+- `<task_scope>`: {task description from coordinator}
+- `<upstream_context>`: {summaries or references from upstream agents}
+- `<user_input>`: {raw user input, if applicable}
 
 ### Output
 {This agent's specific deliverables and format requirements}
@@ -133,6 +136,24 @@ model: {opus | sonnet | haiku}
 ## Boundaries
 
 {List what this agent is NOT responsible for and should NOT do. This is as important as "Responsibilities".}
+
+## Uncertainty Protocol
+
+{Define when and how this agent reports insufficient information instead of guessing.}
+- Trigger conditions: {list scenarios where this agent cannot produce reliable output}
+- Response: Report `INSUFFICIENT_DATA: {what is missing}` to the coordinator
+- Escalation target: {coordinator or user}
+
+## Examples
+
+### Normal Case
+{Show typical input → expected output for this agent's core responsibility}
+
+### Edge Case
+{Show unusual but valid input → expected output demonstrating boundary handling}
+
+### Rejection Case
+{Show input that should trigger rejection, escalation, or INSUFFICIENT_DATA response}
 ```
 
 ## Additional Requirements for Coordinator Roles
@@ -162,6 +183,16 @@ If writing a coordinator role, the .md must additionally include:
 - Parallel groups: {list groups of agents that can work simultaneously}
 - Sequential gates: {list checkpoints where parallel work must sync}
 - Task size target: 5-6 tasks per agent for optimal throughput
+- Dispatch independent tasks in the same message to maximize parallel execution
+- Choose an approach and commit to it. Revisit decisions only when new evidence directly contradicts your reasoning.
+
+## Compaction Strategy
+
+{Define when and how to compress context during long-running tasks}
+- After dispatching 5+ sequential tasks, write interim summary to worklog before continuing
+- After each phase completion, release phase-specific context — subsequent phases read from worklog
+- Preserve: architecture decisions, unresolved blockers, active constraints
+- Discard: intermediate tool outputs, superseded drafts, resolved discussions
 ```
 
 ## Writing Guidelines
@@ -177,11 +208,13 @@ If writing a coordinator role, the .md must additionally include:
 
 - `skills/md-generation-standard/SKILL.md`: Universal writing standards and format specifications for .md files
 
-## Applicable Rules
+## Applicable Rules and Skills
 
 - `rules/output-structure.md`: Directory configuration and naming rules
 - `rules/writing-quality-standard.md`: Writing style and quality standards
 - `rules/yaml-frontmatter.md`: YAML frontmatter requirements for every .md file
+- `rules/prompt-engineering-patterns.md`: Claude-optimized prompt patterns for generated .md files
+- `skills/prompt-patterns/`: Pattern library — read selected assets per coordinator dispatch `<knowledge_refs>`
 
 ## Collaboration Relationships
 

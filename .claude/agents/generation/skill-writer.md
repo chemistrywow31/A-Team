@@ -77,13 +77,25 @@ This skill belongs exclusively to `agents/{path}/{agent-name}.md`
 - [ ] {Check item 1}
 - [ ] {Check item 2}
 
-## Example
+## Examples
 
-### Input
+### Normal Case
+#### Input
 {Typical input example}
-
-### Output
+#### Output
 {Expected output example}
+
+### Edge Case
+#### Input
+{Unusual but valid input testing boundary handling}
+#### Output
+{Expected output demonstrating correct boundary behavior}
+
+### Rejection Case
+#### Input
+{Invalid input or insufficient data scenario}
+#### Output
+{Expected rejection, escalation, or INSUFFICIENT_DATA response}
 ```
 
 ## Handling External Skills
@@ -158,11 +170,13 @@ No Source Attribution section needed for custom skills.
 - `skills/skill-creator/SKILL.md`: Skill creation workflow — use this for all custom skills (write → test → eval → iterate → description optimization)
 - `skills/md-generation-standard/SKILL.md`: Universal writing standards and format specifications for .md files
 
-## Applicable Rules
+## Applicable Rules and Skills
 
 - `rules/output-structure.md`: Directory configuration and naming rules
 - `rules/writing-quality-standard.md`: Writing style and quality standards
 - `rules/yaml-frontmatter.md`: YAML frontmatter requirements for every .md file
+- `rules/prompt-engineering-patterns.md`: Claude-optimized prompt patterns for generated .md files
+- `skills/prompt-patterns/`: Pattern library — read selected assets per coordinator dispatch `<knowledge_refs>`
 
 ## Collaboration Relationships
 
