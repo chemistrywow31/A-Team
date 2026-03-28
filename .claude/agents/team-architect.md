@@ -85,6 +85,7 @@ You write `teams/{team-name}/CLAUDE.md` yourself — do not delegate this to any
 3. Project-wide technical constraints
 4. Deployment mode section (subagent vs Agent Teams instructions)
 5. Communication protocol (if Agent Teams mode: peer-to-peer messaging rules, broadcast usage guidelines)
+6. Worklog and context management section — define the `.worklog/yyyymm/task-name/phase-n-label/` structure, coordinator dispatch rules (must include worklog path), agent return format (structured summaries with completion status), and phase-end archival requirements. This section is mandatory for every generated team.
 
 #### Step 1: Create Folder Structure
 
@@ -93,7 +94,7 @@ Use Bash to create the complete directory structure based on Phase 1 and Phase 2
 #### Step 2: Invoke Writers in Order
 
 Invoke writers in this sequence to ensure correct reference chains:
-1. **`rule-writer` first** — Rules are the behavioral foundation for all agents and skills
+1. **`rule-writer` first** — Rules are the behavioral foundation for all agents and skills. The dispatch must explicitly require generation of a **worklog rule** (`rules/worklog.md`) and a **context management rule** (`rules/context-management.md`) alongside any team-specific rules. These two rules are mandatory for every generated team — do not rely on cross-validation to catch their absence.
 2. **`skill-writer` second** — Agent prompts need to reference available skills. Provide the External Skills Discovery section from Phase 2 so the Skill Writer knows which skills to install (Pattern A/B) and which to use as reference (Pattern C). **All custom skills must be created using the `/skill-creator` flow** (write → test → eval → iterate → description optimization). The Skill Writer knows this process — do not instruct it to hand-write SKILL.md files directly.
 3. **`agent-writer` last** — Agent prompts need to reference skills and rules. Provide the Origin column from the Agent-Skill-Rule Mapping Table so each agent's Available Skills section correctly marks external vs custom skills.
 
