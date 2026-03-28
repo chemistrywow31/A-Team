@@ -11,6 +11,82 @@ Each platform has its own native configuration. Format conversion between platfo
 
 ---
 
+## 設計理念
+
+**Anthropic 官方研究的蒸餾**
+
+把 Anthropic 的 prompt engineering 教程、課程、Claude 4 最佳實踐、Context Engineering 部落格全部讀完，系統性地轉化成 agent 的行為約束規則。
+
+結構性方案優先於指令、XML tag 分離、Uncertainty Protocol、Claude 4.6 語氣校準，全部有對應的規則檔。
+
+**Agent 架構設計哲學**
+
+扁平架構，一個 coordinator 管全部 agent，不搞 sub-coordinator。
+
+Context 分級，不是每個 agent 都要知道所有事。
+
+每個生成的團隊強制要有 process reviewer，專門看協作流程的問題，跟看產出品質的 QA 分開。
+
+**可追溯的決策鏈**
+
+每個設計決策都有 worklog 記錄，references → findings → decisions 形成證據鏈。
+
+可以回溯每個「為什麼這樣設計」。
+
+worklog 同時拿來做 context offloading，寫進去就能釋放 context window。
+
+**Anti-Sycophancy**
+
+禁止 agent 講「That's an interesting approach」這種模糊討好的話。
+
+有問題直接講，同時給替代方案。
+
+**雙模式、雙平台**
+
+運行支援 subagent（coordinator 在同一 session 調度）跟 Agent Teams（每個 agent 獨立跑、平行作業）。
+
+平台支援 Claude Code 跟 Codex，雙平台原生設定共存，格式也能互轉。
+
+---
+
+## Design Philosophy
+
+**Distilled from Anthropic's Official Research**
+
+Read through Anthropic's prompt engineering tutorials, courses, Claude 4 best practices, and Context Engineering blog, then systematically converted them into enforceable agent behavior rules.
+
+Structural solutions over instructions, XML tag separation, Uncertainty Protocol, Claude 4.6 tone calibration — all backed by dedicated rule files.
+
+**Agent Architecture Philosophy**
+
+Flat architecture: one coordinator manages all agents, no sub-coordinators.
+
+Context tiering: not every agent needs to know everything.
+
+Every generated team must have a process reviewer — dedicated to reviewing collaboration quality, separate from QA.
+
+**Traceable Decision Chains**
+
+Every design decision is recorded in a worklog: references → findings → decisions, forming a full evidence chain.
+
+Every "why was it designed this way" is traceable.
+
+The worklog doubles as context offloading — write it down, free up the context window.
+
+**Anti-Sycophancy**
+
+Agents are prohibited from saying things like "That's an interesting approach" or other vague, agreeable responses.
+
+If there's a problem, say it directly. Always provide an alternative.
+
+**Dual Mode, Dual Platform**
+
+Supports subagent mode (coordinator dispatches within one session) and Agent Teams (each agent runs independently, working in parallel).
+
+Supports both Claude Code and Codex, with native configs coexisting in one repo. Format conversion works both ways.
+
+---
+
 ## English
 
 ### What A-Team Does
