@@ -36,6 +36,8 @@ teams/{team-name}/
     │   └── {group-b}/
     │       └── {agent-3}.md
     ├── skills/
+    │   ├── boss/                     ← Entry-point skill (invokes coordinator)
+    │   │   └── SKILL.md
     │   ├── {skill-1}/                ← Each skill has its own folder
     │   │   └── SKILL.md              ← Fixed filename (uppercase)
     │   ├── {skill-2}/
@@ -98,6 +100,16 @@ The generated team's `rules/` directory must also include:
 - A **worklog rule** defining the `.worklog/` structure and evidence chain requirements
 - A **context management rule** defining task isolation, summary-based reporting, and worklog-based context recovery
 
+### Entry-Point Skill
+
+Every generated team must include an entry-point skill at `skills/boss/SKILL.md`, invokable as `/boss`. This skill spawns the team's coordinator agent via the Agent tool, ensuring users always enter through the coordinator's full workflow.
+
+The entry-point skill must:
+- Use `boss` as the skill folder name and slash command name (consistent across all generated teams)
+- Spawn the coordinator agent with `subagent_type` matching the coordinator's name
+- Pass any user-provided arguments as context to the coordinator
+- Support bare invocation (no arguments → coordinator starts from Phase 1 or the beginning of its workflow)
+
 ### Path-Scoped Rules
 
 Rules in `.claude/rules/` support an optional `paths` field in YAML frontmatter. Use this to scope rules to specific file types, reducing context consumption and improving adherence:
@@ -135,6 +147,7 @@ paths:
 - Non-coordinator agent placed directly in `agents/` root directory (same level as coordinator) → Violation
 - Skill exists directly as `.md` file instead of `{skill-name}/SKILL.md` format → Violation
 - File or folder name does not follow kebab-case → Violation
+- Generated team missing entry-point skill at `skills/boss/SKILL.md` → Violation
 
 ## Exceptions
 

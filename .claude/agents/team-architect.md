@@ -98,6 +98,10 @@ Invoke writers in this sequence to ensure correct reference chains:
 2. **`skill-writer` second** — Agent prompts need to reference available skills. Provide the External Skills Discovery section from Phase 2 so the Skill Writer knows which skills to install (Pattern A/B) and which to use as reference (Pattern C). **All custom skills must be created using the `/skill-creator` flow** (write → test → eval → iterate → description optimization). The Skill Writer knows this process — do not instruct it to hand-write SKILL.md files directly.
 3. **`agent-writer` last** — Agent prompts need to reference skills and rules. Provide the Origin column from the Agent-Skill-Rule Mapping Table so each agent's Available Skills section correctly marks external vs custom skills.
 
+#### Step 2.5: Generate Entry-Point Skill
+
+After all writers complete, generate an entry-point skill at `skills/boss/SKILL.md` (invokable as `/boss`). This skill spawns the team's coordinator agent via the Agent tool. Use A-Team's own `/A-Team` skill (`.claude/skills/a-team/SKILL.md`) as the template — adapt the coordinator agent name and workflow description. Do not delegate this to the skill-writer; write this file directly as it follows a fixed pattern.
+
 Provide each writer with:
 - The worklog path for Phase 3 (e.g., `.worklog/202603/team-name/phase-3-generation/`)
 - Upstream worklog references: Phase 1 and Phase 2 `decisions.md` paths
@@ -129,6 +133,7 @@ After all writers complete, validate:
 17. **Example diversity**: Every agent has an Examples section with at least three cases (normal, edge, rejection). Every skill has at least three examples.
 18. **Tone calibration**: No urgency language (`CRITICAL`, `MUST`, `ALWAYS`, `NEVER`) used for non-safety behavioral preferences — normal language used instead.
 19. **Coordinator compaction strategy**: Coordinator agent includes a Compaction Strategy section for long-running task context management.
+20. **Entry-point skill exists**: `skills/boss/SKILL.md` exists and spawns the coordinator agent.
 
 If issues are found, invoke the corresponding writer to correct.
 
