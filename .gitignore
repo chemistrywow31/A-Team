@@ -1,4 +1,5 @@
 # API key config files
 **/skills/*/config.json
 
-teams/
+teams/*/
+!teams/life-partners/

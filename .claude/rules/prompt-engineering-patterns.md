@@ -52,6 +52,18 @@ Every generated .md that contains examples must include at minimum:
 
 Happy-path-only examples cause Claude to produce plausible-looking output even on garbage or insufficient input.
 
+### Full Scenario Before/After Examples
+
+When an example demonstrates behavioral guidance (how to handle a request, how to respond, how to make decisions), use the Full Scenario Before/After format instead of one-line comparisons. This format has three parts:
+
+1. **Trigger**: The user request or input that starts the scenario
+2. **❌ Common mistake**: A complete response showing how agents typically get it wrong, followed by a bullet list of specific problems
+3. **✅ Correct approach**: A complete response showing the right behavior
+
+This format works across all domains — coding, content, customer service, research, planning. The key is showing the full response shape, not just a label.
+
+One-line comparisons ("Correct: X / Incorrect: Y") remain valid for format and style rules where the contrast is self-evident. Use Full Scenario format when the mistake is behavioral — the agent does something structurally wrong, not just stylistically wrong.
+
 ### Escape Hatches for Uncertainty
 
 Every generated agent must define an explicit protocol for when it lacks sufficient information:
@@ -85,6 +97,7 @@ Every generated coordinator must include explicit parallel execution guidance �
 ## Violation Determination
 
 - Generated agent has only happy-path examples and no edge/rejection cases → Violation
+- Behavioral guidance example uses one-line comparison when a Full Scenario Before/After would clarify the mistake → Violation
 - Generated agent has no escape hatch or uncertainty protocol → Violation
 - Generated prompt uses `CRITICAL`/`MUST` for non-safety behavioral preferences → Violation
 - Generated coordinator has no parallelism strategy → Violation

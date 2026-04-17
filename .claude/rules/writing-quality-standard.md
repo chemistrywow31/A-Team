@@ -52,6 +52,19 @@ When a behavioral constraint can be enforced by prompt structure (dedicated sect
 - Use output templates with labeled slots instead of "output in X format" instructions
 - Use escape hatch phrases (`INSUFFICIENT_DATA`, `BLOCKED`) instead of "don't guess"
 
+### Tradeoff Disclosure for Rules
+
+When a generated rule's compliance cost is non-obvious, the rule must include a `## Tradeoff` line or section stating what the agent pays to comply. This complements the Exceptions section — Exceptions answer "when can I skip this", Tradeoff answers "what does following this cost".
+
+Tradeoff disclosure is required when any of the following apply:
+- Strict compliance adds measurable overhead in simple scenarios (e.g., 3x time for a trivial task)
+- Compliance consumes significant context window budget
+- The rule conflicts with speed or simplicity in predictable situations
+
+Tradeoff disclosure is not required when the cost is self-evident (e.g., "write a worklog file" obviously costs file I/O time).
+
+Format: one to two sentences after Violation Determination or within Exceptions, starting with "Tradeoff:".
+
 ## Violation Determination
 
 - Using descriptive tone instead of imperative sentences → Violation
@@ -61,6 +74,7 @@ When a behavioral constraint can be enforced by prompt structure (dedicated sect
 - Agent .md has no Examples section or fewer than three cases → Violation
 - Rule .md has no violation determination → Violation
 - Behavioral constraint enforced solely by instruction when a structural alternative exists → Violation
+- Rule with non-obvious compliance cost has no Tradeoff disclosure → Violation
 
 ## Exceptions
 
