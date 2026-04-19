@@ -1,7 +1,8 @@
 ---
 name: Skill Writer
 description: Specialized in writing high-quality skill .md files
-model: sonnet
+model: opus
+effort: high
 ---
 
 # Skill Writer
@@ -36,6 +37,17 @@ skills/
 ---
 name: {Skill name, English}
 description: {One sentence describing the capability this skill provides}
+# Optional fields (include only when applicable):
+# disable-model-invocation: true       # REQUIRED for entry-point skills (skills/boss/)
+# user-invocable: false                 # Hide from / menu (Claude-only reference skill)
+# allowed-tools: ["Agent", "Read"]      # Pre-approve tools used by this skill
+# model: opus                           # Default opus. Use sonnet/haiku only for deterministic skills
+# effort: xhigh                         # Default high. Use xhigh/max for complex reasoning
+# context: fork                         # Run SKILL.md body in isolated subagent context
+# agent: {subagent-name}                # Subagent to use when context: fork
+# argument-hint: "[expected input]"     # Autocomplete hint
+# paths: ["src/**/*.ts"]                # Glob patterns scoping auto-activation
+# benefits-from: ["other-skill-name"]   # A-Team custom: upstream skill dependency
 ---
 
 # {Skill Name}
@@ -162,8 +174,43 @@ No Source Attribution section needed for custom skills.
 1. **Write examples first, then rules.** Good examples are more effective than lengthy rule descriptions. If examples are clear enough, rules can be simplified.
 2. **Steps must have order.** Use numbered lists, don't use unordered lists to describe sequential steps.
 3. **Avoid circular references.** Skills should not reference behavioral details of agents that use them; they only describe the capability itself.
-4. **Keep length restrained.** Single skill .md should not exceed 200 lines. If exceeded, consider splitting into multiple skills or using a references folder for detailed content.
+4. **Keep length restrained.** Single SKILL.md must not exceed 200 lines. If the skill needs more content, use the **Progressive Disclosure** pattern below — do not split into multiple skills unless the capabilities are genuinely separable.
 5. **Keep technical terms in English.** Terms like "SEO", "API", "CI/CD" should not be translated.
+
+## Progressive Disclosure for Large Skills
+
+When a skill's content exceeds 200 lines, restructure as a bundle. SKILL.md becomes a "table of contents" pointing to detailed files loaded on demand:
+
+```
+skills/{skill-name}/
+├── SKILL.md              ← ≤200 lines. Overview + decision routing + links to detail files
+├── reference.md          ← Detailed rules / API spec / domain knowledge (loaded when SKILL.md links to it)
+├── examples/             ← Categorized examples (load only the matching example)
+│   ├── normal-case.md
+│   ├── edge-case.md
+│   └── rejection-case.md
+└── scripts/              ← Executable helpers — call via ${CLAUDE_SKILL_DIR}/scripts/{name}
+    └── helper.py
+```
+
+### How SKILL.md routes to detail files
+
+Use markdown links inside SKILL.md so Claude knows when to load each detail file:
+
+```markdown
+## When to Load Reference Material
+
+For full API spec, see [reference.md](reference.md).
+For complex multi-step examples, see [examples/normal-case.md](examples/normal-case.md).
+To run the validator, execute `${CLAUDE_SKILL_DIR}/scripts/validate.py {input}`.
+```
+
+### Why progressive disclosure beats one big SKILL.md
+
+- Skill description (always loaded) stays under the 1,536-character cap
+- Heavy reference content loads only when relevant
+- Scripts can use `${CLAUDE_SKILL_DIR}` to resolve their own path regardless of CWD
+- After auto-compaction, skill keeps only the first 5,000 tokens — keep the routing logic high in SKILL.md so it survives
 
 ## Available Skills
 

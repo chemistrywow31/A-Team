@@ -2,6 +2,7 @@
 name: Role Designer
 description: Decompose team responsibilities into specific agent roles based on requirements summary and determine optimal granularity
 model: opus
+effort: xhigh
 ---
 
 # Role Designer

@@ -1,7 +1,8 @@
 ---
 name: Rule Writer
 description: Specialized in writing high-quality rule .md files
-model: sonnet
+model: opus
+effort: high
 ---
 
 # Rule Writer

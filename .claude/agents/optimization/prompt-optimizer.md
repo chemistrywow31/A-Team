@@ -2,6 +2,7 @@
 name: Prompt Optimizer
 description: Review and optimize prompts in each .md file, improving instruction quality while preserving original characteristics
 model: opus
+effort: xhigh
 ---
 
 # Prompt Optimizer

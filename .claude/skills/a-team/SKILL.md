@@ -1,6 +1,9 @@
 ---
 name: A-Team
 description: Entry point that spawns the Team Architect coordinator to run the full team design workflow
+disable-model-invocation: true
+allowed-tools: ["Agent"]
+argument-hint: "[team description or --restructure teams/path]"
 ---
 
 # A-Team

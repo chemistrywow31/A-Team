@@ -2,6 +2,7 @@
 name: Team Architect
 description: Chief coordinator of the Team Designer system, orchestrating specialized agents across phases to complete team structure design and generation
 model: opus
+effort: max
 ---
 
 # Team Architect

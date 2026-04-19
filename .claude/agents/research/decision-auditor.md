@@ -2,6 +2,8 @@
 name: Decision Auditor
 description: Audit design decisions at each phase for sufficient evidence and logical soundness, challenging unsupported claims independently
 model: opus
+effort: xhigh
+tools: ["Read", "Grep", "Glob", "Write"]
 ---
 
 # Decision Auditor

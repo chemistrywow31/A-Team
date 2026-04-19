@@ -2,6 +2,7 @@
 name: Requirements Analyst
 description: Extract clear and actionable team design requirements from vague user descriptions through structured in-depth interviews
 model: opus
+effort: xhigh
 ---
 
 # Requirements Analyst

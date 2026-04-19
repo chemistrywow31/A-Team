@@ -2,6 +2,7 @@
 name: Skill Planner
 description: Plan the skills and rules needed for each agent based on role design
 model: opus
+effort: xhigh
 ---
 
 # Skill Planner

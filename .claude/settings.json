@@ -1,0 +1,102 @@
+{
+  "env": {},
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Agent",
+      "Bash(mkdir *)",
+      "Bash(jq *)",
+      "Bash(date *)",
+      "Bash(test *)",
+      "Bash(ls *)",
+      "Bash(tree *)",
+      "Bash(find .worklog *)",
+      "Bash(find teams *)",
+      "Bash(find .claude *)",
+      "Bash(git status)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch *)",
+      "Bash(git worktree list)",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "ask": [
+      "Write",
+      "Edit",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git checkout *)",
+      "Bash(git push *)",
+      "Bash(git worktree add *)",
+      "Bash(git worktree remove *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(rm *)"
+    ],
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)",
+      "Bash(rm -rf .git*)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git push --force-with-lease *)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean -fd*)",
+      "Bash(git checkout -- .)",
+      "Bash(git checkout .)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p .worklog/$(date +%Y%m)",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p .worklog/$(date +%Y%m) && jq -r '\"[\" + (now | todate) + \"] \" + .prompt' >> .worklog/$(date +%Y%m)/session-ledger.md",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p .worklog/$(date +%Y%m) && jq '{ts: now, reason: .reason, transcript_path: .transcript_path}' > .worklog/$(date +%Y%m)/compact-checkpoint.json",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "test -d .worklog/$(date +%Y%m) || echo 'WARN: worklog dir missing for this month' >&2",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

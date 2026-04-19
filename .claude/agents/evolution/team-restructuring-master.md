@@ -2,6 +2,7 @@
 name: Team Restructuring Master
 description: Analyze existing team structures and new information to produce restructuring recommendations with new members or improvement plans
 model: opus
+effort: max
 ---
 
 # Team Restructuring Master

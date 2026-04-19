@@ -2,6 +2,8 @@
 name: Dialogue Reviewer
 description: Review the consultation dialogue between A-Team and the client, producing a detailed bilateral communication quality report
 model: opus
+effort: xhigh
+tools: ["Read", "Grep", "Glob", "Write"]
 ---
 
 # Dialogue Reviewer

@@ -44,11 +44,12 @@ teams/{team-name}/
     │   │   └── SKILL.md
     │   └── {skill-3}/
     │       └── SKILL.md
-    └── rules/
-        ├── {rule-1}.md               ← Unconditional or path-scoped
-        ├── {rule-2}.md
-        └── {subdirectory}/           ← Optional grouping (e.g., frontend/, backend/)
-            └── {rule-3}.md
+    ├── rules/
+    │   ├── {rule-1}.md               ← Unconditional or path-scoped
+    │   ├── {rule-2}.md
+    │   └── {subdirectory}/           ← Optional grouping (e.g., frontend/, backend/)
+    │       └── {rule-3}.md
+    └── settings.json                 ← Hooks, permissions, env (per rules/settings-json.md)
 ```
 
 ### Naming Conventions
@@ -81,7 +82,22 @@ Content NOT to include in CLAUDE.md (put these in `rules/` instead):
 Every generated CLAUDE.md must include a deployment mode section specifying how the team is intended to run:
 
 - **Subagent mode**: Agents are invoked via the Task tool within a single session. Coordinator manages all delegation. Suitable for sequential workflows with clear handoffs.
-- **Agent Teams mode** (experimental): Agents run as independent Claude Code instances with shared task lists and direct messaging. Suitable for parallel workflows where agents need peer-to-peer communication. Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` to be enabled.
+- **Agent Teams mode** (experimental): Agents run as independent Claude Code instances with shared task lists and direct messaging. Suitable for parallel workflows where agents need peer-to-peer communication.
+
+Agent Teams mode requires additional configuration:
+
+- `.claude/settings.json` must set `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS: "1"` and `teammateMode: "in-process"` (default) or `"tmux"`
+- CLAUDE.md must list the **known limitations**: no `/resume` recovery for teammates, fixed lead per session, one team per session, no nested teams, no split-pane support in VS Code / Windows Terminal / Ghostty
+- Each agent .md must declare File Ownership (which directories it owns) — see `agent-writer.md` template
+- Direct messaging channels between agents must be enumerated in CLAUDE.md (which agent talks to which, on what topics)
+
+### CLAUDE.md Lifecycle
+
+- **Precedence**: Managed (org-wide) > User (`~/.claude/CLAUDE.md`) > Project (team root `CLAUDE.md`) > Local (`.claude.local.md`, gitignored). Generated team CLAUDE.md sits at project scope.
+- **Nested CLAUDE.md**: Place additional CLAUDE.md files in subdirectories only when subdirectory-specific rules exist. Nested CLAUDE.md loads on-demand when Claude reads files in that subdirectory.
+- **Compaction behavior**: The team-root CLAUDE.md is re-injected after auto-compaction. Nested CLAUDE.md files are NOT re-injected — they reload on-demand. Put load-bearing rules in the root, not in nested files.
+- **`@imports`**: Resolve relative to the CLAUDE.md location. Maximum import depth is 5 hops. Imported content expands at session start and counts toward context budget.
+- **`claudeMdExcludes`**: Settings can exclude paths from CLAUDE.md auto-loading (e.g., to skip vendored CLAUDE.md files in `node_modules/`).
 
 ### Worklog and Context Management Section in CLAUDE.md
 
@@ -109,6 +125,22 @@ The entry-point skill must:
 - Spawn the coordinator agent with `subagent_type` matching the coordinator's name
 - Pass any user-provided arguments as context to the coordinator
 - Support bare invocation (no arguments → coordinator starts from Phase 1 or the beginning of its workflow)
+
+The entry-point skill frontmatter must declare:
+
+```yaml
+---
+name: Boss
+description: {Entry point that spawns the {coordinator} to run {workflow description}}
+disable-model-invocation: true
+allowed-tools: ["Agent"]
+argument-hint: "[team-specific hint]"
+---
+```
+
+- `disable-model-invocation: true` prevents Claude from auto-triggering the full workflow from conversational context. The workflow must be explicitly invoked by the user.
+- `allowed-tools: ["Agent"]` pre-approves the Agent tool so `/boss` does not prompt for permission mid-invocation.
+- `argument-hint` provides autocomplete guidance for the team's expected arguments.
 
 ### Path-Scoped Rules
 
@@ -148,6 +180,14 @@ paths:
 - Skill exists directly as `.md` file instead of `{skill-name}/SKILL.md` format → Violation
 - File or folder name does not follow kebab-case → Violation
 - Generated team missing entry-point skill at `skills/boss/SKILL.md` → Violation
+- Entry-point skill `skills/boss/SKILL.md` missing `disable-model-invocation: true` → Violation
+- Entry-point skill missing `allowed-tools: ["Agent"]` → Violation
+- Entry-point skill missing `argument-hint` → Violation
+- Generated team missing `.claude/settings.json` → Violation (see `rules/settings-json.md`)
+- Team declares Agent Teams mode in CLAUDE.md but `settings.json` lacks `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` → Violation
+- Agent Teams mode team missing File Ownership section in any agent .md → Violation
+- Agent Teams mode team CLAUDE.md missing the known-limitations list → Violation
+- Generated team missing baseline hook set in `settings.json` → Violation (see `rules/hooks-integration.md`)
 
 ## Exceptions
 

@@ -2,6 +2,8 @@
 name: Domain Researcher
 description: Investigate domain best practices, industry standards, and existing solutions to provide evidence-based recommendations for team design decisions
 model: opus
+effort: xhigh
+tools: ["Read", "Grep", "Glob", "Write", "WebFetch", "WebSearch"]
 ---
 
 # Domain Researcher

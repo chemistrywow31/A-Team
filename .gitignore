@@ -1,5 +1,8 @@
 # API key config files
 **/skills/*/config.json
 
+# Local Claude Code overrides (user-specific)
+.claude/settings.local.json
+
 teams/*/
 !teams/life-partners/
