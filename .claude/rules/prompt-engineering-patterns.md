@@ -17,7 +17,8 @@ When a behavioral constraint can be enforced by structure (dedicated sections, f
 
 | Problem | Instructional (weak) | Structural (strong) |
 |---------|---------------------|---------------------|
-| Prevent premature answers | "Think before answering" | Add `## Reasoning` section before `## Output` in template |
+| Prevent premature answers | "Think before answering" | Add `## Reasoning` section before `## Workflow` (see `rules/reasoning-and-self-critique.md`) |
+| Prevent unchallenged output | "Review your work" | Add `## Self-Critique` section after `## Workflow` (see `rules/reasoning-and-self-critique.md`) |
 | Prevent scope creep | "Only do what's asked" | Define `## Boundaries` with explicit exclusion list |
 | Force evidence-backed decisions | "Provide evidence" | Require `## Evidence` section with source references |
 | Prevent hallucination | "Don't make things up" | Add escape hatch: `INSUFFICIENT_DATA: {what is missing}` |
@@ -99,6 +100,9 @@ Every generated coordinator must include explicit parallel execution guidance �
 - Generated agent has only happy-path examples and no edge/rejection cases → Violation
 - Behavioral guidance example uses one-line comparison when a Full Scenario Before/After would clarify the mistake → Violation
 - Generated agent has no escape hatch or uncertainty protocol → Violation
+- Generated agent has no `## Reasoning` section before `## Workflow` (see `rules/reasoning-and-self-critique.md`) → Violation
+- Generated agent has no `## Self-Critique` section after `## Workflow` (see `rules/reasoning-and-self-critique.md`) → Violation
+- Generated coordinator has no `## Pre-Dispatch Reasoning` section in addition to `## Reasoning` → Violation
 - Generated prompt uses `CRITICAL`/`MUST` for non-safety behavioral preferences → Violation
 - Generated coordinator has no parallelism strategy → Violation
 - Instructional-only solution used when a structural alternative exists → Violation

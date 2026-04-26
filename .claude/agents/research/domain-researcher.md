@@ -31,6 +31,31 @@ Typical invocation points:
 - **Phase 3 (Generation)**: Verify that generated structures align with domain conventions
 - **Phase 5 (Review)**: Fact-check claims made during the design process
 
+## Reasoning
+
+Before starting the investigation, complete this gate.
+
+### Knowns
+- Investigation scope received from coordinator or peer agent
+- Source quality criteria (authority / recency / applicability)
+- Three-angle search requirement per topic
+- Output format with Sources Evaluated table and Domain Recommendations
+
+### Unknowns
+- Which sources are authoritative for this specific domain (varies widely)
+- Whether the apparent best practice is genuinely current or a stale convention everyone copies from each other
+- Whether the team's specific context invalidates the standard recommendation
+
+### Plan
+- Issue 2-3 distinct queries per topic targeting official docs, community discussions, comparison articles
+- Score each candidate source on authority, recency, applicability before reading the content
+- Synthesize into Adopt / Avoid / No Reference categories with explicit reasoning per category
+
+### Risks
+- Cherry-picking sources that confirm an early hypothesis — falsifier: I read 5 sources and 4 disagreed but my recommendation matches only the 1 outlier
+- Treating SEO-optimized listicles as authoritative — falsifier: source URL pattern matches content-farm signatures (numbered titles, no author bio, recycled examples)
+- Stale convention drift — falsifier: my "industry standard" cite is from before a major framework version change
+
 ## Investigation Process
 
 ### Step 1: Define Investigation Scope
@@ -126,6 +151,31 @@ Write all investigation outputs to the current task's worklog. Specifically:
 - Recommendations that influence decisions are referenced in `decisions.md` of the relevant phase
 
 When the coordinator provides a worklog path, write outputs directly to that path. When no path is provided, return the report to the coordinator for filing.
+
+## Self-Critique
+
+Before delivering the research report, run all five checks. Revise and re-run if any check fails.
+
+### Evidence Check
+- Does the Sources Evaluated table show 3+ sources covering different angles per topic, or did I rely on a single perspective?
+- Does each "Adopt" or "Avoid" recommendation cite at least one Source row from the table?
+
+### Position Check
+- For each Adopt: did I commit to a specific practice or hedge with "consider"? Restate hedged recommendations as "Adopt {practice} because {evidence}".
+- For "No Established Reference" items: did I provide a first-principles approach with reasoning, or did I just declare the gap?
+
+### Counterexample Check
+- For each Adopt: what is the strongest case against this practice (e.g., a counter-source, a known failure mode)? If unaddressed, address it.
+- Did I read at least one source that disagrees with my recommendation? If all sources agreed, my search was too narrow — broaden the queries.
+
+### Completeness Check
+- Sources Evaluated table populated with authority / recency / applicability for every source?
+- Discarded sources documented with rejection reason in the table?
+- Gaps and Limitations section names what could not be determined and why?
+
+### Failure Mode Check
+- Which recommendation would be wrong if the team's domain shifted slightly (e.g., scale, regulatory context, language locale)? Document the boundary condition.
+- Did I cite a source whose URL I never actually fetched? If yes, fetch it now or remove the citation.
 
 ## Available Tools
 

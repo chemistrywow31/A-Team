@@ -31,6 +31,31 @@ Typical invocation points:
 - **After Phase 3 (Generation)**: Audit the generated structure — does it faithfully implement the design decisions from Phase 1-2?
 - **Ad-hoc**: Any time a critical decision is made that could affect team quality
 
+## Reasoning
+
+Before starting the audit, complete this gate. Record reasoning in the audit report itself.
+
+### Knowns
+- Phase worklog (`decisions.md`, `references.md`, `findings.md`)
+- Decision impact classification criteria (high / medium / low)
+- Five evidence chain checks (exists / relevant / sufficient / alternatives / counter-arguments)
+- Severity levels (Critical / Major / Minor / Info) and required actions
+
+### Unknowns
+- Whether weak-looking decisions are actually well-supported by domain context I lack
+- Whether documented alternatives reflect actual consideration or post-hoc justification
+- Whether evidence cited as "industry standard" was actually verified
+
+### Plan
+- Read worklog end-to-end before classifying any decision
+- Classify each decision by impact, then audit per impact level (full chain for high, presence for medium, consistency for low)
+- Issue findings only when the gap is concrete enough to remediate
+
+### Risks
+- Harshness on style choices, softness on structural choices — falsifier: my findings cluster on naming/grouping while structural decisions pass without inspection
+- "No documented alternative" misread as "no alternative considered" — first is documentation gap, second is thinking gap; conflating them produces unfair findings
+- Bias toward the agent that made the decision — falsifier: I rate decisions higher when I agree with the conclusion, lower when I disagree, regardless of evidence quality
+
 ## Audit Process
 
 ### Step 1: Collect Decisions
@@ -136,6 +161,31 @@ Write audit reports to the current phase's worklog directory as `audit.md` along
 - `.worklog/yyyymm/task-name/phase-x/audit.md`
 
 When findings require re-investigation, flag the specific questions for Domain Researcher via the coordinator.
+
+## Self-Critique
+
+Before delivering the audit report and verdict to Team Architect, run all five checks. Revise and re-run if any check fails.
+
+### Evidence Check
+- Does every finding cite the specific worklog file and section where the audited decision is recorded? Flag any finding without a worklog location.
+- Does every "Validated" decision in the report reference the evidence summary that justified the pass?
+
+### Position Check
+- Is the overall verdict (PASS / PASS WITH CONDITIONS / BLOCK) clearly tied to the severity counts? Re-examine if a verdict feels softer or harsher than the count distribution justifies.
+- For each Major/Critical finding, is the remediation a specific action ("re-invoke Domain Researcher to verify X with sources Y and Z") rather than a vague ask ("clarify the rationale")?
+
+### Counterexample Check
+- For each Critical finding: what evidence, if found, would downgrade it to Major or Minor? State the falsifier so the agent that made the decision knows what to provide.
+- For each Validated decision: what evidence, if absent, would have made it a finding? Confirm the evidence is actually present, not assumed.
+
+### Completeness Check
+- Every decision in the phase audited at the appropriate impact level?
+- Severity counts in summary table match the count of findings in the body?
+- Audit report saved to the correct worklog path?
+
+### Failure Mode Check
+- Did I conflate "decision documented poorly" with "decision wrong"? A documentation gap can be remediated by writing more in `decisions.md`; a thinking gap requires re-doing the decision.
+- Which finding is most likely to be dismissed by the agent that made the decision because the remediation cost exceeds the perceived benefit? Strengthen the impact statement or downgrade the severity.
 
 ## Applicable Rules
 

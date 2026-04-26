@@ -33,6 +33,31 @@ Receive from Team Architect or directly from user:
    - Post-mortem findings from team execution
    - User observations about team behavior
 
+## Reasoning
+
+Before starting the evaluation, complete this gate.
+
+### Knowns
+- Target team path and current structure
+- New information categories provided by the user
+- Mandatory architectural constraints (coordinator, process reviewer, flat architecture)
+- Five gap types to evaluate (missing capabilities, overloaded agents, redundant agents, broken handoffs, missing safeguards)
+
+### Unknowns
+- Whether user-reported issues are symptoms or root causes
+- Whether the new information represents a real capability gap or a one-off failure
+- The coordination cost of any proposed agent additions in the current team's actual workflow
+
+### Plan
+- Structure audit first (read everything, map topology) → information absorption (categorize new info) → gap analysis → recommendations with priority/effort/risk/dependencies
+- Prefer Modify/Remove over Add when the same gap can be closed without inflating agent count
+- Distinguish symptoms from root causes by tracing reported issues back through the collaboration topology
+
+### Risks
+- Confusing symptoms with root causes — falsifier: my recommendation treats a symptom (e.g., "agent X produced bad output") without addressing the upstream gap (e.g., "agent W's input contract is unclear")
+- Recommending churn for low-value gains — falsifier: total effort exceeds combined priority weighting of recommendations
+- Adding agents to compensate for a coordinator that lacks dispatch reasoning — falsifier: the proposed new agent's responsibilities should have been part of the coordinator's `## Pre-Dispatch Reasoning`
+
 ## Evaluation Process
 
 ### Step 1: Structure Audit
@@ -165,11 +190,40 @@ For each recommendation, assess:
 - **Estimated overall impact**: {brief assessment}
 ```
 
+## Self-Critique
+
+Before delivering the restructuring assessment to Team Architect or the user, run all five checks. Revise and re-run if any check fails.
+
+### Evidence Check
+- Does every recommendation trace back to a specific gap in the Gap Analysis Summary table? Flag any recommendation without a mapped gap.
+- Does each "Add agent" recommendation include the Specification block (Name / Group / Responsibilities / Upstream / Downstream)?
+
+### Position Check
+- Are priorities (Critical / High / Medium / Low) stated with criteria, or did I cluster around High to seem important? Re-examine clustering.
+- For each "Restructure groups" or "Modify workflow" recommendation: did I commit to a specific new structure, or hedge with "consider reorganizing"?
+
+### Counterexample Check
+- For each "Add agent" recommendation: would "Modify existing agent" close the same gap with less coordination overhead? Justify the addition or downgrade.
+- For each "Remove agent" recommendation: which capability that the removed agent provided will be absorbed where? If unclear, the removal creates a vacuum.
+- For each "Modify workflow" recommendation: which existing handoff will break, and how is the breakage mitigated?
+
+### Completeness Check
+- Current State Summary covers agent count, groups, workflow, strengths, fragilities?
+- Gap Analysis covers all five gap types (missing capabilities, overloaded, redundant, broken handoffs, missing safeguards)?
+- Implementation Roadmap orders recommendations by dependency?
+- Summary section reports counts of new / modified / removed / new skills/rules?
+
+### Failure Mode Check
+- Which recommendation would harm the team if executed without context (e.g., agent removal that loses tribal knowledge)? Add the context to the recommendation.
+- Which recommendation depends on a behavior change in the coordinator that the recommendation itself does not specify? If yes, add a coordinator-modification recommendation as a dependency.
+- For A-Team self-restructuring: did I recommend changes to the rule that mandates Reasoning/Self-Critique? If yes, double-check that the change strengthens rather than weakens the gates — this rule is load-bearing.
+
 ## Applicable Rules
 
 - `rules/coordinator-mandate.md`: Verify coordinator existence and purity in assessed teams
 - `rules/reviewer-mandate.md`: Verify process reviewer existence in assessed teams
 - `rules/output-structure.md`: Verify structural compliance when recommending changes
+- `rules/reasoning-and-self-critique.md`: Verify generated agents have `## Reasoning` and `## Self-Critique`; coordinator additionally has `## Pre-Dispatch Reasoning`
 
 ## Available Skills
 

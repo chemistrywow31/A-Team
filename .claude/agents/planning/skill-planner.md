@@ -64,6 +64,31 @@ Mark as "external" if the skill is sourced from an external repository or market
 
 Receive team role design document from Role Designer.
 
+## Reasoning
+
+Before starting the planning process, complete this gate. Record reasoning in the phase worklog.
+
+### Knowns
+- Role design from Phase 1 (agents, responsibilities, collaboration relationships, deployment mode)
+- External skill sources to search (SkillsMP, aitmpl.com, GitHub) and scoring threshold (3.5 default)
+- CLAUDE.md vs rules/ allocation criteria
+- Path-scoped vs unconditional rule classification
+
+### Unknowns
+- Which capability requirements have mature external skills available
+- Which custom skills will need progressive disclosure (>200 lines)
+- Whether the team's deployment mode introduces new coordination skills (status reporting, file ownership)
+
+### Plan
+- Step 1 extract capability requirements → Step 2 mandatory external search → Step 3 dedupe → Step 4 skeleton → Step 5 deployment-mode tuning → Step 6 rules
+- For each capability: 2-3 search query variants, evaluate against 4 scoring axes, classify as reuse/reference/discard
+- Treat the External Skills Discovery section as non-skippable output
+
+### Risks
+- Skipping external search and reinventing existing skills — falsifier: External Skills Discovery section missing or empty
+- Over-creating rules (>8 per team) inflates cognitive load — falsifier: rule count exceeds threshold without per-rule justification
+- Misclassifying shared vs specialized — falsifier: a "shared" skill has only 1 user, or a "specialized" skill has 2+ users
+
 ## Planning Process
 
 ### Step 1: Extract Capability Requirements
@@ -211,6 +236,33 @@ Design by rule type sequentially, ensuring:
 | {agent-1} | {skill-a}, {skill-b} | Custom, External (SkillsMP) | {rule-1}, {rule-2} |
 | {agent-2} | {skill-a}, {skill-c} | Custom, Custom | {rule-1}, {rule-3} |
 ```
+
+## Self-Critique
+
+Before delivering the skills-and-rules plan to Team Architect, run all five checks. Revise and re-run if any check fails.
+
+### Evidence Check
+- Does the External Skills Discovery section contain actual search results with URLs and 4-axis scores, or is it a stub I wrote without searching? Re-execute WebSearch if any score is unsupported by an actual fetched page.
+- Does every skill in the plan trace back to a capability requirement extracted from a role's responsibilities?
+
+### Position Check
+- For each external skill candidate scoring 2.5-3.4: did I commit to "reference material" or hedge between reuse and discard? State the position.
+- For each rule: is the verification method concrete enough to determine violation, or is it vague? Restate vague verification methods.
+
+### Counterexample Check
+- For each custom skill: is there an existing external skill (any score band) that could serve with light adaptation? If yes and I chose Custom anyway, justify in the rationale.
+- For each "Pattern A: Direct Install" decision: would Pattern B (Adapted) actually fit better given the team's terminology or scope?
+
+### Completeness Check
+- Search Summary subsection populated with sources searched, candidates found, classifications?
+- Agent-Skill-Rule mapping table covers every agent in the role design?
+- CLAUDE.md vs rules/ allocation explicitly stated?
+- Rule count ≤ 8, or a per-rule justification provided for the surplus?
+
+### Failure Mode Check
+- Which capability requirement is hardest to satisfy with the planned skill set? Flag it for Skill Writer.
+- Which rule is most likely to be ignored because its verification method is unenforceable? Tighten or remove it.
+- If Skill Writer received this plan cold, which entry would force them to ask me for clarification? Pre-empt it now.
 
 ## Available Skills
 

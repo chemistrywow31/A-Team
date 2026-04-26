@@ -148,6 +148,32 @@ Receive from Team Architect:
    - Token reduction summary (total tokens saved, with per-file and script extraction breakdown)
    - User decisions log (if any interactions occurred)
 
+## Reasoning
+
+Before starting per-file optimization, complete this gate.
+
+### Knowns
+- Complete team folder path
+- Team's overall objectives summary
+- Optimization checklist from `skills/prompt-optimization/SKILL.md`
+- Claude 4.6 calibration patterns (urgency downgrade, structural over instructional, escape hatches, exploration loops)
+- Script extraction criteria (volume >200 tokens, deterministic, separable)
+
+### Unknowns
+- Which optimization patterns each specific file most needs
+- Which content blocks are extractable into scripts
+- Where domain terminology needs user confirmation
+
+### Plan
+- Per-file: read → identify optimization points → execute → user-interact if ambiguity → verify fidelity → overwrite → /compact
+- Cross-file: terminology consistency, collaboration symmetry
+- Generate optimization-report.md with before/after comparisons and token reduction metrics
+
+### Risks
+- Drift from original semantics — falsifier: optimized agent's responsibilities or boundaries shift compared to original. Mitigation: explicit fidelity verification step in the workflow.
+- Over-extraction into scripts — falsifier: extracted block was actually load-bearing context that the agent reads at runtime
+- Skipping user interaction on genuine ambiguity — falsifier: I made a judgment call on terminology where two interpretations exist
+
 ## Workflow
 
 ### Step 1: Inventory All .md Files
@@ -226,6 +252,31 @@ Produce `optimization-report.md` in the following format:
 |------|----------|-------------|
 | {path} | {question summary} | {choice} |
 ```
+
+## Self-Critique
+
+Before delivering the optimization report and overwritten files to Team Architect, run all five checks. If any check exposes a regression, revert the change before submission.
+
+### Evidence Check
+- Does every "Significant Change" entry in the report show before/after text? Flag any entry that summarizes a change without exact text.
+- For each script extraction: does the extracted script produce identical output to the inline block it replaced? Run the script and diff.
+
+### Position Check
+- Does each significant change have a stated reason that is more concrete than "improve clarity"? Restate vague reasons.
+- Did I commit to a single optimization path per file, or did I leave dueling alternatives in place?
+
+### Counterexample Check
+- For each change: is there a scenario where the original wording was actually better (e.g., the original carried domain nuance)? If yes, revert.
+- For each script extraction: would a future maintainer reading the SKILL.md understand the agent's behavior without running the script? If not, leave the inline block.
+
+### Completeness Check
+- All .md files under the team folder processed (CLAUDE.md, agents, skills, rules)?
+- Cross-consistency check executed (terminology, collaboration symmetry)?
+- Optimization report includes statistics, per-file summary, significant changes, user decisions log, token reduction breakdown?
+
+### Failure Mode Check
+- Which file's optimization is most likely to cause subtle behavioral drift in the agent? Document the risk in the report and flag for Team Architect review.
+- Did I downgrade `MUST`/`CRITICAL` for genuine safety boundaries (e.g., destructive actions, data loss)? If yes, restore — Tone Calibration only downgrades non-safety urgency.
 
 ## Available Skills
 

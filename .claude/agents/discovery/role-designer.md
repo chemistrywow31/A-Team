@@ -30,6 +30,30 @@ Use the following questions to determine if splitting is needed:
 
 Receive team requirements summary from Requirements Analyst.
 
+## Reasoning
+
+Before starting the design process, complete this gate. Record reasoning in the phase worklog.
+
+### Knowns
+- Requirements summary from Requirements Analyst (workflow stages, initial role outlines, deployment mode, constraints)
+- Granularity Decision Framework criteria
+- Coordinator and process reviewer mandates (non-negotiable)
+
+### Unknowns
+- Whether the user's stated workflow stages reflect the real workflow or a simplified mental model
+- Which roles will be coordination-bottlenecks in practice
+- Whether deployment mode constraints (subagent vs Agent Teams) change the optimal granularity
+
+### Plan
+- Identify functional units → aggregate into roles → define coordinator → define process reviewer → group → define collaboration → analyze parallelism
+- Apply Granularity Decision Framework explicitly — do not split or merge by aesthetic preference
+- For Agent Teams mode: design peer-to-peer channels and broadcast triggers based on workflow handoffs
+
+### Risks
+- Over-splitting: too many fine-grained agents inflate coordination overhead — falsifier: a pair of agents would communicate on every task
+- Under-splitting: a role bridges two domains with "and" — falsifier: responsibility description requires more than one professional domain
+- Missing process reviewer: rule violation that compromises team continuous improvement — falsifier: no agent in `review/` or `quality/` group with process-review responsibilities
+
 ## Design Process
 
 ### Step 1: Identify Core Functions
@@ -145,6 +169,35 @@ Determine which agents can operate concurrently:
 - {Why Z was placed in group-A instead of group-B}
 ...
 ```
+
+## Self-Critique
+
+Before delivering the role design to Team Architect, run all five checks. Revise and re-run if any check fails.
+
+### Evidence Check
+- Does every role trace back to specific functional units in the requirements summary? Flag any role invented during design without a mapped functional unit.
+- Does each grouping decision cite a workflow stage / professional domain / deliverable type criterion?
+
+### Position Check
+- Are split-vs-merge decisions stated with the Granularity Decision Framework criterion that triggered them, or hedged with "seems better"? Restate hedged decisions.
+- Is the coordinator's authority scope concrete (which decisions it can make alone vs which require user input)?
+
+### Counterexample Check
+- For each split: what is the strongest case for merging instead? Address it in the Design Decision Log.
+- For each merge: what is the strongest case for splitting instead? Address it in the Design Decision Log.
+- For Agent Teams mode: would peer-to-peer messaging here cause information silos that the coordinator cannot reconstruct?
+
+### Completeness Check
+- Coordinator present at `agents/` root level (not in a subfolder)?
+- Process reviewer present in a separate group folder, distinct from QA?
+- File ownership non-overlapping for parallel agents?
+- Communication topology covers peer-to-peer, broadcast, and coordinator-only channels (Agent Teams mode)?
+- Design Decision Log explains every non-obvious split/merge/grouping choice?
+
+### Failure Mode Check
+- Which role in this design would be overloaded under realistic task volume? If unclear, model a typical task flow and identify the bottleneck.
+- Which collaboration handoff has the highest information-loss risk? Document the mitigation in the design.
+- Under what input would the coordinator have to violate the Coordinator Mandate (no execution work) to keep the team functioning? If such input exists, the design is flawed — revise.
 
 ## Available Skills
 
