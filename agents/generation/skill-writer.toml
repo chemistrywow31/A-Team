@@ -1,3 +1,5 @@
+name = "Skill Writer"
+description = "Write authored and runtime skill files for generated teams."
 model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"

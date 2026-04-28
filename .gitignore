@@ -1,8 +1,43 @@
+# macOS
+.DS_Store
+
+# IDE / editor
+.idea/
+.vscode/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
 # API key config files
 **/skills/*/config.json
 
 # Local Claude Code overrides (user-specific)
 .claude/settings.local.json
 
+# Runtime evidence chain — written by agents, not source
+.worklog/
+
+# Temporary scratch
+temp/
+temp.md
+
+# Built / packaged team artifacts
+teams/*.zip
+
+# Generated teams — only whitelisted teams are tracked
 teams/*/
 !teams/life-partners/
+
+# Third-party / locally-installed skills (not part of A-Team source)
+article-image-generator/
+docx/
+pdf/
+pptx/
+ui-ux-pro-max/
+hermes/
+dotcodex
+dotcodex/
+
+# Personal / unrelated docs
+兒歌教材課程表.md

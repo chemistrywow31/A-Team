@@ -1,3 +1,5 @@
+name = "Team Architect"
+description = "Coordinate A-Team discovery, planning, generation, review, and delivery."
 model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"

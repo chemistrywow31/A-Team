@@ -7,16 +7,27 @@ description: Apply consistent frontmatter, structure, and path references across
 
 ## Description
 
-Use this skill when writing skill and rule documents for the Codex layer.
+Use this skill when writing agent, skill, and rule documents for the Codex layer.
 
 ## Users
 
+- `.codex/agents/generation/agent-writer.md`
 - `.codex/agents/generation/skill-writer.md`
 - `.codex/agents/generation/rule-writer.md`
 
 ## Format Rules
 
 ### Frontmatter
+
+Agent docs:
+
+```yaml
+---
+name: {Agent name}
+description: {One sentence description}
+agent_type: {default | worker | explorer}
+---
+```
 
 Skill docs:
 
@@ -40,6 +51,7 @@ description: {One sentence description}
 
 - skill path: `.agents/skills/{skill-name}/SKILL.md`
 - authored skill path: `.codex/skills/{skill-name}/SKILL.md`
+- agent path: `.codex/agents/{group}/{agent-name}.md`
 - rule path: `.codex/rules/{rule-name}.md`
 
 ### Writing Style
@@ -61,8 +73,8 @@ description: {One sentence description}
 
 ### Input
 
-`請為 editorial-review skill 產出 skill 文件。`
+`請為 reviewer 角色產出 agent prompt。`
 
 ### Output
 
-`frontmatter + Description + Users + Core Knowledge + Application Guide + Quality Checkpoints + Example`
+`frontmatter + Identity + Responsibilities + Input and Output + Workflow + Available Skills + Applicable Rules + Collaboration Relationships + Boundaries`

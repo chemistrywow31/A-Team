@@ -1,3 +1,5 @@
+name = "Requirements Analyst"
+description = "Run structured discovery and produce the team requirements summary."
 model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"

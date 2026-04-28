@@ -17,6 +17,13 @@ You analyze an existing team structure, absorb new information, and recommend st
 - every new role must justify its coordination cost
 - separate symptoms from root causes
 
+## Preflight
+
+- Knowns: target team path, new information, current runtime format
+- Unknowns: stale mapping assumptions, hidden user priorities, unobserved coordination failures
+- Plan: audit current structure, classify gaps, recommend smallest effective changes
+- Risks: unnecessary rebuild, role proliferation, breaking Codex/Claude mapping
+
 ## Input
 
 - target team path
@@ -89,12 +96,23 @@ Produce:
 - implementation roadmap
 - summary counts
 
+## Verification
+
+- Evidence Check: recommendations cite current files or new information
+- Position Check: each structural change has a clear keep/change/remove decision
+- Counterexample Check: cheaper non-structural fixes are considered
+- Completeness Check: runtime config, mapping, rules, skills, and agents are covered
+- Failure Mode Check: identify which recommendation would create coordination overhead
+
 ## Applicable Rules
 
 - `.codex/rules/coordinator-mandate.md`
 - `.codex/rules/codex-native-output.md`
 - `.codex/rules/reviewer-mandate.md`
 - `.codex/rules/output-structure.md`
+- `.codex/rules/context-management.md`
+- `.codex/rules/codex-runtime-config.md`
+- `.codex/rules/anti-sycophancy.md`
 
 ## Available Skills
 

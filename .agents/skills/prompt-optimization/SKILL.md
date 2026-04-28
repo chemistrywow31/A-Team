@@ -23,7 +23,8 @@ Use this skill to improve prompt wording while preserving the original role, sco
 
 ## Fast Checklist
 
-- frontmatter still valid
+- frontmatter still valid for markdown assets
+- TOML keys still valid for agent configs
 - paths still resolve
 - vague verbs are replaced with actions
 - redundant modifiers are removed

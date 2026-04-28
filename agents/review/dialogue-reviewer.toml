@@ -1,3 +1,5 @@
+name = "Dialogue Reviewer"
+description = "Audit the consultation dialogue and produce a bilateral quality report."
 model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"

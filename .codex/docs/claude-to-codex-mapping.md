@@ -56,6 +56,8 @@ Section handling:
 
 - `developer_instructions` already contains the role contract, so it becomes the main body of the Claude agent file
 - runtime-only TOML keys that Claude cannot express must be retained in a sidecar when round-trip fidelity is required
+- Codex-native research agents such as `agents/research/domain-researcher.toml` and `agents/research/decision-auditor.toml` map to `.claude/agents/research/*.md` when exporting to Claude
+- `name` and `description` in TOML are runtime metadata in Codex and map to Claude frontmatter or heading metadata during export
 
 ### Claude -> Codex
 
@@ -82,6 +84,8 @@ Default injection policy:
 
 - if Claude provides no explicit runtime model metadata, inject Codex defaults during conversion
 - record injected defaults in the manifest so reverse conversion does not pretend they came from Claude
+- convert Claude `settings.json` and hook intent to `.codex/config.toml`, optional Codex hooks, worklog rules, or mapping notes; do not require `.claude/settings.json` in Codex-native output
+- convert Claude skill `context: fork` intent to registered Codex subagents plus structured summary handoffs; do not add Claude-only skill frontmatter to Codex-native skills
 
 ## Runtime Split
 
@@ -246,7 +250,11 @@ teams/{team-name}/
 ## Special Cases
 
 - `skill-creator` is bridged into Codex as a lightweight wrapper. Prefer the globally available Codex/system skill when present. The original large implementation remains under `.claude/skills/skill-creator/`.
+- `a-team` is adapted into a lightweight Codex-native entry skill under `.codex/skills/a-team/` and `.agents/skills/a-team/`. It intentionally omits Claude-only slash-command fields.
 - `.codex/skills/` is the maintenance copy. `.agents/skills/` is the runtime copy. Keep them in sync.
+- `prompt-patterns` is adapted as a lightweight Codex-native skill. Claude-specific raw research assets are retained under `.claude/skills/prompt-patterns/` and are not canonical Codex runtime assets.
+- `settings-json`, `hooks-integration`, `frontmatter-optional-patterns`, and `skill-context-fork` are not copied directly. Their portable intent lives in `.codex/rules/codex-runtime-config.md`, `.codex/rules/codex-agent-config-patterns.md`, and `.codex/rules/context-isolation.md`.
+- See `.codex/docs/claude-adaptation-audit.md` for the current migration decision log.
 
 ## Conversion Use Cases
 

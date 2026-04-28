@@ -1,3 +1,5 @@
+name = "Rule Writer"
+description = "Write rule files for generated Codex teams."
 model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"

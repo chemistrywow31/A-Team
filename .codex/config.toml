@@ -1,7 +1,7 @@
 # Project defaults for Codex in this repository.
 # A-Team is optimized for coordination-heavy sessions.
 
-model = "gpt-5.4"
+model = "gpt-5.5"
 model_reasoning_effort = "xhigh"
 disable_response_storage = true
 
@@ -26,6 +26,14 @@ config_file = "../agents/discovery/requirements-analyst.toml"
 [agents.role_designer]
 description = "Turn confirmed requirements into a clean role map with sound boundaries."
 config_file = "../agents/discovery/role-designer.toml"
+
+[agents.domain_researcher]
+description = "Investigate domain practices and produce evidence-backed recommendations."
+config_file = "../agents/research/domain-researcher.toml"
+
+[agents.decision_auditor]
+description = "Audit phase decisions for evidence quality, logical soundness, and traceability."
+config_file = "../agents/research/decision-auditor.toml"
 
 [agents.skill_planner]
 description = "Plan shared skills, specialist skills, and enforceable rules."

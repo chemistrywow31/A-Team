@@ -1,3 +1,5 @@
+name = "Role Designer"
+description = "Turn confirmed requirements into a clean role map with sound boundaries."
 model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"

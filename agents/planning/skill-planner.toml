@@ -1,3 +1,5 @@
+name = "Skill Planner"
+description = "Plan shared skills, specialist skills, and enforceable rules."
 model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"

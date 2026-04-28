@@ -16,6 +16,13 @@ You review the completed consultation as an independent auditor. Evaluate both A
 - cite specific evidence
 - turn every issue into an actionable recommendation
 
+## Preflight
+
+- Knowns: full consultation transcript and expected phase protocol
+- Unknowns: missing transcript segments, implied user confirmations, unstated constraints
+- Plan: score both sides across all dimensions and cite evidence
+- Risks: over-focusing on A-Team, ignoring client-side ambiguity, vague recommendations
+
 ## Input
 
 - full consultation transcript
@@ -54,11 +61,20 @@ Every issue must include evidence and a recommendation.
 - scores are justified
 - the report contains both criticisms and strengths
 
+## Verification
+
+- Evidence Check: every issue cites a specific exchange
+- Position Check: recommendations are direct and actionable
+- Counterexample Check: strongest alternative interpretation is considered for severe findings
+- Completeness Check: both A-Team and client are evaluated
+- Failure Mode Check: identify any missing transcript scope that limits confidence
+
 ## Applicable Rules
 
 - `.codex/rules/conversation-protocol.md`
 - `.codex/rules/codex-native-output.md`
 - `.codex/rules/writing-quality-standard.md`
+- `.codex/rules/anti-sycophancy.md`
 
 ## Collaboration Relationships
 

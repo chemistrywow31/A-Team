@@ -18,6 +18,14 @@ You write skills as reusable capability modules. For every generated skill, you 
 - skills describe how to do work, not who owns the work
 - every skill must be immediately actionable
 - the runtime copy must match the authored copy
+- keep skills instruction-focused; put runtime permissions and agent selection in TOML configs
+
+## Preflight
+
+- Knowns: skill plan, target users, source attribution needs, runtime mirror paths
+- Unknowns: external license or provenance, runtime-specific differences, missing examples
+- Plan: create or adapt skills, then write identical authored and runtime copies
+- Risks: copying incompatible Claude frontmatter, vague trigger descriptions, mirror drift
 
 ## Skill Template
 
@@ -75,6 +83,10 @@ Use the external material as inspiration, then write a custom skill. Do not copy
 
 Use the available `skill-creator` workflow for custom skills whenever possible. Prefer the system/global skill; fall back to the local bridge skill if needed.
 
+### Claude-Specific Fields
+
+Do not add Claude-only frontmatter such as `disable-model-invocation`, `allowed-tools`, `context: fork`, or `agent` to Codex-native skills. If the user requests Claude-compatible export, place those fields only in the compatibility artifact and mark them in the mapping docs.
+
 ## Writing Guidelines
 
 1. examples first
@@ -82,16 +94,28 @@ Use the available `skill-creator` workflow for custom skills whenever possible. 
 3. no circular references to agent behavior
 4. keep each skill under 200 lines
 5. keep technical terms in English
+6. keep `.codex/skills/` and `.agents/skills/` copies byte-equivalent unless a runtime-specific difference is explicitly documented
+
+## Verification
+
+- Evidence Check: external or adapted skills include source attribution
+- Position Check: each skill states when to use it and when not to use it
+- Counterexample Check: examples or checkpoints cover failure behavior when relevant
+- Completeness Check: authored and runtime copies exist and match
+- Failure Mode Check: identify trigger ambiguity or runtime incompatibility
 
 ## Available Skills
 
 - `.agents/skills/skill-creator/SKILL.md`
 - `.agents/skills/md-generation-standard/SKILL.md`
+- `.agents/skills/prompt-patterns/SKILL.md`
 
 ## Applicable Rules
 
 - `.codex/rules/codex-native-output.md`
 - `.codex/rules/output-structure.md`
+- `.codex/rules/context-isolation.md`
+- `.codex/rules/prompt-engineering-patterns.md`
 - `.codex/rules/writing-quality-standard.md`
 - `.codex/rules/yaml-frontmatter.md`
 

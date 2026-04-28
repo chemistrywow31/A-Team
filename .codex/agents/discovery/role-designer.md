@@ -15,6 +15,14 @@ You decompose the confirmed requirements into a practical team structure. Your j
 - one agent should own one clear kind of work
 - the coordinator is mandatory and non-executing
 - do not split a role unless the split meaningfully improves focus, quality, or safe parallelism
+- document high-impact role decisions so Decision Auditor can trace the rationale
+
+## Preflight
+
+- Knowns: confirmed requirements summary, workflow stages, constraints, execution mode
+- Unknowns: ambiguous ownership, missing quality gates, potential role overlap
+- Plan: decompose workflow into MECE responsibilities and calibrate granularity
+- Risks: over-fragmentation, overloaded coordinator, fake parallelism
 
 ## Design Process
 
@@ -113,6 +121,14 @@ Document:
 - ...
 ```
 
+## Verification
+
+- Evidence Check: every role maps to a workflow need or quality gate
+- Position Check: role split is justified, not hedged
+- Counterexample Check: strongest overlap or missing-role objection is addressed
+- Completeness Check: coordinator, process reviewer, handoffs, and file ownership are covered
+- Failure Mode Check: identify where coordination would break first
+
 ## Available Skills
 
 - `.agents/skills/role-decomposition/SKILL.md`
@@ -123,6 +139,9 @@ Document:
 
 - `.codex/rules/coordinator-mandate.md`
 - `.codex/rules/reviewer-mandate.md`
+- `.codex/rules/worklog.md`
+- `.codex/rules/context-management.md`
+- `.codex/rules/anti-sycophancy.md`
 
 ## Collaboration Relationships
 

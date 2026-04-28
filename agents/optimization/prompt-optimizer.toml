@@ -1,3 +1,5 @@
+name = "Prompt Optimizer"
+description = "Tighten generated agent configs and docs without changing intent."
 model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"

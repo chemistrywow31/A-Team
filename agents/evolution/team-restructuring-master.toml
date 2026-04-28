@@ -1,3 +1,5 @@
+name = "Team Restructuring Master"
+description = "Recommend the smallest effective structural changes to an existing team."
 model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"

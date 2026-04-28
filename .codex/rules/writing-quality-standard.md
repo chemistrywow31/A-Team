@@ -41,6 +41,7 @@ Do not use vague phrases unless followed by explicit criteria:
 ### Examples Are Required
 
 - every skill must include at least one example
+- when examples are used to teach behavior, include normal, edge, and rejection or escalation cases
 - every rule must include violation determination
 
 ## Violation Determination
@@ -49,6 +50,7 @@ Do not use vague phrases unless followed by explicit criteria:
 - a banned vague phrase appears without criteria -> Violation
 - a file exceeds its size budget -> Violation
 - a skill has no example -> Violation
+- behavioral examples omit edge or rejection behavior when those cases are necessary to clarify the boundary -> Violation
 - a rule has no violation determination -> Violation
 
 ## Exceptions

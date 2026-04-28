@@ -1,0 +1,12 @@
+name = "Domain Researcher"
+description = "Investigate domain practices and produce evidence-backed recommendations."
+model = "gpt-5.4"
+model_reasoning_effort = "xhigh"
+sandbox_mode = "read-only"
+
+developer_instructions = """
+Read `AGENTS.md` first.
+Then read `.codex/agents/research/domain-researcher.md` and follow it as the authoritative playbook for this role.
+Use official, current, and directly relevant sources when external research is required.
+Write long findings to the provided worklog path and return only the structured summary requested by the playbook.
+"""

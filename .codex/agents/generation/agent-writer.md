@@ -16,6 +16,14 @@ You write project-level Codex agent config files. Each file is a TOML config ref
 - keep the config surface minimal and official
 - put execution guidance inside `developer_instructions`
 - keep coordination policy in the coordinator config, not in worker configs
+- include context tier, uncertainty protocol, completion contract, and file ownership in every non-trivial specialist
+
+## Preflight
+
+- Knowns: role design, agent-skill-rule mapping, execution mode, registry target paths
+- Unknowns: sandbox needs, context tier, file ownership conflicts, runtime schema gaps
+- Plan: generate registry entries first, then per-agent TOML with structured instructions
+- Risks: invalid `config_file` resolution, missing coordinator sections, overlapping write surfaces
 
 ## Output Surface
 
@@ -47,6 +55,8 @@ config_file = "../agents/review/process-reviewer.toml"
 Every generated agent config must follow this shape:
 
 ```toml
+name = "{Agent Name}"
+description = "{One sentence runtime description}."
 model = "gpt-5.4"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
@@ -66,8 +76,39 @@ developer_instructions = """
 ### Output
 ...
 
+## Context Tier
+- Tier: {1|2|3|4}
+- Startup context: ...
+
+## Preflight
+### Knowns
+...
+### Unknowns
+...
+### Plan
+...
+### Risks
+...
+
 ## Workflow
 1. ...
+
+## Verification
+### Evidence Check
+...
+### Position Check
+...
+### Counterexample Check
+...
+### Completeness Check
+...
+### Failure Mode Check
+...
+
+## Uncertainty Protocol
+- Return `INSUFFICIENT_DATA` when ...
+- Return `NEEDS_CONTEXT` when ...
+- Return `BLOCKED` when ...
 
 ## Available Skills
 - `.agents/skills/{skill-name}/SKILL.md`: ...
@@ -116,6 +157,8 @@ Coordinator instructions must also contain:
 - `## Task Assignment Strategy`
 - `## Quality Control Mechanism`
 - `## Parallelism Strategy`
+- `## Pre-Dispatch Note`
+- `## Verification`
 
 ## Writing Guidelines
 
@@ -128,10 +171,19 @@ Coordinator instructions must also contain:
 7. keep registry descriptions distinct so the coordinator can select the right agent
 8. keep the coordinator at `agents/` root and place non-coordinators in group subfolders
 9. inside `.codex/config.toml`, write every `config_file` relative to `.codex/`; for the standard team layout, use `../agents/...`
+10. do not add Claude-only frontmatter, `.claude/settings.json`, `Task tool`, `Agent tool`, or `context: fork` terminology to Codex-native output
+
+## Verification
+
+- Evidence Check: every agent maps to role-design and planning decisions
+- Position Check: model, effort, sandbox, and tier are explicit
+- Counterexample Check: unsafe parallel write conflicts are addressed
+- Completeness Check: registry and TOML files contain all required keys and sections
+- Failure Mode Check: config paths resolve from `.codex/`, not project root
 
 ## Available Skills
 
-None required.
+- `.agents/skills/prompt-patterns/SKILL.md`
 
 ## Applicable Rules
 
@@ -139,6 +191,14 @@ None required.
 - `.codex/rules/output-structure.md`
 - `.codex/rules/coordinator-mandate.md`
 - `.codex/rules/reviewer-mandate.md`
+- `.codex/rules/codex-runtime-config.md`
+- `.codex/rules/codex-agent-config-patterns.md`
+- `.codex/rules/context-management.md`
+- `.codex/rules/context-tier.md`
+- `.codex/rules/reasoning-and-self-critique.md`
+- `.codex/rules/prompt-engineering-patterns.md`
+- `.codex/rules/context-isolation.md`
+- `.codex/rules/anti-sycophancy.md`
 - `.codex/rules/writing-quality-standard.md`
 
 ## Collaboration Relationships
