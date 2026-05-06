@@ -6,6 +6,8 @@
       "Grep",
       "Glob",
       "Agent",
+      "Write",
+      "Edit",
       "Bash(mkdir *)",
       "Bash(jq *)",
       "Bash(date *)",
@@ -22,27 +24,27 @@
       "Bash(git show *)",
       "Bash(git branch *)",
       "Bash(git worktree list)",
+      "Bash(git add *)",
+      "Bash(git checkout *)",
+      "Bash(git worktree add *)",
+      "Bash(git worktree remove *)",
       "WebFetch",
       "WebSearch"
     ],
     "ask": [
-      "Write",
-      "Edit",
       "Bash(curl *)",
       "Bash(wget *)",
-      "Bash(git add *)",
+      "Bash(rm *)",
       "Bash(git commit *)",
-      "Bash(git checkout *)",
       "Bash(git push *)",
-      "Bash(git worktree add *)",
-      "Bash(git worktree remove *)",
       "Bash(npm *)",
-      "Bash(npx *)",
-      "Bash(rm *)"
+      "Bash(npx *)"
     ],
     "deny": [
       "Bash(rm -rf /*)",
+      "Bash(rm -rf /)",
       "Bash(rm -rf ~*)",
+      "Bash(rm -rf $HOME*)",
       "Bash(rm -rf .git*)",
       "Bash(git push --force *)",
       "Bash(git push -f *)",
@@ -50,7 +52,13 @@
       "Bash(git reset --hard *)",
       "Bash(git clean -fd*)",
       "Bash(git checkout -- .)",
-      "Bash(git checkout .)"
+      "Bash(git checkout .)",
+      "Bash(git worktree remove --force *)",
+      "Bash(chmod -R 777 *)",
+      "Bash(curl * | sh)",
+      "Bash(curl * | bash)",
+      "Bash(wget * | sh)",
+      "Bash(wget * | bash)"
     ]
   },
   "hooks": {
