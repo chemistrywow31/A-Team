@@ -18,8 +18,11 @@ When the coordinator dispatches a task to any agent via the Task tool, the dispa
 1. **Current worklog path**: The directory where this agent must write its outputs (e.g., `.worklog/202603/english-teaching-team/phase-2-planning/`)
 2. **Upstream reference paths**: Paths to relevant upstream phase worklogs that this agent must read for context (e.g., `.worklog/202603/english-teaching-team/phase-1-discovery/decisions.md`)
 3. **Task scope summary**: A concise description of what this specific task must accomplish (not the entire project context)
+4. **Acceptance criteria**: 1–5 mechanically checkable conditions the deliverable must meet — a fresh-context verifier checks exactly these per `rules/execution-contract.md` EC-3
+5. **Scope fence**: an explicit OUT list — files and directories this agent must not touch
+6. **BRIEF path**: the task's `.worklog/{yyyymm}/{task-name}/brief.md` per EC-5.1
 
-The coordinator must not pass full upstream content inline. Pass paths; let the agent read what it needs.
+Before any dispatch, read the matching delegation template in `templates/` (search / implementation / refactoring / research / review) and fill every slot. The coordinator must not pass full upstream content inline. Pass paths; let the agent read what it needs.
 
 ### XML Tag Separation in Dispatch
 
@@ -33,34 +36,9 @@ When the coordinator must include variable data in a Task dispatch (task scope, 
 
 Instructions remain outside the tags. Data goes inside.
 
-### Agent Return Format: Structured Summaries
+### Agent Return Format
 
-When an agent completes a task and returns results to the coordinator, the return must be a structured summary, not raw output:
-
-```markdown
-## Task Completion: {task name}
-
-### Status: {DONE / DONE_WITH_CONCERNS / BLOCKED / NEEDS_CONTEXT}
-
-### Key Outcomes
-- {Outcome 1}
-- {Outcome 2}
-
-### Decisions Made
-- {Decision with brief rationale — full detail in worklog}
-
-### Artifacts Produced
-- {file path 1}: {one-line description}
-- {file path 2}: {one-line description}
-
-### Worklog Updated
-- {worklog path}: {what was written}
-
-### Issues / Blockers (if any)
-- {Issue description and suggested resolution}
-```
-
-Agents must not return full file contents, complete research dumps, or unstructured narratives. The worklog contains the detail; the return contains the summary.
+Every task return follows the six-field report schema in `rules/execution-contract.md` EC-1: `STATUS` / `CONCLUSIONS` (max 10 lines) / `EVIDENCE` (file:line) / `ARTIFACTS` (paths, including worklog files) / `RISKS/UNKNOWNS` / `NEXT` — max 40 lines total; any product over 30 lines goes to a file with the path in ARTIFACTS (EC-1.3). Agents must not return full file contents, complete research dumps, or unstructured narratives. The worklog contains the detail; the return contains the summary. A malformed return bounces once with the schema attached; the second violation counts as a failed attempt (EC-1.6).
 
 ### Completion Status Protocol
 
@@ -71,11 +49,7 @@ Every agent must end its task with exactly one of these statuses:
 - **BLOCKED** — Cannot proceed. State what was attempted (up to 3 attempts), what failed, and what specific information or action is needed to unblock. Do not retry the same approach more than 3 times.
 - **NEEDS_CONTEXT** — Missing information required to begin or continue. List each missing item and where it might be found.
 
-The coordinator must handle each status:
-- **DONE**: Proceed to next task or phase.
-- **DONE_WITH_CONCERNS**: Evaluate concerns before proceeding. Log concerns in worklog.
-- **BLOCKED**: Resolve blocker before re-dispatching. Do not re-dispatch the same task without addressing the blocker.
-- **NEEDS_CONTEXT**: Provide the requested context and re-dispatch.
+The coordinator handles each status per `rules/execution-contract.md` EC-1.5. Accepting DONE additionally requires the fresh-context verification in EC-3 — the producer's own claim never counts as acceptance. When the missing context in NEEDS_CONTEXT is user input (a QUESTIONS block), the coordinator relays the questions to the user, appends the exchange to the task's `dialogue-log.md`, and re-dispatches with the answers.
 
 ### Task Isolation via Subagents
 
@@ -113,7 +87,7 @@ Since agents cannot directly measure context window usage, use these proxy indic
 
 ## Violation Determination
 
-- Coordinator dispatches a Task without including the worklog path → Violation
+- Coordinator dispatches a Task without the worklog path, acceptance criteria, or scope fence → Violation
 - Coordinator dispatches a Task with full upstream content inline instead of passing worklog paths → Violation
 - Agent returns raw unstructured output exceeding 500 words without worklog reference → Violation
 - Coordinator performs execution work inline instead of dispatching a Task → Violation

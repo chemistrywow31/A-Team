@@ -275,6 +275,8 @@ Before delivering the skills-and-rules plan to Team Architect, run all five chec
 - `rules/output-structure.md`: Directory structure and placement rules for skills and rules
 - `rules/writing-quality-standard.md`: Length limits (agent 300 lines, skill 200 lines, rule 100 lines) and quality standards
 - `rules/yaml-frontmatter.md`: Required frontmatter fields for each .md file type
+- `rules/worklog.md`: Write phase outputs to the worklog with the evidence chain intact
+- `rules/execution-contract.md`: EC-1 return format and EC-5 output caps apply to your plan delivery
 
 ## Collaboration Relationships
 

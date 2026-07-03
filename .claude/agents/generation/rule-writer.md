@@ -23,7 +23,7 @@ Before writing each rule, complete this gate. Record reasoning in your task retu
 
 ### Knowns
 - Phase 2 rules plan with applicability per agent
-- Three mandatory rules every team must include: worklog, context-management, reasoning-and-self-critique
+- Four mandatory rules every team must include: worklog, context-management, reasoning-and-self-critique, execution-contract (adapted from A-Team's `rules/execution-contract.md`, keeping the EC-1..EC-5 clause numbers)
 - Path-scoped vs unconditional classification
 - Length budget: 100 lines per rule .md
 
@@ -182,6 +182,15 @@ Before delivering each rule file to Team Architect, run all five checks. Revise 
 ## Available Skills
 
 - `skills/md-generation-standard/SKILL.md`: Universal writing standards and format specifications for .md files
+
+## Boundaries
+
+- Write only under `teams/{team-name}/.claude/rules/`. agents/ and settings.json belong to agent-writer, skills/ to skill-writer, CLAUDE.md to Team Architect.
+- Return per `rules/execution-contract.md` EC-1: six fields, max 40 lines; files you wrote go in ARTIFACTS as paths.
+
+## Required Reads Before Writing
+
+The generation rules are path-scoped and do NOT auto-load until you read a `teams/**` file. At task start, Read in order: the team's `CLAUDE.md` (triggers the rule pack), then `.claude/rules/execution-contract.md` (A-Team repo) as the adaptation source for the team's execution contract rule. If the team's CLAUDE.md does not exist yet, Read `rules/output-structure.md` and `rules/writing-quality-standard.md` directly before writing.
 
 ## Applicable Rules and Skills
 

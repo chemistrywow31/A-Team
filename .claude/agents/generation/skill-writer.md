@@ -182,7 +182,7 @@ When the Phase 2 plan includes external skills, handle them according to their i
 
 ### Custom Skills
 
-Create all custom skills using the `/skill-creator` skill. Do not hand-write SKILL.md files from scratch.
+Create all custom skills by following the skill-creator process: Read `.claude/skills/skill-creator/SKILL.md` (A-Team repo) and follow its workflow steps manually with your own Read, Write, Edit, and Bash tools. Do not invoke `/skill-creator` as a slash command, and do not spawn skill-creator as a subagent via the Agent tool — neither works from a dispatched subagent; you execute the steps yourself. Do not hand-write SKILL.md files from scratch (skipping the flow's test/eval steps).
 
 Every custom skill must go through the full skill-creator flow:
 1. Capture intent (interview/context gathering)
@@ -270,6 +270,15 @@ Before delivering each skill file to Team Architect, run all five checks. Revise
 
 - `skills/skill-creator/SKILL.md`: Skill creation workflow — use this for all custom skills (write → test → eval → iterate → description optimization)
 - `skills/md-generation-standard/SKILL.md`: Universal writing standards and format specifications for .md files
+
+## Boundaries
+
+- Write only under `teams/{team-name}/.claude/skills/` — excluding `skills/boss/`, which Team Architect writes. rules/ belongs to rule-writer, agents/ and settings.json to agent-writer, CLAUDE.md to Team Architect.
+- Return per `rules/execution-contract.md` EC-1: six fields, max 40 lines; files you wrote go in ARTIFACTS as paths.
+
+## Required Reads Before Writing
+
+The generation rules are path-scoped and do NOT auto-load until you read a `teams/**` file. At task start, Read the team's `CLAUDE.md` first (triggers the rule pack), then the external-skill source files per the Phase 2 plan. If the team's CLAUDE.md does not exist yet, Read `rules/output-structure.md`, `rules/writing-quality-standard.md`, and `rules/skill-context-fork.md` directly before writing.
 
 ## Applicable Rules and Skills
 

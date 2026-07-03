@@ -1,6 +1,8 @@
 ---
 name: Prompt Engineering Patterns
 description: Claude-optimized prompt patterns that all generation agents must apply when producing .md files
+paths:
+  - "teams/**"
 ---
 
 # Prompt Engineering Patterns
@@ -42,16 +44,11 @@ Structure every generated .md file so that:
 2. **Reference data, rules, and examples** come in the middle
 3. **Task workflow, output format, and boundaries** come last
 
-Placing actionable instructions at the end of a prompt improves response quality by up to 30%. The agent template already follows this order — do not rearrange sections.
+Placing actionable instructions at the end of a prompt measurably improves instruction adherence. The agent template already follows this order — do not rearrange sections.
 
 ### Example Diversity
 
-Every generated .md that contains examples must include at minimum:
-1. **Normal case**: Standard input producing expected output
-2. **Edge case**: Unusual but valid input testing boundary handling
-3. **Rejection case**: Input that triggers rejection, escalation, or `INSUFFICIENT_DATA`
-
-Happy-path-only examples cause Claude to produce plausible-looking output even on garbage or insufficient input.
+Every generated .md that contains examples must include the three cases mandated by `rules/writing-quality-standard.md`: normal, edge, rejection. Happy-path-only examples cause Claude to produce plausible-looking output even on garbage or insufficient input.
 
 ### Full Scenario Before/After Examples
 
@@ -93,7 +90,7 @@ Opus 4.6 tends to over-explore when given open-ended instructions. Generated pla
 
 ### Parallel Execution Instructions
 
-Every generated coordinator must include explicit parallel execution guidance — this raises parallel tool call success rate to ~100%. Required: list concurrent agent groups, define sequential gates, and instruct dispatching independent tasks in the same message.
+Every generated coordinator must include explicit parallel execution guidance. Required: list concurrent agent groups, define sequential gates, instruct dispatching independent tasks in the same message, and state a batch-size rule for repetitive work (batch items into one dispatch when more than 5 similar items exist; never dispatch per-item — measured cost in ground truth: ~25× overhead).
 
 ## Violation Determination
 

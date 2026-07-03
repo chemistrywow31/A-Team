@@ -1,6 +1,8 @@
 ---
 name: Context Tier
 description: Define four tiers of context budget, model, and effort for generated agents based on decision scope
+paths:
+  - "teams/**"
 ---
 
 # Context Tier

@@ -67,7 +67,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "mkdir -p .worklog/$(date +%Y%m)",
+            "command": "mkdir -p \"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\" 2>/dev/null || true",
             "timeout": 5
           }
         ]
@@ -78,7 +78,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "mkdir -p .worklog/$(date +%Y%m) && jq -r '\"[\" + (now | todate) + \"] \" + .prompt' >> .worklog/$(date +%Y%m)/session-ledger.md",
+            "command": "D=\"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\"; mkdir -p \"$D\" && jq -r '\"[\" + (now | todate) + \"] \" + .prompt' >> \"$D/session-ledger.md\" 2>/dev/null || echo 'WARN: session-ledger hook failed (jq missing?)' >&2",
             "timeout": 10
           }
         ]
@@ -89,7 +89,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "mkdir -p .worklog/$(date +%Y%m) && jq '{ts: now, reason: .reason, transcript_path: .transcript_path}' > .worklog/$(date +%Y%m)/compact-checkpoint.json",
+            "command": "D=\"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\"; mkdir -p \"$D\" && jq '{ts: now, reason: .reason, transcript_path: .transcript_path}' > \"$D/compact-checkpoint.json\" 2>/dev/null || echo 'WARN: compact-checkpoint hook failed (jq missing?)' >&2",
             "timeout": 5
           }
         ]
@@ -100,7 +100,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "test -d .worklog/$(date +%Y%m) || echo 'WARN: worklog dir missing for this month' >&2",
+            "command": "test -d \"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\" || echo 'WARN: worklog dir missing for this month' >&2",
             "timeout": 5
           }
         ]

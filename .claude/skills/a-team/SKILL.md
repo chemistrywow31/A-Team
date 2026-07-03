@@ -1,6 +1,6 @@
 ---
 name: A-Team
-description: Entry point that spawns the Team Architect coordinator to run the full team design workflow
+description: Entry point that makes this session adopt the Team Architect workflow to run the full team design process
 disable-model-invocation: true
 allowed-tools: ["Agent"]
 argument-hint: "[team description or --restructure teams/path]"
@@ -10,52 +10,24 @@ argument-hint: "[team description or --restructure teams/path]"
 
 ## Description
 
-Launch the Team Architect coordinator to run the complete team design workflow (Phase 1-6). Use this skill as the standard entry point for all team design requests.
+Adopt the Team Architect coordinator workflow in the CURRENT session and run the complete team design process (Phases 1–6, or Phase 7 for restructuring).
 
-## Trigger
+## Why Main-Session Adoption, Not Spawning
 
-Use when the user wants to design, create, or build a new multi-agent team structure.
+A spawned coordinator subagent cannot dispatch further agents and cannot converse with the user — the workflow dead-locks at the first interview question (production evidence: teams/toeic-daily-prep-team first run, 2026-06, hand-patched). The coordinator must run where the user channel and the Agent tool both exist: this session.
 
 ## Execution
 
-When this skill is invoked, spawn the Team Architect agent to handle the entire workflow:
+When this skill is invoked:
 
-1. Parse any arguments the user provided (team name, domain hints, constraints)
-2. Spawn the `team-architect` agent via the Agent tool with subagent_type `Team Architect`
-3. Pass the user's request and any arguments as the agent's prompt
-4. The Team Architect runs its full 6-phase workflow: Discovery → Planning → Generation → Optimization → Review → Dialogue Review
-
-### Spawn Instructions
-
-Use the Agent tool with these parameters:
-
-- `subagent_type`: `Team Architect`
-- `model`: `opus`
-- `prompt`: Include the user's original request and any arguments. If the user provided no details, instruct the Team Architect to begin with Phase 1 Discovery (requirements interview).
-
-### With Arguments
-
-If the user provides arguments after `/A-Team`, pass them as context:
-
-```
-/A-Team 英文教學內容團隊
-```
-
-→ Spawn Team Architect with prompt: "Design a team for: 英文教學內容團隊. Begin with Phase 1 Discovery."
-
-```
-/A-Team --restructure teams/existing-team
-```
-
-→ Spawn Team Architect with prompt: "Restructure the existing team at teams/existing-team. Run Phase 7."
-
-### Without Arguments
-
-```
-/A-Team
-```
-
-→ Spawn Team Architect with prompt: "The user wants to design a new team. Begin with Phase 1 Discovery — start the requirements interview."
+0. Context guard: if this invocation arrived inside a Task dispatch rather than a user's conversation turn (you are a dispatched subagent), STOP and return `BLOCKED: wrong-context invocation — /A-Team must run in the main session.`
+1. Read `.claude/agents/team-architect.md` and adopt it as your operating playbook for this task. Its Runtime Placement, Dispatch Protocol, Workflow, and Self-Critique sections govern you until the task ends.
+2. Create the worklog structure per its Worklog Initialization: `brief.md`, an empty `dialogue-log.md`, and phase directories as phases begin.
+3. Parse arguments:
+   - `/A-Team {description}` → begin Phase 1 Discovery, interviewing the user directly about {description}
+   - `/A-Team --restructure teams/{path}` → run Phase 7 against that team
+   - `/A-Team` (bare) → begin Phase 1 Discovery from scratch
+4. Dispatch specialists via the Agent tool per the playbook. You keep the user channel; specialists route questions back through `NEEDS_CONTEXT` returns, which you relay and log to `dialogue-log.md`.
 
 ## Examples
 
@@ -63,16 +35,16 @@ If the user provides arguments after `/A-Team`, pass them as context:
 
 User: `/A-Team 自動化測試團隊`
 
-Action: Spawn Team Architect → "Design a team for: 自動化測試團隊. Begin with Phase 1 Discovery."
+Action: Read team-architect.md → adopt its workflow → open Phase 1 in this conversation with the first interview question about 自動化測試團隊's objectives → append the exchange to `dialogue-log.md`.
 
-### Restructuring Case
+### Restructuring Case (edge)
 
 User: `/A-Team --restructure teams/english-teaching-content`
 
-Action: Spawn Team Architect → "Restructure the existing team at teams/english-teaching-content. Run Phase 7 (Team Restructuring)."
+Action: Read team-architect.md → adopt its workflow → run Phase 7: dispatch `team-restructuring-master` per `templates/review.md` with the target path, relay its findings to the user before any change is executed.
 
-### No Arguments Case
+### Rejection Case
 
-User: `/A-Team`
+User: `/A-Team delete the old teams and rebuild everything`
 
-Action: Spawn Team Architect → "The user wants to design a new team. Begin with Phase 1 Discovery — start the requirements interview."
+Action: Adopt the workflow, but do NOT delete anything. Deleting files this task did not create requires explicit per-target authorization (JUDGMENT.md J3.2). Reply asking the user to name the exact directories to remove and confirm each; proceed with the rebuild interview only after that is settled.

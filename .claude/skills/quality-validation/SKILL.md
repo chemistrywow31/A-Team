@@ -1,79 +1,90 @@
 ---
 name: Quality Validation
-description: Provide validation methods to check if final team structure output is complete and consistent
+description: Canonical validation checklist for generated team structures, executed by a fresh-context verifier
+disable-model-invocation: true
 ---
 
 # Quality Validation
 
 ## Description
 
-Provide validation methods to check if final output (entire team's agents/skills/rules structure) is complete and consistent.
+The single checklist source for validating a generated team. Team Architect does NOT execute this checklist itself — per `rules/execution-contract.md` EC-3.1, the orchestrator of production never accepts the production. The architect dispatches a fresh-context verifier (built from `templates/review.md`) with: this file's path, the team directory, and the Phase 1–2 `decisions.md` paths. The verifier runs every check with commands and returns per-item PASS/FAIL with evidence (EC-3.6).
 
 ## Belongs To
 
-This skill belongs exclusively to `agents/team-architect.md`
+Used by the fresh-context verifier dispatched by `agents/team-architect.md` (Phase 3 Step 3, re-validation after Phase 4/7 mutations, Phase 5 confirmation).
 
-## Validation Process
+## How to Execute
 
-### Level 1: Structural Completeness
+- Level 2 items apply the per-artifact floors canonically defined in `JUDGMENT.md` J5. When this file and J5 disagree, J5 wins — update this file in the same change (single-source rule).
+- Run each check's command from the repo root; `{team}` = `teams/{team-name}`.
+- Record one line per item: `{item} | PASS or FAIL | {file:line or command output}`.
+- Overall PASS requires every applicable item PASS. Return per EC-1; the full item table goes to the phase worklog as `verification.md`.
 
-```
-✓ teams/{team-name}/ directory exists
-✓ agents/ directory exists and contains at least one coordinator .md
-✓ skills/ directory exists and contains skill folders
-✓ rules/ directory exists and contains at least one .md file
-✓ All .md file names use kebab-case
-✓ All agent group folder names use kebab-case
-```
+## Level 1: Structural Completeness
 
-### Level 2: Content Completeness
+- 1.1 `{team}/CLAUDE.md` exists — `test -f`
+- 1.2 Coordinator .md sits in `agents/` root; every non-coordinator agent sits in a subfolder — `ls -R {team}/.claude/agents/`
+- 1.3 Every skill is `skills/{name}/SKILL.md` (uppercase filename) — `find {team}/.claude/skills -name SKILL.md`
+- 1.4 `rules/` contains .md files — `ls {team}/.claude/rules/`
+- 1.5 `settings.json` exists and parses — `jq . {team}/.claude/settings.json`
+- 1.6 All file and folder names kebab-case — `find {team} -name '*_*' -o -name '* *'` returns nothing
+- 1.7 Entry-point skill exists — `test -f {team}/.claude/skills/boss/SKILL.md`
 
-```
-✓ Each agent .md contains: Identity, Responsibilities, Input and Output, Workflow, Available Skills, Applicable Rules, Collaboration Relationships, Boundaries
-✓ Coordinator .md additionally contains: Team Overview, Subordinate Agent List, Task Assignment Strategy, Quality Control Mechanism
-✓ Each skill .md contains: Description, Users/Belongs To, Core Knowledge
-✓ Each rule .md contains: Applicability, Rule Content, Violation Determination
-✓ Each external skill (Pattern A or B) contains a Source Attribution section with Origin, Integration, Retrieved, and Modifications fields
-```
+## Level 2: Content Completeness
 
-### Level 3: Reference Consistency
+- 2.1 Every .md starts with `---` on line 1 — `head -1` each
+- 2.2 Every agent frontmatter has `name`, `description`, `model` (+ `effort`) — grep each
+- 2.3 Section order in every agent: `## Reasoning` before `## Workflow` before `## Self-Critique` — `grep -n '^## '`
+- 2.4 Reasoning has the 4 canonical slots; Self-Critique has the 5 canonical checks (Tier 1 agents: reduced 2-check form allowed only with a Tier 1 justification) — grep slot headers
+- 2.5 Every agent has `## Boundaries`, `## Uncertainty Protocol`, `## Examples` with normal + edge + rejection cases — grep
+- 2.6 Coordinator additionally has: Pre-Dispatch Reasoning, Team Overview, Subordinate Agent List, Task Assignment Strategy, Quality Control Mechanism, Parallelism Strategy (with the >5-items batch rule), Compaction Strategy, Verification Protocol, Correction Loop Bound, User Relay — grep
+- 2.7 Every skill has Description, Users/Belongs To, Core Knowledge, 3 examples; ≤200 lines or progressive-disclosure bundle — grep + `wc -l`
+- 2.8 Every rule has Applicability, Rule Content, Violation Determination, Exceptions; ≤100 lines — grep + `wc -l`
+- 2.9 Every external skill (Pattern A/B) has Source Attribution with Origin, Integration, Retrieved, Modifications — grep
+- 2.10 Every agent .md ≤300 lines — `wc -l`
 
-```
-✓ Each skill path referenced in agent .md corresponds to an actual existing file
-✓ Each rule path referenced in agent .md corresponds to an actual existing file
-✓ Users listed in skill .md correspond to actual existing agents
-✓ Applicability scope in rule .md corresponds to actual existing agents
-✓ Coordinator's subordinate list covers all non-coordinator agents
-✓ External skill Source Attribution URLs match the source recorded in the Phase 2 plan
-✓ External skill Integration type (Pattern A/B) is consistent between Source Attribution and the Phase 2 plan
-```
+## Level 3: Reference Consistency
 
-### Level 4: Logical Consistency
+- 3.1 Every skill path referenced in an agent file exists — extract refs, `test -f` each
+- 3.2 Every rule path referenced in an agent file exists — same
+- 3.3 Skill Users lists ↔ actual agents; rule Applicability ↔ actual agents
+- 3.4 Coordinator's subordinate list covers all non-coordinator agents
+- 3.5 Source Attribution URLs and Pattern types match the Phase 2 plan — read Phase 2 `decisions.md`
+- 3.6 The same concept uses the same name across all files
 
-```
-✓ No two agents have overlapping responsibilities (unless designed as review relationship)
-✓ All agent responsibilities combined cover the team's complete scope of work
-✓ No agent appears in two different groups simultaneously
-✓ Collaboration relationships are bidirectionally consistent (A says downstream is B, B should say upstream is A)
-```
+## Level 4: Logical Consistency
+
+- 4.1 No two agents have overlapping responsibilities (unless designed as a review relationship)
+- 4.2 Combined responsibilities cover the Phase 1 scope with no vacuum — read Phase 1 `decisions.md`
+- 4.3 No agent appears in two groups; collaboration relationships are bidirectionally consistent
+- 4.4 Coordinator's Responsibilities contain only coordination work (planning, assignment, tracking, quality control)
+- 4.5 (judgment expected) Each rule's loading mode is sensible: file-type rules path-scoped, process rules unconditional; flag misclassifications with reasoning — this item may use judgment, unlike Level 5
+
+## Level 5: Mandate Compliance
+
+- 5.1 CLAUDE.md contains: deployment mode section with the coordinator-runs-in-main-session statement, worklog + context management section, precedence order, and the generator version stamp `Generated by A-Team on` — grep each
+- 5.2 `rules/` contains the four mandatory rules: worklog, context-management, reasoning-and-self-critique, execution-contract — `ls`
+- 5.3 The team's execution contract keeps EC-1..EC-5 clause numbering — `grep -c 'EC-'`
+- 5.4 `boss/SKILL.md` declares `disable-model-invocation: true`, `allowed-tools: ["Agent"]`, `argument-hint`, and uses main-session adoption. The verifier dispatch supplies the coordinator agent's name. Check: `grep -inE 'subagent_type|spawn' {team}/.claude/skills/boss/SKILL.md` — FAIL if any hit instructs spawning the coordinator (by the supplied name or as "the coordinator"); PASS additionally requires a line instructing the session to Read the coordinator's .md and adopt its workflow
+- 5.5 Process reviewer exists in its own group folder (teams ≤3 agents: coordinator absorbs it, documented in Responsibilities)
+- 5.6 Code reviewer exists when deliverables include executable artifacts; otherwise a deliverable-QA reviewer — read CLAUDE.md scope
+- 5.7 settings.json has `hooks`, `permissions`, `env`; hook commands anchor paths to `$CLAUDE_PROJECT_DIR`, contain no `jq` dependency, and `permissions.allow` grants nothing destructive — `jq` + grep
+- 5.8 Mechanical check only: every rule whose Rule Content contains glob tokens (`**/` or `*.`) has `paths` frontmatter — grep the body for glob tokens, cross-check the frontmatter. Rules that read as both file-type and process are NOT judged here: list them under DONE_WITH_CONCERNS (semantic classification lives in 4.5)
+- 5.9 No urgency language (CRITICAL / MUST / ALWAYS / NEVER) on non-safety behavioral preferences — grep, judge each hit against the tone table in `rules/prompt-engineering-patterns.md`
+- 5.10 Every non-Tier-1 agent has an Uncertainty Protocol with a concrete trigger — grep
+- 5.11 Agent Teams mode only: env flag in settings.json + `teammateMode`; File Ownership and Communication Patterns per agent; known-limitations list in CLAUDE.md; messaging pairs bidirectional
+- 5.12 Agent Teams mode only: environment readiness was checked, or CLAUDE.md includes the exact setup JSON
 
 ## Validation Result Format
 
 ```markdown
 # Quality Validation Report: {team-name}
-
-## Structural Completeness: ✓ Pass / ✗ Fail
-{If failed, list specific issues}
-
-## Content Completeness: ✓ Pass / ✗ Fail
-{If failed, list specific issues}
-
-## Reference Consistency: ✓ Pass / ✗ Fail
-{If failed, list specific issues}
-
-## Logical Consistency: ✓ Pass / ✗ Fail
-{If failed, list specific issues}
-
-## Summary
-{Pass / Needs correction, and correction recommendations}
+| Item | Verdict | Evidence |
+|------|---------|----------|
+| 1.1  | PASS    | teams/x/CLAUDE.md exists |
+| ...  | ...     | ... |
+Overall: PASS / FAIL ({n} failures listed above)
 ```
+
+Deliver the report per EC-1; write the full table to the phase worklog as `verification.md`.

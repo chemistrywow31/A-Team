@@ -1,6 +1,8 @@
 ---
 name: Settings JSON
 description: Define the settings.json template every generated team must include
+paths:
+  - "teams/**"
 ---
 
 # Settings JSON
@@ -25,33 +27,7 @@ Every generated `settings.json` must contain:
 
 ### Template
 
-```json
-{
-  "env": {},
-  "permissions": {
-    "allow": [
-      "Bash(mkdir *)",
-      "Bash(jq *)",
-      "Read",
-      "Grep",
-      "Glob"
-    ],
-    "ask": [
-      "Bash(curl *)",
-      "Bash(rm *)",
-      "Write",
-      "Edit"
-    ],
-    "deny": []
-  },
-  "hooks": {
-    "SessionStart": [ /* per hooks-integration.md */ ],
-    "UserPromptSubmit": [ /* per hooks-integration.md */ ],
-    "PreCompact": [ /* per hooks-integration.md */ ],
-    "Stop": [ /* per hooks-integration.md */ ]
-  }
-}
-```
+Copy `.claude/templates/settings-baseline.json` (A-Team repo) as the starting file, then apply the team-specific additions below. Read-trigger: agent-writer must Read that template file before producing any settings.json. The baseline's `hooks` is an EMPTY stub `{}` — replace it entirely with the `hooks` object from `.claude/templates/hooks-baseline.json` per `rules/hooks-integration.md`; shipping the empty stub is a violation. Compliance check: the generated file parses with `jq .`, contains `hooks`, `permissions`, and `env` keys, and `hooks` contains at least the four baseline events.
 
 ### Agent Teams Mode Configuration
 

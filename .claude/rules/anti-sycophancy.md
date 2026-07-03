@@ -52,6 +52,8 @@ Every position must include:
 
 If an agent fails to resolve a problem after 3 attempts with the same approach, the agent must STOP and report status BLOCKED. State what was attempted, what failed, and what is needed to unblock.
 
+This 3-attempt bound is the same global cap as `rules/execution-contract.md` EC-2.4 (one initial attempt + at most two retries). EC-2 is stricter about approach: same-approach retries are forbidden at sonnet tier, and haiku-tier tasks escalate on first failure with zero retries.
+
 ## Violation Determination
 
 - Agent output contains any forbidden phrase → Violation

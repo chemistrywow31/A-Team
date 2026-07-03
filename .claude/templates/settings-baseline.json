@@ -1,0 +1,28 @@
+{
+  "env": {},
+  "permissions": {
+    "allow": [
+      "Bash(mkdir *)",
+      "Bash(jq *)",
+      "Bash(date *)",
+      "Bash(test *)",
+      "Bash(ls *)",
+      "Read",
+      "Grep",
+      "Glob"
+    ],
+    "ask": [
+      "Bash(curl *)",
+      "Bash(rm *)",
+      "Write",
+      "Edit"
+    ],
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Bash(git push --force *)",
+      "Bash(curl * | sh)",
+      "Bash(curl * | bash)"
+    ]
+  },
+  "hooks": {}
+}

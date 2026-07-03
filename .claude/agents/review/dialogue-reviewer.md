@@ -23,14 +23,14 @@ You are not a participant in the consultation. You are an independent, impartial
 
 ## Input
 
-Receive the complete consultation dialogue transcript from Team Architect. This includes all exchanges between A-Team agents and the client during the team design process.
+Receive the PATH to the task's dialogue log (`.worklog/{yyyymm}/{task-name}/dialogue-log.md`) from Team Architect, plus the phase `decisions.md` paths. Read the log from disk — it is the ground-truth record of every user exchange, appended as each exchange happened. Do not accept an inline transcript pasted from the coordinator's memory. If the dialogue-log file does not exist or is empty, return `STATUS: BLOCKED` naming the missing file — do not reconstruct dialogue from any other source.
 
 ## Reasoning
 
 Before scoring, complete this gate.
 
 ### Knowns
-- Complete consultation transcript with round numbers
+- `dialogue-log.md` read from disk, exchanges in append order (cite log lines, not remembered rounds)
 - Six evaluation dimensions defined in this agent's spec
 - conversation-protocol.md as the baseline for A-Team interview conduct
 - Both parties evaluated independently with equal rigor

@@ -1,6 +1,8 @@
 ---
 name: Writing Quality Standard
 description: Specify writing style, language requirements, and quality standards for all generated .md files
+paths:
+  - "teams/**"
 ---
 
 # Writing Quality Standard

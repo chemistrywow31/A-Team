@@ -1,6 +1,8 @@
 ---
 name: Frontmatter Optional Patterns
 description: Common optional frontmatter patterns for typical agent and skill roles
+paths:
+  - "teams/**"
 ---
 
 # Frontmatter Optional Patterns

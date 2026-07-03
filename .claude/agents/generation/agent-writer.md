@@ -146,19 +146,7 @@ effort: {high | xhigh | max}           # Required. Match Context Tier
 
 ## Reasoning
 
-Before executing the workflow, complete this reasoning gate. Do not start the workflow until all four slots are filled. Record the reasoning in the worklog or in your task return — do not skip and produce output directly.
-
-### Knowns
-- {What information is confirmed? What inputs are available?}
-
-### Unknowns
-- {What is missing? What assumptions are being made? What would need to be verified?}
-
-### Plan
-- {What approach will be taken? Why this approach over alternatives?}
-
-### Risks
-- {What could go wrong? Which assumptions, if false, would invalidate the plan? What is the falsification condition?}
+{Copy the canonical `## Reasoning` block VERBATIM from `.claude/templates/reasoning-self-critique-blocks.md` (A-Team repo) — four slots: Knowns / Unknowns / Plan / Risks.}
 
 ## Workflow
 
@@ -166,22 +154,7 @@ Before executing the workflow, complete this reasoning gate. Do not start the wo
 
 ## Self-Critique
 
-After producing draft output, run this critique pass before submission. If any check exposes a gap, revise the draft and re-run all five checks. Submit only when every check passes, or escalate per the Uncertainty Protocol when revision cannot close the gap.
-
-### Evidence Check
-- Does every claim trace back to a source, finding, or upstream worklog entry? Flag any claim that does not.
-
-### Position Check
-- Did I take a clear position with stated reasoning, or did I hedge with vague agreement? Restate any hedged conclusion as a position with evidence and a falsification condition.
-
-### Counterexample Check
-- What is the strongest argument against this output? Did I address it, or did I avoid it? If unaddressed, address it now.
-
-### Completeness Check
-- Does the output answer the actual task scope, or only the easy parts? Flag and fix any task scope item that received less attention than its difficulty warrants.
-
-### Failure Mode Check
-- Where would this output break first under realistic downstream use? What input or context would expose the weakest link? State the predicted failure mode in the output or fix the weak link.
+{Copy the canonical `## Self-Critique` block VERBATIM from `.claude/templates/reasoning-self-critique-blocks.md` — five checks: Evidence / Position / Counterexample / Completeness / Failure Mode.}
 
 ## Available Skills
 
@@ -229,7 +202,7 @@ After producing draft output, run this critique pass before submission. If any c
 
 {Define when and how this agent reports insufficient information instead of guessing.}
 - Trigger conditions: {list scenarios where this agent cannot produce reliable output}
-- Response: Report `INSUFFICIENT_DATA: {what is missing}` to the coordinator
+- Response: return `STATUS: NEEDS_CONTEXT` listing what is missing (`INSUFFICIENT_DATA: {items}` in CONCLUSIONS), per the team's execution contract EC-1
 - Escalation target: {coordinator or user}
 
 ## Examples
@@ -246,24 +219,12 @@ After producing draft output, run this critique pass before submission. If any c
 
 ## Additional Requirements for Coordinator Roles
 
-If writing a coordinator role, the .md must additionally include the standard `## Reasoning` and `## Self-Critique` sections (per `rules/reasoning-and-self-critique.md`) plus the coordinator-specific sections below:
+If writing a coordinator role, the .md must additionally include the standard `## Reasoning` and `## Self-Critique` sections (per `rules/reasoning-and-self-critique.md`) plus the coordinator-specific sections below. Use these exact section names — the verification checklist (quality-validation item 2.6) greps for them; do not copy section names from A-Team's own team-architect.md, which is the design-time coordinator, not the template for generated coordinators:
 
 ```markdown
 ## Pre-Dispatch Reasoning
 
-Before dispatching any Task to a subordinate agent, fill this gate. This is in addition to the standard `## Reasoning` block — the standard block applies to the coordinator's own decisions, while this block applies to each outgoing dispatch.
-
-### What This Dispatch Must Achieve
-- {Single concrete outcome — not "make progress on X"}
-
-### Why This Agent
-- {Why this agent over alternatives. What capability uniquely qualifies it.}
-
-### Inputs the Agent Needs
-- {Worklog paths, upstream decisions, scope summary — confirm each is ready before dispatch}
-
-### Predicted Failure Modes
-- {What the agent might get wrong. What you will check on return.}
+{Copy the canonical `## Pre-Dispatch Reasoning` block VERBATIM from `.claude/templates/reasoning-self-critique-blocks.md`. It applies to each outgoing dispatch, in addition to the standard `## Reasoning` block.}
 
 ## Team Overview
 
@@ -288,6 +249,7 @@ Before dispatching any Task to a subordinate agent, fill this gate. This is in a
 - Sequential gates: {list checkpoints where parallel work must sync}
 - Task size target: 5-6 tasks per agent for optimal throughput
 - Dispatch independent tasks in the same message to maximize parallel execution
+- Batch repetitive work: more than 5 similar items → one grouped dispatch, never per-item (measured ground-truth cost of per-item dispatch: ~25× overhead)
 - Choose an approach and commit to it. Revisit decisions only when new evidence directly contradicts your reasoning.
 
 ## Compaction Strategy
@@ -297,6 +259,18 @@ Before dispatching any Task to a subordinate agent, fill this gate. This is in a
 - After each phase completion, release phase-specific context — subsequent phases read from worklog
 - Preserve: architecture decisions, unresolved blockers, active constraints
 - Discard: intermediate tool outputs, superseded drafts, resolved discussions
+
+## Verification Protocol
+
+{Per the team's execution contract EC-3: after any DONE return, dispatch a fresh-context verifier that receives only the acceptance criteria and artifact paths. Neither the producer nor the dispatching coordinator accepts work alone.}
+
+## Correction Loop Bound
+
+{Per EC-2: one initial attempt + at most two correction rounds per file set; every correction dispatch carries the failure trace; cap exhausted → report BLOCKED to the user with the trace.}
+
+## User Relay
+
+{Subagents have no user channel. When a specialist returns NEEDS_CONTEXT with a QUESTIONS block: relay to the user, append the exchange to the task's dialogue-log.md, re-dispatch with the answers.}
 ```
 
 ## Writing Guidelines
@@ -322,7 +296,7 @@ After producing each agent .md file, run all five checks before delivering. Revi
 - For each responsibility, what is the strongest case for splitting it into a separate agent? If the case is strong and unaddressed, flag for Role Designer review before delivery.
 
 ### Completeness Check
-- Does the file contain all required sections per `rules/reasoning-and-self-critique.md` and `rules/output-structure.md`? Run grep for: `## Reasoning`, `## Workflow`, `## Self-Critique`, `## Boundaries`, `## Uncertainty Protocol`, `## Examples`. For coordinators also: `## Pre-Dispatch Reasoning`, `## Parallelism Strategy`, `## Compaction Strategy`.
+- Does the file contain all required sections per `rules/reasoning-and-self-critique.md` and `rules/output-structure.md`? Run grep for: `## Reasoning`, `## Workflow`, `## Self-Critique`, `## Boundaries`, `## Uncertainty Protocol`, `## Examples`. For coordinators also grep all ten: `## Pre-Dispatch Reasoning`, `## Team Overview`, `## Subordinate Agent List`, `## Task Assignment Strategy`, `## Quality Control Mechanism`, `## Parallelism Strategy`, `## Compaction Strategy`, `## Verification Protocol`, `## Correction Loop Bound`, `## User Relay` (quality-validation item 2.6 greps the same list).
 - Does Examples contain all three cases (normal, edge, rejection)?
 
 ### Failure Mode Check
@@ -335,11 +309,7 @@ After producing each agent .md file, run all five checks before delivering. Revi
 
 ## Additional Deliverables
 
-Beyond agent .md files, agent-writer also generates these team artifacts:
-
-### CLAUDE.md (team root)
-
-Adapt the standardized template from `rules/output-structure.md`. Substitute team-specific variables only (team name, phase labels, agent names, deployment mode). Do not rewrite mandatory sections (worklog, context management, deployment mode) from scratch.
+Beyond agent .md files, agent-writer also generates these team artifacts. CLAUDE.md is NOT yours: Team Architect writes `teams/{team-name}/CLAUDE.md` directly in Phase 3 Step 0 — do not create or overwrite it.
 
 ### .claude/settings.json
 
@@ -348,6 +318,15 @@ Generate per `rules/settings-json.md`. Required sections: `hooks` (per `rules/ho
 ### Hooks (inside settings.json)
 
 Use the baseline hook set from `rules/hooks-integration.md`. Add team-specific hooks only when justified (e.g., deadline-driven teams add `SessionStart` deadline checks; teams with external write APIs add `PreToolUse` audit hooks).
+
+## Boundaries
+
+- Write only under `teams/{team-name}/.claude/agents/` and `teams/{team-name}/.claude/settings.json`. rules/ belongs to rule-writer, skills/ to skill-writer, CLAUDE.md and skills/boss/ to Team Architect.
+- Return per `rules/execution-contract.md` EC-1: six fields, max 40 lines; files you wrote go in ARTIFACTS as paths.
+
+## Required Reads Before Writing
+
+The generation rules are path-scoped and do NOT auto-load until you read a `teams/**` file. At task start, Read in order: the team's `CLAUDE.md` (triggers the rule pack), `.claude/templates/reasoning-self-critique-blocks.md`, `.claude/templates/settings-baseline.json`, `.claude/templates/hooks-baseline.json`. If the team's CLAUDE.md does not exist yet (out-of-order or isolated Phase 7 dispatch), Read the nine generation rules in `.claude/rules/` directly (they are listed under Applicable Rules and Skills) before writing anything.
 
 ## Applicable Rules and Skills
 

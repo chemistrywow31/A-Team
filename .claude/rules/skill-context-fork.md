@@ -1,6 +1,9 @@
 ---
 name: Skill Context Fork
 description: Decide when a skill should use context fork instead of running inline or via Agent dispatch
+paths:
+  - "teams/**"
+  - ".claude/skills/**"
 ---
 
 # Skill Context Fork
@@ -38,7 +41,7 @@ Typical candidates:
 
 Do not use `context: fork` for:
 
-- **Entry-point skills** — they already spawn a coordinator via the Agent tool; adding `fork` creates double isolation, which breaks argument passing
+- **Entry-point skills** — they make the main session adopt the coordinator workflow (per `rules/output-structure.md`); adding `fork` would isolate that workflow from the user channel and from the Agent tool
 - Skills that need parent conversation history (e.g., skills that reference previously discussed files)
 - Quick single-step skills where Agent dispatch overhead exceeds the skill's work
 - Skills that return small deterministic output (use inline)
@@ -66,13 +69,13 @@ agent: literature-reviewer   # Must exist in .claude/agents/literature-reviewer.
 
 ### Entry-Point Exception
 
-Entry-point skills (`skills/boss/SKILL.md`, `skills/a-team/SKILL.md`) do not use `context: fork`. They pre-approve the Agent tool with `allowed-tools: ["Agent"]` and call Agent explicitly inside the skill body — this gives them finer control over argument passing to the coordinator.
+Entry-point skills (`skills/boss/SKILL.md`, `skills/a-team/SKILL.md`) do not use `context: fork`. They run in the main session, pre-approve the Agent tool with `allowed-tools: ["Agent"]`, and dispatch specialists from there — the coordinator workflow itself must keep the user channel.
 
 ## Violation Determination
 
 - Skill declares `context: fork` without companion `agent` field → Violation
 - Skill declares `context: fork` and `agent` points to a subagent that does not exist in `.claude/agents/` → Violation
-- Entry-point skill declares `context: fork` → Violation (entry-points must use Agent dispatch)
+- Entry-point skill declares `context: fork` → Violation (entry-points run in the main session)
 - Skill declares `context: fork` but body requires parent conversation history (references prior messages) → Violation
 
 ## Exceptions

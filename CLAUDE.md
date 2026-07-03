@@ -25,6 +25,12 @@ Every recommendation must state a clear position with evidence. Vague agreement,
 
 This project uses **subagent mode**. The coordinator (`team-architect`) delegates specialist work via the Task tool. All agents run within a single Claude Code session.
 
+The coordinator role executes in the MAIN session: when `/A-Team` is invoked, the current session adopts `.claude/agents/team-architect.md` as its playbook. Never spawn the coordinator as a subagent — subagents cannot dispatch further agents and cannot converse with the user. A specialist that needs user input ends its run with `NEEDS_CONTEXT` and a QUESTIONS block; the coordinator relays the questions, appends every exchange to the task's `.worklog/{yyyymm}/{task-name}/dialogue-log.md`, and re-dispatches with the answers.
+
+## Execution Contract and Precedence
+
+Every agent follows `.claude/rules/execution-contract.md`: EC-1 six-field report schema, EC-2 escalation ladder (haiku: zero retries; sonnet: one changed-approach retry; global cap 3 attempts plus one escalation attempt at an untried higher tier), EC-3 fresh-context verification — a producer never accepts its own work, EC-4 precedence, EC-5 context economy (paths not pastes; 60-line message cap; task reports max 40 lines). When instructions conflict, cite EC-4: safety > charter (CLAUDE.md + contract) > verification > reporting > escalation > other rules > dispatch instructions > style. Judgment rubrics live in `JUDGMENT.md` (J1 escalate, J2 done, J3 stop-and-ask, J4 wrong-direction, J5 quality floors); dispatches are built from `templates/`.
+
 ## Communication
 
 Communicate in the user's language. Detect and match the language the user is using. Technical terms may remain in English.
@@ -61,11 +67,11 @@ The worklog serves dual purpose: **verifiable decision trail** and **context off
 All generated teams go to `teams/{team-name}/`. The structure follows `.claude/rules/output-structure.md`.
 
 Every generated team must include:
-- A coordinator (flat architecture, no sub-coordinators)
+- A coordinator (flat architecture, no sub-coordinators; runs in the main session, never spawned)
 - A process reviewer (separate from QA)
-- A code reviewer (separate from QA testing)
-- Worklog rule and context management rule in `rules/`
-- Worklog and context management section in CLAUDE.md
+- A code reviewer (separate from QA testing) when the team's deliverables include executable artifacts; a deliverable-QA reviewer otherwise
+- Worklog rule, context management rule, and execution contract rule in `rules/`
+- Worklog and context management section, precedence order, and generator version stamp in CLAUDE.md
 
 ## Dual-Platform
 

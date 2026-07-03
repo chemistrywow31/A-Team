@@ -41,50 +41,11 @@ This ordering creates a tight think → act → verify triad. Do not separate th
 
 ### Canonical `## Reasoning` Block
 
-Every agent's `## Reasoning` section must contain four labeled subsections. The agent must fill all four before starting the workflow.
-
-```markdown
-## Reasoning
-
-Before executing the workflow, complete this reasoning gate. Do not start the workflow until all four slots are filled. Write the reasoning to the worklog or to a structured note in your task return — do not skip and produce output directly.
-
-### Knowns
-- {What information is confirmed? What inputs are available?}
-
-### Unknowns
-- {What is missing? What assumptions are being made? What would need to be verified?}
-
-### Plan
-- {What approach will be taken? Why this approach over alternatives?}
-
-### Risks
-- {What could go wrong? Which assumptions, if false, would invalidate the plan? What is the falsification condition?}
-```
+Every agent's `## Reasoning` section must contain four labeled subsections — `### Knowns`, `### Unknowns`, `### Plan`, `### Risks` — filled before the workflow starts, written to the worklog or the task return. The canonical block text lives in `.claude/templates/reasoning-self-critique-blocks.md`; writers copy it verbatim from there. Compliance check: grep the agent file for all four slot headers under `## Reasoning`.
 
 ### Canonical `## Self-Critique` Block
 
-Every agent's `## Self-Critique` section must contain five labeled checks. The agent must run all five against the draft output before submission. If any check fails, the agent must revise and re-run all five — not submit unrevised output.
-
-```markdown
-## Self-Critique
-
-After producing draft output, run this critique pass before submission. If any check exposes a gap, revise the draft and re-run all five checks. Submit only when every check passes, or escalate per the Uncertainty Protocol when revision cannot close the gap.
-
-### Evidence Check
-- Does every claim trace back to a source, finding, or upstream worklog entry? Flag any claim that does not.
-
-### Position Check
-- Did I take a clear position with stated reasoning, or did I hedge with vague agreement? Restate any hedged conclusion as a position with evidence and a falsification condition.
-
-### Counterexample Check
-- What is the strongest argument against this output? Did I address it, or did I avoid it? If unaddressed, address it now.
-
-### Completeness Check
-- Does the output answer the actual task scope, or only the easy parts? Flag and fix any task scope item that received less attention than its difficulty warrants.
-
-### Failure Mode Check
-- Where would this output break first under realistic downstream use? What input or context would expose the weakest link? State the predicted failure mode in the output or fix the weak link.
-```
+Every agent's `## Self-Critique` section must contain five labeled checks — `### Evidence Check`, `### Position Check`, `### Counterexample Check`, `### Completeness Check`, `### Failure Mode Check` — run against the draft before submission. If any check fails, revise and re-run all five; do not submit unrevised output. Canonical block text: `.claude/templates/reasoning-self-critique-blocks.md` (writers copy verbatim). Compliance check: grep the agent file for all five check headers under `## Self-Critique`.
 
 ### When the Gates Apply
 
@@ -99,27 +60,7 @@ The gates do not apply to internal scratch work that never leaves the agent (e.g
 
 ### Coordinators Run a Pre-Dispatch Variant
 
-Coordinators must additionally run a **Pre-Dispatch Reasoning** before each Task dispatch:
-
-```markdown
-## Pre-Dispatch Reasoning (Coordinator only)
-
-Before dispatching any Task, fill this gate:
-
-### What This Dispatch Must Achieve
-- {Single concrete outcome — not "make progress on X"}
-
-### Why This Agent
-- {Why this agent over alternatives. What capability uniquely qualifies it.}
-
-### Inputs the Agent Needs
-- {Worklog paths, upstream decisions, scope summary — confirm each is ready before dispatch}
-
-### Predicted Failure Modes
-- {What the agent might get wrong. What you will check on return.}
-```
-
-This is the coordinator's equivalent of `## Reasoning`. It forces the coordinator to commit before dispatching and prevents reflexive forwarding of vague tasks.
+Coordinators must additionally run a **Pre-Dispatch Reasoning** gate before each Task dispatch, with four slots: `### What This Dispatch Must Achieve`, `### Why This Agent`, `### Inputs the Agent Needs`, `### Predicted Failure Modes`. Canonical block text: `.claude/templates/reasoning-self-critique-blocks.md`. It forces the coordinator to commit before dispatching and prevents reflexive forwarding of vague tasks.
 
 ### Self-Critique Cannot Be Outsourced
 
@@ -129,23 +70,11 @@ This is a separation of concerns: Self-Critique catches the agent's own blind sp
 
 ### Tier 1 Agents
 
-Tier 1 agents (deterministic formatters, single-lookup utilities — see `rules/context-tier.md`) may use a reduced 2-slot Self-Critique:
-
-```markdown
-## Self-Critique
-
-### Format Check
-- Does the output match the required format exactly?
-
-### Input Coverage Check
-- Was every required input field consumed?
-```
-
-Tier 1 agents may omit `## Reasoning` entirely if the task has zero judgment calls and the agent .md states this in the Tier 1 justification.
+Tier 1 agents (deterministic formatters, single-lookup utilities — see `rules/context-tier.md`) may use the reduced 2-slot Self-Critique (`### Format Check`, `### Input Coverage Check`) — canonical text in `.claude/templates/reasoning-self-critique-blocks.md`. Tier 1 agents may omit `## Reasoning` entirely if the task has zero judgment calls and the agent .md states this in the Tier 1 justification.
 
 ### Failure Recovery
 
-If Self-Critique exposes a gap that revision cannot close after 3 attempts, the agent must escalate via the Uncertainty Protocol with `INSUFFICIENT_DATA` or `BLOCKED` rather than submit known-flawed output. State the specific gap and what would unblock it.
+If Self-Critique exposes a gap that revision cannot close after 3 attempts, the agent must escalate rather than submit known-flawed output: return `STATUS: NEEDS_CONTEXT` (naming the missing information, e.g. `INSUFFICIENT_DATA: {items}` in CONCLUSIONS) when the gap is informational, or `STATUS: BLOCKED` otherwise — the four EC-1.1 statuses are the only valid report statuses. State the specific gap and what would unblock it.
 
 ## Violation Determination
 
@@ -166,4 +95,4 @@ If Self-Critique exposes a gap that revision cannot close after 3 attempts, the 
 - Tier 1 agents may use the reduced Self-Critique format and may omit `## Reasoning` per the Tier 1 carve-out above.
 - During interactive conversation phases (Phase 1 Discovery), agents that ask the user a single clarification question may complete the question without running the full Self-Critique — but must run both gates before producing any artifact (summary document, requirements doc, role design).
 
-Tradeoff: Both gates add structured reasoning steps before and after every workflow. For trivial tasks the cost is real — typically 30-60 extra seconds of reasoning per dispatch. The payoff is reliability: agents catch their own evidence gaps, hedged positions, and unaddressed counterexamples before downstream agents have to. Skipping the gates produces faster output that fails more often under real use, and downstream review costs (re-dispatch, rework, audit findings) exceed the gate cost.
+Tradeoff: both gates add 30-60 seconds of structured reasoning per dispatch; skipping them produces faster output whose downstream failure costs (re-dispatch, rework, audit findings) exceed the gate cost.

@@ -1,0 +1,49 @@
+{
+  "_comment": "Baseline hook set for generated teams (rules/hooks-integration.md). Portable: no jq (not preinstalled on stock macOS), every path anchored to CLAUDE_PROJECT_DIR (bare relative paths created nested .worklog trees in production), non-blocking failures suppressed. session-events.jsonl accumulates the RAW UserPromptSubmit event JSON, one object per line (the user's text is inside the .prompt field — consumers must parse JSON, not expect plain text). Name its consumer in the team CLAUDE.md; teams handling secrets drop that hook or add redaction.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p \"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\" 2>/dev/null || true",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "D=\"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\"; mkdir -p \"$D\" && cat >> \"$D/session-events.jsonl\" 2>/dev/null || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "D=\"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\"; mkdir -p \"$D\" && cat > \"$D/compact-checkpoint.json\" 2>/dev/null || true",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "test -d \"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\" || echo 'WARN: worklog dir missing for this month' >&2",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

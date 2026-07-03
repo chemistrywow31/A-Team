@@ -52,6 +52,7 @@ Generate all deliverables under `teams/{team-name}/`. Discovery must confirm the
 
 ## Key Rules
 
+- `.codex/rules/execution-contract.md` — EC-1 reports, EC-2 escalation, EC-3 fresh-context verification, EC-4 precedence, EC-5 context economy; judgment rubrics in repo-root `JUDGMENT.md`, dispatch templates in repo-root `templates/`
 - `.codex/rules/conversation-protocol.md`
 - `.codex/rules/codex-native-output.md`
 - `.codex/rules/codex-runtime-config.md`

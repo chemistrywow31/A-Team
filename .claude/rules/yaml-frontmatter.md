@@ -1,6 +1,8 @@
 ---
 name: YAML Frontmatter
 description: Mandate YAML frontmatter as the first content in every generated .md file
+paths:
+  - "teams/**"
 ---
 
 # YAML Frontmatter

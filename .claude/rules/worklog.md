@@ -18,8 +18,11 @@ Every task executed by the team must maintain a worklog under the `.worklog/` di
 ### Directory Structure and Naming
 
 ```
-.worklog/{yyyymm}/{task-name}/phase-{n}-{label}/
-  ├── references.md    ├── findings.md    ├── decisions.md    └── audit.md (optional)
+.worklog/{yyyymm}/{task-name}/
+  ├── brief.md          ← task BRIEF: goal, constraints, key paths (rules/execution-contract.md EC-5.1)
+  ├── dialogue-log.md   ← every user Q&A exchange, appended when it happens
+  └── phase-{n}-{label}/
+      ├── references.md    ├── findings.md    ├── decisions.md    └── audit.md (optional)
 ```
 
 - `{yyyymm}`: Year-month of task start (e.g., `202603`)
@@ -69,7 +72,7 @@ When no external reference exists for a decision, `references.md` must explicitl
 
 ### Worklog Creation Timing
 
-- The coordinator creates the worklog directory structure at the start of each task, before dispatching any phase work
+- The coordinator creates the worklog directory structure at the start of each task, before dispatching any phase work — including `brief.md` and an EMPTY `dialogue-log.md` (created even when no dialogue has happened yet: Phase 6 reads this file, and an absent file blocks the dialogue review)
 - Each agent writes to the worklog during and at the end of their phase work
 - The coordinator verifies worklog completeness at each phase boundary before proceeding
 
@@ -93,3 +96,4 @@ Once information is written to the worklog, agents do not need to retain it in c
 
 - Phases that produce no decisions (e.g., a phase that only collects user input without making design choices) may have an empty `decisions.md` with a note: "No decisions made in this phase — input collection only."
 - For tasks with a single phase, the phase folder is still required (e.g., `phase-1-execution/`).
+- Generated teams running high-frequency operational pipelines may declare per-phase worklog profiles in their own worklog rule: decision-making phases keep the full three-file chain; mechanical phases (deterministic transforms that decide nothing) log one line per run to `phase-log.jsonl` (inputs, outputs, status) instead. A-Team's own design phases always use the full triad.
