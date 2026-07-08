@@ -39,6 +39,7 @@ Resolve `config_file` relative to the `.codex/` directory.
 Do not generate `.claude/settings.json`, Claude permission allowlists, Claude Agent Teams flags, or Claude hook events for Codex-native output. Convert portable intent as follows:
 
 - settings defaults -> `.codex/config.toml`
+- permission bands -> `approval_policy` + `sandbox_mode`: the Claude allow band maps to `sandbox_mode = "workspace-write"` with `approval_policy = "on-failure"` (routine sandboxed work proceeds without prompts); ask-band intent stays covered by sandbox escalation prompts; never default to `danger-full-access` or `approval_policy = "never"`
 - skill discovery -> `.agents/skills/`
 - lifecycle bookkeeping -> worklog and optional Codex hooks
 - Agent Teams flags -> `[features] multi_agent = true`

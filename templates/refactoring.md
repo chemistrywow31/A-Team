@@ -7,7 +7,7 @@ Use for: restructuring existing files while preserving behavior (prompt slimming
 ```
 TASK ID: {{id}}   TIER: {{haiku|sonnet|opus}}   RETRY BUDGET: per EC-2 (§7.2)
 OBJECTIVE: {{one sentence — what gets restructured, what must not change}}
-CONTEXT (paths only): {{BRIEF path}}; {{upstream decisions.md paths}}
+CONTEXT (absolute paths only): {{BRIEF absolute path}}; {{upstream decisions.md absolute paths}}
 SCOPE — IN: {{exact files to refactor}}
 SCOPE — OUT (do not touch): {{files that stay frozen, e.g. frontmatter fields, other agents' files}}
 BEHAVIOR-PRESERVATION PROOF: run {{check commands}} BEFORE editing, save output; run the same

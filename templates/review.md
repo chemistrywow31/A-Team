@@ -8,7 +8,7 @@ Use for: verification dispatches, decision audits, structure validation, dialogu
 TASK ID: {{id}}   TIER: {{haiku|sonnet|opus}}   RETRY BUDGET: per EC-2 (§7.2)
 OBJECTIVE: {{one sentence — what artifact set gets reviewed against what bar}}
 RUBRIC: apply {{JUDGMENT.md J5.x floors and/or rule-file violation lists}} — cite each by number
-CONTEXT (paths only): {{acceptance criteria file/list}}; {{artifact paths}} — DO NOT send producer
+CONTEXT (absolute paths only): {{acceptance criteria file/list, absolute}}; {{artifact absolute paths}} — DO NOT send producer
   reasoning or history to this reviewer (EC-3.2)
 SCOPE — IN: {{exact files to review}}
 SCOPE — OUT (do not touch): the reviewer modifies nothing — findings only. Rewrites are a
@@ -29,7 +29,7 @@ BUDGET: max {{lines}} output lines / {{count}} tool calls
 TASK ID: demo-15   TIER: opus   RETRY BUDGET: per EC-2 (§7.2)
 OBJECTIVE: Verify the 6 generated agent files for teams/demo-team/ meet the agent floor and the Phase 2 plan.
 RUBRIC: JUDGMENT.md J5.1 (agent floor) + rules/reasoning-and-self-critique.md violation list
-CONTEXT (paths only): .worklog/202607/demo-team/phase-2-planning/decisions.md (criteria source);
+CONTEXT (absolute paths only): /Users/{user}/{repo}/.worklog/202607/demo-team/phase-2-planning/decisions.md (criteria source);
   teams/demo-team/.claude/agents/ — DO NOT send producer reasoning (EC-3.2)
 SCOPE — IN: all .md under teams/demo-team/.claude/agents/
 SCOPE — OUT (do not touch): the reviewer modifies nothing; findings only

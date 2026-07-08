@@ -152,6 +152,7 @@ Omit `paths` (unconditional loading) when the rule is about process or behavior:
 4. **Control quantity.** The entire team's rule files should not exceed 8. If exceeded, consider merging or removing lower-priority rules.
 5. **Don't repeat agent responsibility descriptions.** Rules define universal norms across roles, not a specific role's workflow.
 6. **Scope file-type rules with `paths`.** Every rule about a specific file type or directory must include `paths` frontmatter. This prevents loading irrelevant rules and saves context tokens.
+7. **Retrofit lint for existing teams.** When writing or adapting a rule for an existing team (a team with already-generated agents or skills), before delivering: (a) grep every agent or skill the rule names as an example and reconcile the rule text with that file's own declarations; (b) grep every frontmatter or format prescription the rule makes against the team's current file inventory, counting the conflicts. Deliver only after conflicts are reconciled in the rule text or explicitly listed in the report's RISKS/UNKNOWNS with a proposed resolution. A rule that instantly puts existing files in violation without flagging it is a defective delivery.
 
 ## Self-Critique
 

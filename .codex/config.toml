@@ -5,6 +5,12 @@ model = "gpt-5.5"
 model_reasoning_effort = "xhigh"
 disable_response_storage = true
 
+# Basic permission posture (parity with .claude/settings.json permission bands):
+# run shell steps inside a workspace-scoped sandbox and only escalate for
+# approval when a command fails or needs to leave the sandbox.
+approval_policy = "on-failure"
+sandbox_mode = "workspace-write"
+
 # Prefer Codex-native project docs, but still load legacy teams that only ship CLAUDE.md.
 project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md"]
 

@@ -43,6 +43,7 @@ Used by the fresh-context verifier dispatched by `agents/team-architect.md` (Pha
 - 2.8 Every rule has Applicability, Rule Content, Violation Determination, Exceptions; ≤100 lines — grep + `wc -l`
 - 2.9 Every external skill (Pattern A/B) has Source Attribution with Origin, Integration, Retrieved, Modifications — grep
 - 2.10 Every agent .md ≤300 lines — `wc -l`
+- 2.11 Generation-artifact hygiene — `grep -rn '</content>\|</invoke>\|</parameter>' {team}` returns nothing; `grep -rn 'TODO\|TBD' {team}` hits only lines that are demonstrably content (e.g., a rule discussing TODO conventions), never unfinished slots (ground truth: alexandria 2026-07 — 14 stray closing tags shipped past producer Self-Critique AND this checklist's verifier; only the design-fidelity auditor caught them)
 
 ## Level 3: Reference Consistency
 
@@ -69,7 +70,7 @@ Used by the fresh-context verifier dispatched by `agents/team-architect.md` (Pha
 - 5.4 `boss/SKILL.md` declares `disable-model-invocation: true`, `allowed-tools: ["Agent"]`, `argument-hint`, and uses main-session adoption. The verifier dispatch supplies the coordinator agent's name. Check: `grep -inE 'subagent_type|spawn' {team}/.claude/skills/boss/SKILL.md` — FAIL if any hit instructs spawning the coordinator (by the supplied name or as "the coordinator"); PASS additionally requires a line instructing the session to Read the coordinator's .md and adopt its workflow
 - 5.5 Process reviewer exists in its own group folder (teams ≤3 agents: coordinator absorbs it, documented in Responsibilities)
 - 5.6 Code reviewer exists when deliverables include executable artifacts; otherwise a deliverable-QA reviewer — read CLAUDE.md scope
-- 5.7 settings.json has `hooks`, `permissions`, `env`; hook commands anchor paths to `$CLAUDE_PROJECT_DIR`, contain no `jq` dependency, and `permissions.allow` grants nothing destructive — `jq` + grep
+- 5.7 settings.json has `hooks`, `permissions`, `env`; hook commands anchor paths to `$CLAUDE_PROJECT_DIR`, contain no `jq` dependency, and `permissions.allow` grants nothing destructive and no interpreter/runner wildcards; bare `Write`/`Edit`/`Agent` sit in allow, not ask (permission bands per `rules/settings-json.md`) — `jq` + grep
 - 5.8 Mechanical check only: every rule whose Rule Content contains glob tokens (`**/` or `*.`) has `paths` frontmatter — grep the body for glob tokens, cross-check the frontmatter. Rules that read as both file-type and process are NOT judged here: list them under DONE_WITH_CONCERNS (semantic classification lives in 4.5)
 - 5.9 No urgency language (CRITICAL / MUST / ALWAYS / NEVER) on non-safety behavioral preferences — grep, judge each hit against the tone table in `rules/prompt-engineering-patterns.md`
 - 5.10 Every non-Tier-1 agent has an Uncertainty Protocol with a concrete trigger — grep

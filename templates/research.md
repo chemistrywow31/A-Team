@@ -8,7 +8,7 @@ Use for: domain investigation, best-practice synthesis, comparative analysis (do
 TASK ID: {{id}}   TIER: {{haiku|sonnet|opus}}   RETRY BUDGET: per EC-2 (§7.2)
 OBJECTIVE: {{the one question this research must answer}}
 QUESTION DECOMPOSITION: {{2–5 sub-questions; each gets its own evidence-table rows}}
-CONTEXT (paths only): {{BRIEF path}}; {{upstream decisions.md paths}}
+CONTEXT (absolute paths only): {{BRIEF absolute path}}; {{upstream decisions.md absolute paths}}
 SCOPE — IN: {{domains/source types to cover}}
 SCOPE — OUT (do not touch): {{out-of-scope topics; no file modifications outside the output file}}
 EVIDENCE TABLE (required output format, one row per claim):

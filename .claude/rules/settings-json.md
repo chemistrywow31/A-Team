@@ -44,15 +44,21 @@ When the team uses Agent Teams mode (per CLAUDE.md deployment section), settings
 
 Use `"in-process"` as default. Teams may switch to `"tmux"` only when split-pane visibility is critical and the user confirms their terminal supports it.
 
+### Permission Bands
+
+The baseline sorts every permission into three bands by blast radius. Keep entries in the matching band:
+
+1. **allow — routine, project-scoped, reversible**: Read/Grep/Glob, Write/Edit on project files, Agent dispatch, WebFetch/WebSearch, safe file ops (ls/mkdir/jq/date/test/tree), local-only git (status/diff/log/add/commit/checkout/worktree). Prompting for routine work trains users to approve reflexively, which destroys the signal of the prompts that matter; local git is reversible via reflog.
+2. **ask — externally visible or hard to reverse**: curl/wget transfers, rm, git push, npm/npx installs, API write operations (e.g., `"Bash(curl -X POST *)"`).
+3. **deny — irreversible or secret-exposing**: rm -rf variants, force push, reset --hard, clean -fd, pipe-to-shell, chmod -R 777, reads of `.env` / `secrets/**` / `*.pem`.
+
+Scoped overrides beat bare grants: `ask`/`deny` rules match before `allow`, so a team that must gate one directory keeps bare `Write` in allow and adds the scoped gate to ask (e.g., `"Write(profiles/**)"` for fixed-by-design profiles). Never demote bare `Write`/`Edit`/`Agent` to ask — that reintroduces a prompt on every deliverable and every dispatch.
+
+Never allowlist arbitrary execution: interpreter and runner wildcards (`Bash(python3 *)`, `Bash(node *)`, `Bash(bash *)`, `Bash(npm run *)`) are unrestricted code execution. Grant exact-form entries per vetted script instead (e.g., `"Bash(python scripts/cnn_scraper.py *)"`, `"Bash(npm run lint*)"`).
+
 ### Team-Specific Permissions
 
-Beyond the baseline `permissions`, teams must add:
-
-- API write operations the team performs (e.g., `"Bash(curl -X POST *)"` for teams that push to HTTP APIs)
-- MCP tool calls the team depends on (e.g., `"mcp__memory__write"`)
-- Agent tool itself (teams that dispatch via Agent must allow `"Agent"` or scope it via skills' `allowed-tools`)
-
-Default to `"ask"` for write operations unless the team has explicit user authorization for automation.
+Beyond the baseline `permissions`, teams add allow entries for tools their pipeline actually invokes (e.g., `"Bash(pandoc *)"`, `"Bash(ffprobe *)"`) and MCP tool calls they depend on (e.g., `"mcp__memory__write"`). Default to `"ask"` only for operations with external effect, per the bands above.
 
 ### File Locations
 
@@ -71,6 +77,8 @@ Precedence: Managed (org-wide) > User (`~/.claude/settings.json`) > Project (`.c
 - `settings.json` missing required sections (`hooks`, `permissions`, `env`) → Violation
 - Team declares Agent Teams mode in CLAUDE.md but settings.json lacks `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` → Violation
 - `permissions.allow` grants destructive operations (`"Bash(rm -rf *)"`, `"Bash(git push --force *)"`) without explicit user instruction → Violation
+- `permissions.allow` contains an interpreter, shell, or runner wildcard (`Bash(python3 *)`, `Bash(node *)`, `Bash(bash *)`, `Bash(npm run *)`) → Violation
+- Bare `Write`, `Edit`, or `Agent` placed in `ask`/`deny` instead of allow, without a decisions.md entry justifying the gate → Violation
 - `settings.local.json` committed to git (project template should gitignore it) → Violation
 
 ## Exceptions

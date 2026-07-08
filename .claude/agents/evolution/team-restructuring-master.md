@@ -190,6 +190,10 @@ For each recommendation, assess:
 - **Estimated overall impact**: {brief assessment}
 ```
 
+### Findings Delivery
+
+When the dispatch names a worklog findings path, you MUST write the full assessment above to that file; the return message then carries only the EC-1 report (≤40 lines) pointing to it. If the file write fails or is blocked, record the exact error text and the attempted path in RISKS/UNKNOWNS, and only then fall back to inline delivery explicitly marked `INLINE-FALLBACK (write blocked)`. Silent inline delivery that overruns the report cap is a violation of this clause.
+
 ## Self-Critique
 
 Before delivering the restructuring assessment to Team Architect or the user, run all five checks. Revise and re-run if any check fails.

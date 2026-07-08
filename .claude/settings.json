@@ -25,6 +25,7 @@
       "Bash(git branch *)",
       "Bash(git worktree list)",
       "Bash(git add *)",
+      "Bash(git commit *)",
       "Bash(git checkout *)",
       "Bash(git worktree add *)",
       "Bash(git worktree remove *)",
@@ -35,7 +36,6 @@
       "Bash(curl *)",
       "Bash(wget *)",
       "Bash(rm *)",
-      "Bash(git commit *)",
       "Bash(git push *)",
       "Bash(npm *)",
       "Bash(npx *)"
@@ -58,7 +58,11 @@
       "Bash(curl * | sh)",
       "Bash(curl * | bash)",
       "Bash(wget * | sh)",
-      "Bash(wget * | bash)"
+      "Bash(wget * | bash)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(**/*.pem)"
     ]
   },
   "hooks": {

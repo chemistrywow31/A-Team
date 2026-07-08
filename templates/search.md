@@ -7,7 +7,7 @@ Use for: external skill discovery, tool lookup, finding existing solutions. Fill
 ```
 TASK ID: {{id}}   TIER: {{haiku|sonnet|opus}}   RETRY BUDGET: per EC-2 (§7.2)
 OBJECTIVE: {{one sentence, one deliverable}}
-CONTEXT (paths only): {{BRIEF path}}; {{upstream decisions.md paths}}
+CONTEXT (absolute paths only): {{BRIEF absolute path}}; {{upstream decisions.md absolute paths}}
 SCOPE — IN: {{what to search for}}
 SCOPE — OUT (do not touch): {{topics/dirs to leave alone; no file modifications}}
 ACCEPTANCE CRITERIA (mechanically checkable):
@@ -30,7 +30,7 @@ BUDGET: max {{lines}} output lines / {{count}} tool calls
 ```
 TASK ID: toeic-04   TIER: sonnet   RETRY BUDGET: per EC-2 (§7.2)
 OBJECTIVE: Find reusable external skills for TOEIC question generation to avoid writing custom ones.
-CONTEXT (paths only): .worklog/202607/toeic-team/brief.md; .worklog/202607/toeic-team/phase-2-planning/decisions.md
+CONTEXT (absolute paths only): /Users/you/repo/.worklog/202607/toeic-team/brief.md; /Users/you/repo/.worklog/202607/toeic-team/phase-2-planning/decisions.md
 SCOPE — IN: SkillsMP, aitmpl.com, GitHub topic "claude-skills"; skills for language-quiz generation
 SCOPE — OUT (do not touch): paid marketplaces; do not modify any repo file
 ACCEPTANCE CRITERIA (mechanically checkable):

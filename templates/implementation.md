@@ -7,7 +7,7 @@ Use for: generating files (agent/skill/rule .md, CLAUDE.md, settings.json) or wr
 ```
 TASK ID: {{id}}   TIER: {{haiku|sonnet|opus}}   RETRY BUDGET: per EC-2 (§7.2)
 OBJECTIVE: {{one sentence, one deliverable}}
-CONTEXT (paths only): {{BRIEF path}}; {{upstream decisions.md paths}}; {{template/spec paths to read first}}
+CONTEXT (absolute paths only): {{BRIEF absolute path}}; {{upstream decisions.md absolute paths}}; {{template/spec absolute paths to read first}}
 SCOPE — IN: {{exact files to create or edit}}
 SCOPE — OUT (do not touch): {{dirs/files owned by other agents this phase}}
 CONSTRAINTS: {{length limits, mandatory sections, naming rules — cite the rule file}}
