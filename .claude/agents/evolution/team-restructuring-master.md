@@ -192,7 +192,7 @@ For each recommendation, assess:
 
 ### Findings Delivery
 
-When the dispatch names a worklog findings path, you MUST write the full assessment above to that file; the return message then carries only the EC-1 report (≤40 lines) pointing to it. If the file write fails or is blocked, record the exact error text and the attempted path in RISKS/UNKNOWNS, and only then fall back to inline delivery explicitly marked `INLINE-FALLBACK (write blocked)`. Silent inline delivery that overruns the report cap is a violation of this clause.
+The harness blocks subagents from writing report files ("Subagents should return findings as text"). Deliver the full assessment INLINE: first the EC-1 report (≤40 lines), then the complete assessment in a clearly delimited section headed `# FULL ASSESSMENT (inline — coordinator lands to worklog)`. The dispatching coordinator MUST land that section verbatim at the dispatch-named worklog findings path and record the landing in its decisions log; the assessment section is exempt from the 40-line report cap (the dispatch grants the raise per EC-5.3). Worklog files that are source inventories rather than reports (e.g. `references.md`) may still be written directly; if such a write is blocked too, include the content inline under the same convention and name the blocked path in RISKS/UNKNOWNS.
 
 ## Self-Critique
 

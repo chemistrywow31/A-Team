@@ -19,7 +19,7 @@ Used by the fresh-context verifier dispatched by `agents/team-architect.md` (Pha
 - Level 2 items apply the per-artifact floors canonically defined in `JUDGMENT.md` J5. When this file and J5 disagree, J5 wins — update this file in the same change (single-source rule).
 - Run each check's command from the repo root; `{team}` = `teams/{team-name}`.
 - Record one line per item: `{item} | PASS or FAIL | {file:line or command output}`.
-- Overall PASS requires every applicable item PASS. Return per EC-1; the full item table goes to the phase worklog as `verification.md`.
+- Overall PASS requires every applicable item PASS. Return per EC-1 with the full item table INLINE (the harness blocks subagent report-file writes); the dispatching coordinator lands the table at the phase worklog as `verification.md`.
 
 ## Level 1: Structural Completeness
 
@@ -39,7 +39,7 @@ Used by the fresh-context verifier dispatched by `agents/team-architect.md` (Pha
 - 2.4 Reasoning has the 4 canonical slots; Self-Critique has the 5 canonical checks (Tier 1 agents: reduced 2-check form allowed only with a Tier 1 justification) — grep slot headers
 - 2.5 Every agent has `## Boundaries`, `## Uncertainty Protocol`, `## Examples` with normal + edge + rejection cases — grep
 - 2.6 Coordinator additionally has: Pre-Dispatch Reasoning, Team Overview, Subordinate Agent List, Task Assignment Strategy, Quality Control Mechanism, Parallelism Strategy (with the >5-items batch rule), Compaction Strategy, Verification Protocol, Correction Loop Bound, User Relay — grep
-- 2.7 Every skill has Description, Users/Belongs To, Core Knowledge, 3 examples; ≤200 lines or progressive-disclosure bundle — grep + `wc -l`
+- 2.7 Every skill per J5.2: lives at `skills/{name}/SKILL.md`, frontmatter `name` + `description`, 3 examples (normal, edge, rejection), ≤200 lines or progressive-disclosure bundle; entry-point extras are checked in 5.4 — path test + grep + `wc -l`
 - 2.8 Every rule has Applicability, Rule Content, Violation Determination, Exceptions; ≤100 lines — grep + `wc -l`
 - 2.9 Every external skill (Pattern A/B) has Source Attribution with Origin, Integration, Retrieved, Modifications — grep
 - 2.10 Every agent .md ≤300 lines — `wc -l`
@@ -49,7 +49,7 @@ Used by the fresh-context verifier dispatched by `agents/team-architect.md` (Pha
 
 - 3.1 Every skill path referenced in an agent file exists — extract refs, `test -f` each
 - 3.2 Every rule path referenced in an agent file exists — same
-- 3.3 Skill Users lists ↔ actual agents; rule Applicability ↔ actual agents
+- 3.3 Where a skill declares a Users/Belongs To section, its list ↔ actual agents (the section itself is optional per 2.7/J5.2); rule Applicability ↔ actual agents
 - 3.4 Coordinator's subordinate list covers all non-coordinator agents
 - 3.5 Source Attribution URLs and Pattern types match the Phase 2 plan — read Phase 2 `decisions.md`
 - 3.6 The same concept uses the same name across all files
@@ -88,4 +88,4 @@ Used by the fresh-context verifier dispatched by `agents/team-architect.md` (Pha
 Overall: PASS / FAIL ({n} failures listed above)
 ```
 
-Deliver the report per EC-1; write the full table to the phase worklog as `verification.md`.
+Deliver the report per EC-1 with the table inline; the coordinator lands it at the phase worklog as `verification.md`.

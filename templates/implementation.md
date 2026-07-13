@@ -19,6 +19,9 @@ NO PLACEHOLDERS: delivered files contain zero TODO/TBD/{{...}} markers
 EXECUTION EVIDENCE: paste nothing — run the checks, cite their output location in EVIDENCE
 VERIFICATION: fresh-context verifier re-runs the checks and reads back each criterion, per EC-3 (§7.3)
 REPORT: EC-1 schema (§7.1); anything over 30 lines → file under {{worklog path}}, send the path
+HARNESS NOTE: team artifacts (the deliverable files) write normally; worklog-report writes may
+  be harness-blocked ("Subagents should return findings as text") — if blocked, return inline
+  marked INLINE-FALLBACK (dispatch states the raised cap); the dispatcher persists verbatim
 ESCALATE IF: J1.1, J1.2, J4.2 (fix keeps growing), or J4.3 (weakened check) fires
 BUDGET: max {{lines}} output lines / {{count}} tool calls
 ```

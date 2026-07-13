@@ -19,6 +19,9 @@ ACCEPTANCE CRITERIA (mechanically checkable):
   2. Executable artifacts were executed, output cited (EC-3.4); unexecuted claim = FAIL.
 VERDICT: overall PASS only when every criterion on every file is PASS (EC-3.6)
 REPORT: EC-1 schema (§7.1); findings over 30 lines → {{output file}}, send the path
+HARNESS NOTE: the harness may block subagent Writes of report-shaped .md ("Subagents should
+  return findings as text"); do not circumvent via Bash — return findings inline marked
+  INLINE-FALLBACK (dispatch states the raised line cap); the dispatcher persists them verbatim
 ESCALATE IF: J1.3 (expertise gap) or J3.1 (criteria conflict) fires; budget per EC-2.4
 BUDGET: max {{lines}} output lines / {{count}} tool calls
 ```

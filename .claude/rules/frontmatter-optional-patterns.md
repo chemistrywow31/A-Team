@@ -97,12 +97,12 @@ No `tools` restriction — the coordinator dispatches via Agent / Task tools and
 
 ### Pattern F: Entry-Point Skill
 
-See `rules/yaml-frontmatter.md` Entry-Point Skill Mandate. Standard shape:
+See `rules/yaml-frontmatter.md` Entry-Point Skill Mandate and the Entry-Point Skill section of `rules/output-structure.md`. The skill makes the CURRENT session adopt the coordinator playbook — it never spawns the coordinator as a subagent (a spawned coordinator cannot dispatch further agents or converse with the user). Standard shape:
 
 ```yaml
 ---
 name: Boss
-description: Entry point that spawns the {coordinator} to run {workflow}
+description: Entry point that makes the current session adopt the {coordinator} workflow to run {workflow}
 disable-model-invocation: true
 allowed-tools: ["Agent"]
 argument-hint: "[team-specific hint]"
