@@ -60,12 +60,7 @@ Cross-phase support agents (available at any phase):
 
 ## Worklog
 
-All work is documented in `.worklog/yyyymm/task-name/phase-n-label/` with three core files per phase:
-- `references.md` — Sources consulted
-- `findings.md` — Key discoveries and analysis
-- `decisions.md` — Decisions with rationale, alternatives, and evidence chain
-
-The worklog serves dual purpose: **verifiable decision trail** and **context offloading** (agents read from worklog instead of carrying full context). See `.claude/rules/worklog.md` and `.claude/rules/context-management.md`.
+Structure, required files, and the evidence chain live in `.claude/rules/worklog.md`; context-offloading behavior in `.claude/rules/context-management.md`. Both load unconditionally, so this section points rather than restates — a second copy is paid on every session and every dispatch, and drifts.
 
 ## Output
 
