@@ -26,6 +26,9 @@ This repository keeps the original `.claude/` implementation as the legacy/sourc
 | `.agents/skills/` | `.claude/skills/` | Claude -> Codex runtime | Runtime-discoverable Codex skill copy mirrors authored or adapted skills |
 | `.codex/docs/format-mapping.md` | N/A | Codex anchor | Per-team retained mapping artifact for round-trip conversion |
 | Codex `spawn_agent`, `send_input`, `wait` | Claude `Task` / Agent Teams phrasing | Bidirectional concept mapping | Coordinator workflow terminology differs, intent stays aligned |
+| `scripts/` (repo root) | `scripts/` (repo root) | Shared, tree-neutral | Executable tooling belongs to neither platform tree; one copy serves both. `preflight-permissions.sh` branches on the probed runtime rather than on the tree it was invoked from |
+| `teams/{name}/docs/RUNTIME-SETUP.md` | same path | Bidirectional | Same filename both trees; body differs by probed runtime — Codex reports sandbox/approval posture, Claude Code reports auto-mode carve-outs |
+| N/A | Claude auto-mode carve-out (`autoMode` in user settings) | Claude-only | No Codex counterpart. Codex gates with `approval_policy` / `sandbox_mode` in `.codex/config.toml`. Deliberately non-ported; recorded in `claude-adaptation-audit.md` |
 
 ## Agent Transform Rules
 

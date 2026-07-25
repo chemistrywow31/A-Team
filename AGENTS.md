@@ -34,6 +34,7 @@ Generate all deliverables under `teams/{team-name}/`. Discovery must confirm the
 1. Discovery
 2. Planning
 3. Generation
+3.5. Runtime preflight — probe the live runtime, write `teams/{name}/docs/RUNTIME-SETUP.md`
 4. Optional optimization
 5. Delivery review
 6. Dialogue review
@@ -47,7 +48,7 @@ Generate all deliverables under `teams/{team-name}/`. Discovery must confirm the
 - Planning: `.codex/agents/planning/skill-planner.md`
 - Generation: `.codex/agents/generation/rule-writer.md`, `.codex/agents/generation/skill-writer.md`, `.codex/agents/generation/agent-writer.md`
 - Optimization: `.codex/agents/optimization/prompt-optimizer.md`
-- Review: `.codex/agents/review/dialogue-reviewer.md`
+- Review: `.codex/agents/review/runtime-preflight-advisor.md`, `.codex/agents/review/dialogue-reviewer.md`
 - Evolution: `.codex/agents/evolution/team-restructuring-master.md`
 
 ## Key Rules

@@ -20,6 +20,9 @@ All generated team structures must follow this directory configuration:
 ```
 teams/{team-name}/
 ├── CLAUDE.md                         ← Team-wide instructions all agents must follow
+├── docs/
+│   ├── RUNTIME-SETUP.md              ← Phase 3.5 preflight advisory (per rules/settings-json.md)
+│   └── automode-snippet.json         ← Paste-ready autoMode block for the user's own settings
 ├── .worklog/                         ← Phase-level work documentation (created at runtime)
 │   └── {yyyymm}/
 │       └── {task-name}/
@@ -122,6 +125,14 @@ The generated team's `rules/` directory must also include:
 - A **reasoning and self-critique rule** defining the canonical `## Reasoning` and `## Self-Critique` gates every generated agent carries (per `rules/reasoning-and-self-critique.md`)
 - An **execution contract rule** adapted from A-Team's `rules/execution-contract.md`: six-field report schema, escalation ladder mapped to the team's model tiers, fresh-context verification protocol (producers never accept their own work), precedence order, and output caps
 
+### Runtime Setup Advisory
+
+Every generated team must ship `docs/RUNTIME-SETUP.md`, produced by `runtime-preflight-advisor` at the Phase 3 → Phase 5 boundary. It records what the user's actual Claude Code installation will do with the team's files and what the user must configure before the first run.
+
+It exists because some runtime configuration cannot live inside the team. Auto-mode carve-outs are honored only from user settings, and no agent is permitted to write them (see `rules/settings-json.md`, Auto Mode Reality). A document plus a user-run command is the only delivery mechanism.
+
+The advisory must carry a probe stamp (`Probed: {claude version} on {os} at {yyyy-mm-dd}`) so staleness after a Claude Code upgrade is visible rather than silent, and must state the backup, apply, verify, and rollback commands for the probed OS.
+
 ### Entry-Point Skill
 
 Every generated team must include an entry-point skill at `skills/boss/SKILL.md`, invokable as `/boss`. This skill makes the CURRENT session adopt the team coordinator's full workflow, ensuring users always enter through it. Do not spawn the coordinator as a subagent: a spawned coordinator cannot dispatch further agents and cannot converse with the user (production evidence: toeic-daily-prep-team first-run dead-lock, 2026-06, hand-patched).
@@ -194,6 +205,8 @@ paths:
 - Entry-point skill `skills/boss/SKILL.md` missing `disable-model-invocation: true` → Violation
 - Entry-point skill missing `allowed-tools: ["Agent"]` → Violation
 - Entry-point skill missing `argument-hint` → Violation
+- Generated team missing `docs/RUNTIME-SETUP.md` → Violation
+- `docs/RUNTIME-SETUP.md` missing the probe stamp, or missing the rollback command → Violation
 - Generated team missing `.claude/settings.json` → Violation (see `rules/settings-json.md`)
 - Team declares Agent Teams mode in CLAUDE.md but `settings.json` lacks `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` → Violation
 - Agent Teams mode team missing File Ownership section in any agent .md → Violation

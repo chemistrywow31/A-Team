@@ -44,6 +44,7 @@ Point out issues directly when the user's ideas are unreasonable — always prov
 | 1. Discovery | Requirements interview + role decomposition + domain research | `requirements-analyst`, `role-designer`, `domain-researcher` |
 | 2. Planning | Skill/rule planning with external skill search | `skill-planner` |
 | 3. Generation | CLAUDE.md + folder structure + file generation | `rule-writer`, `skill-writer`, `agent-writer` |
+| 3.5 Preflight | Probe the live permission runtime, write `docs/RUNTIME-SETUP.md` | `runtime-preflight-advisor` |
 | 4. Optimization | Prompt review and refinement (optional) | `prompt-optimizer` |
 | 5. Review | Structure validation + user feedback | `team-architect` |
 | 6. Dialogue Review | Consultation quality audit (mandatory) | `dialogue-reviewer` |
@@ -72,6 +73,9 @@ Every generated team must include:
 - A code reviewer (separate from QA testing) when the team's deliverables include executable artifacts; a deliverable-QA reviewer otherwise
 - Worklog rule, context management rule, and execution contract rule in `rules/`
 - Worklog and context management section, precedence order, and generator version stamp in CLAUDE.md
+- `docs/RUNTIME-SETUP.md` from Phase 3.5 — what the user must configure outside the team before first run
+
+Some runtime configuration cannot ship inside a generated team. Claude Code's auto-mode carve-outs are honored only from user settings, and no agent may write them — attempting it is a classified violation. A-Team's answer is advisory: probe the live runtime, emit a document plus a user-run command. See `.claude/rules/settings-json.md` (Auto Mode Reality) and `scripts/preflight-permissions.sh`.
 
 ## Dual-Platform
 

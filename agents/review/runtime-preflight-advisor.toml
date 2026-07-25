@@ -1,0 +1,12 @@
+name = "Runtime Preflight Advisor"
+description = "Probe the live agent runtime and write the per-team runtime setup advisory."
+model = "gpt-5.4"
+model_reasoning_effort = "high"
+sandbox_mode = "workspace-write"
+
+developer_instructions = """
+Read `AGENTS.md` first.
+Then read `.codex/agents/review/runtime-preflight-advisor.md` and follow it as the authoritative playbook for this role.
+Run `scripts/preflight-permissions.sh` to gather runtime facts; never assert runtime behaviour from memory.
+Write only `teams/{name}/docs/` and the phase worklog. Never write user-scope configuration.
+"""

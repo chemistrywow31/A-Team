@@ -61,6 +61,10 @@ config_file = "../agents/generation/agent-writer.toml"
 description = "Tighten generated agent configs and docs without changing intent."
 config_file = "../agents/optimization/prompt-optimizer.toml"
 
+[agents.runtime_preflight_advisor]
+description = "Probe the live agent runtime and write the per-team runtime setup advisory."
+config_file = "../agents/review/runtime-preflight-advisor.toml"
+
 [agents.dialogue_reviewer]
 description = "Audit the consultation dialogue and produce a bilateral quality report."
 config_file = "../agents/review/dialogue-reviewer.toml"
