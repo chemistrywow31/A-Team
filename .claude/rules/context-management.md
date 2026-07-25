@@ -42,14 +42,9 @@ Every task return follows the six-field report schema in `rules/execution-contra
 
 ### Completion Status Protocol
 
-Every agent must end its task with exactly one of these statuses:
+The four statuses, their definitions, and the coordinator's handling of each live in `rules/execution-contract.md` EC-1.1 and EC-1.5. Retry bounds live in EC-2.4. Do not restate either here — a second copy is how the two drifted apart.
 
-- **DONE** — All steps completed successfully. Evidence of completion provided.
-- **DONE_WITH_CONCERNS** — Task completed, but issues exist that the coordinator must be aware of. List each concern with severity and recommended action.
-- **BLOCKED** — Cannot proceed. State what was attempted (up to 3 attempts), what failed, and what specific information or action is needed to unblock. Do not retry the same approach more than 3 times.
-- **NEEDS_CONTEXT** — Missing information required to begin or continue. List each missing item and where it might be found.
-
-The coordinator handles each status per `rules/execution-contract.md` EC-1.5. Accepting DONE additionally requires the fresh-context verification in EC-3 — the producer's own claim never counts as acceptance. When the missing context in NEEDS_CONTEXT is user input (a QUESTIONS block), the coordinator relays the questions to the user, appends the exchange to the task's `dialogue-log.md`, and re-dispatches with the answers.
+Two consequences worth stating at this point of use: accepting DONE requires the fresh-context verification in EC-3, so a producer's own claim never completes acceptance; and when the missing context in NEEDS_CONTEXT is user input (a QUESTIONS block), the coordinator relays the questions to the user, appends the exchange to the task's `dialogue-log.md`, and re-dispatches with the answers.
 
 ### Task Isolation via Subagents
 

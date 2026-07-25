@@ -33,7 +33,7 @@ Typical invocation points:
 
 ## Reasoning
 
-Before starting the audit, complete this gate. Record reasoning in the audit report itself.
+Before starting the audit, work through this gate.
 
 ### Knowns
 - Phase worklog (`decisions.md`, `references.md`, `findings.md`)

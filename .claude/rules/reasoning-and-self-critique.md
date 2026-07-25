@@ -41,11 +41,11 @@ This ordering creates a tight think → act → verify triad. Do not separate th
 
 ### Canonical `## Reasoning` Block
 
-Every agent's `## Reasoning` section must contain four labeled subsections — `### Knowns`, `### Unknowns`, `### Plan`, `### Risks` — filled before the workflow starts, written to the worklog or the task return. The canonical block text lives in `.claude/templates/reasoning-self-critique-blocks.md`; writers copy it verbatim from there. Compliance check: grep the agent file for all four slot headers under `## Reasoning`.
+Every agent's `## Reasoning` section must contain four labeled subsections — `### Knowns`, `### Unknowns`, `### Plan`, `### Risks` — worked through before the workflow starts. The skeleton lives in `.claude/templates/reasoning-self-critique-blocks.md`; writers take the four slot headers from it and fill the bullets with checks specific to THIS agent's task. Specialization is the point: "does every rule trace to an entry in the Phase 2 rules plan?" is executable, "does every claim trace to a source?" is a checkbox. Compliance check: grep the agent file for all four slot headers under `## Reasoning`.
 
 ### Canonical `## Self-Critique` Block
 
-Every agent's `## Self-Critique` section must contain five labeled checks — `### Evidence Check`, `### Position Check`, `### Counterexample Check`, `### Completeness Check`, `### Failure Mode Check` — run against the draft before submission. If any check fails, revise and re-run all five; do not submit unrevised output. Canonical block text: `.claude/templates/reasoning-self-critique-blocks.md` (writers copy verbatim). Compliance check: grep the agent file for all five check headers under `## Self-Critique`.
+Every agent's `## Self-Critique` section must contain five labeled checks — `### Evidence Check`, `### Position Check`, `### Counterexample Check`, `### Completeness Check`, `### Failure Mode Check` — run against the draft before submission. If any check fails, revise and re-run all five; do not submit unrevised output. Skeleton: `.claude/templates/reasoning-self-critique-blocks.md` — writers take the five headers and write agent-specific checks under each, as with `## Reasoning` above. Compliance check: grep the agent file for all five check headers under `## Self-Critique`.
 
 ### When the Gates Apply
 
@@ -74,7 +74,7 @@ Tier 1 agents (deterministic formatters, single-lookup utilities — see `rules/
 
 ### Failure Recovery
 
-If Self-Critique exposes a gap that revision cannot close after 3 attempts, the agent must escalate rather than submit known-flawed output: return `STATUS: NEEDS_CONTEXT` (naming the missing information, e.g. `INSUFFICIENT_DATA: {items}` in CONCLUSIONS) when the gap is informational, or `STATUS: BLOCKED` otherwise — the four EC-1.1 statuses are the only valid report statuses. State the specific gap and what would unblock it.
+If Self-Critique exposes a gap that revision cannot close within the `rules/execution-contract.md` EC-2.4 bound, the agent must escalate rather than submit known-flawed output. (Two distinct counters: EC-2.4 counts dispatch attempts; this one counts revision loops inside a single attempt. Neither resets the other.) Return `STATUS: NEEDS_CONTEXT` (naming the missing information, e.g. `INSUFFICIENT_DATA: {items}` in CONCLUSIONS) when the gap is informational, or `STATUS: BLOCKED` otherwise — the four EC-1.1 statuses are the only valid report statuses. State the specific gap and what would unblock it.
 
 ## Violation Determination
 
@@ -85,7 +85,7 @@ If Self-Critique exposes a gap that revision cannot close after 3 attempts, the 
 - `## Reasoning` block missing any of the four canonical slots (Knowns / Unknowns / Plan / Risks) → Violation
 - `## Self-Critique` block missing any of the five canonical checks (Evidence / Position / Counterexample / Completeness / Failure Mode) → Violation
 - Coordinator agent missing `## Pre-Dispatch Reasoning` section in addition to `## Reasoning` → Violation
-- Agent submits output without filling `## Reasoning` slots — detected when worklog or task return contains no Knowns/Unknowns/Plan/Risks record → Violation
+- `## Reasoning` or `## Self-Critique` slots filled with the template's generic wording instead of agent-specific checks → Violation
 - Agent declares Tier 1 reduction without Tier 1 justification matching `rules/context-tier.md` → Violation
 - Generated team's `rules/` does not contain a Reasoning and Self-Critique rule (this rule or an equivalent) → Violation
 - Generated team's agents do not include `## Reasoning` and `## Self-Critique` sections → Violation

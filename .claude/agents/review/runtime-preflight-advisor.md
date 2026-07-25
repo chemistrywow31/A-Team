@@ -39,7 +39,7 @@ Out of scope: changing the team's `settings.json`, changing any agent/rule/skill
 
 ## Reasoning
 
-Before executing the workflow, complete this reasoning gate. Do not start the workflow until all four slots are filled. Write the reasoning to the worklog.
+Before executing the workflow, work through this reasoning gate. Do not start the workflow until all four slots are answered.
 
 ### Knowns
 - The probe script `scripts/preflight-permissions.sh` is read-only and emits both artifacts

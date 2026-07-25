@@ -44,12 +44,16 @@ NEXT: dispatch a fresh-context verifier per EC-3 against the Phase 2 rules plan.
 
 ## EC-2 Escalation Ladder
 
-Tier names map to this repo's models per `rules/context-tier.md`: SMALL = `haiku`, MID = `sonnet`, STRONG = `opus`. The ladder is keyed to the model actually running the task — the dispatch-time model override when present, else the agent's `model:` frontmatter — not to the context-tier number. The same task follows EC-2.1 when run on haiku and EC-2.2 when run on sonnet.
+Tier names map to models as: SMALL = `haiku`, MID = `sonnet`, STRONG = `opus`. That mapping is stated here rather than by reference because `rules/context-tier.md` is path-scoped to `teams/**` and does not load in the sessions where this ladder applies.
+
+The ladder is keyed to the model actually running the task — the Agent tool's `model` parameter when the dispatch sets one, else the agent's `model:` frontmatter. A tier written into the dispatch prompt text is a comment, not a control: it does not change which model executes. Coordinators that intend a tier must pass the `model` parameter.
+
+The same task follows EC-2.1 when run on haiku and EC-2.2 when run on sonnet. Where every agent in a tree is `opus` — as in A-Team's own `.claude/agents/` — EC-2.1/2.2/2.3/2.6 have no trigger and EC-2.4/2.5/2.7 carry the whole ladder. They are retained because generated teams do run mixed rosters: across 332 generated agents, 35% are sonnet and 3% haiku, in 20 of 32 teams.
 
 - **EC-2.1** haiku-tier task fails its acceptance check → zero retries at haiku. Escalate to the next tier up immediately (haiku → sonnet → opus; skipping straight to opus is permitted only when the failure needs expertise sonnet lacks — the `JUDGMENT.md` J1.3 signal; name that reason in the escalation), attaching the task, the failed check output, and artifact paths.
 - **EC-2.2** sonnet-tier task fails → one retry, changed approach only. Re-running the same approach is forbidden. A second consecutive failure on the same subtask → escalate to opus.
 - **EC-2.3** Every escalation carries the complete failure trace: the goal, every attempt with its exact error or diff path, hypotheses eliminated, and current file state. Escalating the task without the failure trace is a violation. Compliance check: the receiving tier rejects escalations whose trace lists zero prior attempts.
-- **EC-2.4** Global cap: one initial attempt plus at most two retries = three total attempts per subtask, across all tiers. This is the same bound as the existing "3 attempts then BLOCKED" rules in `rules/anti-sycophancy.md` and `rules/context-management.md` — there is no conflict. One exception: when the cap is consumed and a HIGHER tier has not yet attempted, that tier receives exactly one escalation attempt (with the full EC-2.3 trace); after it fails, BLOCKED per EC-2.7.
+- **EC-2.4** Global cap: one initial attempt plus at most two retries = three total attempts per subtask, across all tiers, regardless of whether the approach changed. This clause is the sole owner of the retry bound; every other rule cites it rather than restating a number. One exception: when the cap is consumed and a HIGHER tier has not yet attempted, that tier receives exactly one escalation attempt (with the full EC-2.3 trace); after it fails, BLOCKED per EC-2.7.
 - **EC-2.5** "Same subtask" = same acceptance criteria. Shrinking the goal to reset the attempt counter is a violation. A shrunk goal is a new subtask only when the coordinator re-issues it in a new dispatch with new acceptance criteria. Criteria may be corrected at most ONCE per deliverable (keyed to the artifact path(s) the criteria target, across all re-issues of that work — a correction cannot reset its own allowance), and only with external evidence (a rule file, spec, or user statement) recorded in the task worklog; the working agent's own claim that the criteria are wrong is not sufficient. Compliance check: the coordinator enforces both bounds against the worklog record (fresh-context verifiers lack dispatch history and do not check this clause).
 - **EC-2.6** opus-tier solves an escalated task → extraction is mandatory: write a reusable recipe (preconditions, steps, verification command) to the task worklog before closing. Remaining instances of the same problem are then batch-applied at sonnet or haiku tier using the recipe.
 - **EC-2.7** Cap exhausted: if a higher tier remains, escalate. If no higher tier remains, report BLOCKED and stop for user input, per `JUDGMENT.md` J3.4.
@@ -95,7 +99,6 @@ Two conflicting rules at the same level: the rule with the narrower Applicabilit
 - Escalation delivered without the failure trace → violation
 - Artifact accepted with no fresh-context verifier verdict → violation
 - Producer or dispatching coordinator acting as sole acceptor → violation
-- Dispatch missing the BRIEF path (once the task's BRIEF exists) → violation
 - Dispatch missing the BRIEF path (once the task's BRIEF exists) → violation
 - Message exceeding 60 lines, or task report exceeding 40 lines, without a dispatch-raised cap → violation (bounce per EC-1.6)
 

@@ -66,7 +66,7 @@ Receive team role design document from Role Designer.
 
 ## Reasoning
 
-Before starting the planning process, complete this gate. Record reasoning in the phase worklog.
+Before starting the planning process, work through this gate.
 
 ### Knowns
 - Role design from Phase 1 (agents, responsibilities, collaboration relationships, deployment mode)
@@ -131,7 +131,7 @@ Define for each skill:
 - List of agents using this skill
 - Origin: Custom / External (with source URL and integration pattern)
 
-**Note**: All custom skills will be implemented by Skill Writer using the `/skill-creator` flow (write → test → eval → iterate). The skeleton here serves as input to that process, not as the final SKILL.md content.
+**Note**: All custom skills will be implemented by Skill Writer, which executes the skill-creator process by Reading `.claude/skills/skill-creator/SKILL.md` (write → test → eval → iterate). The skeleton here serves as input to that process, not as the final SKILL.md content.
 
 ### Step 5: Consider Deployment Mode
 

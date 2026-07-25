@@ -1,13 +1,13 @@
 # Canonical Reasoning and Self-Critique Blocks
 
-Copy these blocks verbatim into every generated agent .md, per `rules/reasoning-and-self-critique.md`. `## Reasoning` goes before `## Workflow`; `## Self-Critique` goes after. Read-trigger: agent-writer reads this file before writing any agent file.
+These are SKELETONS, not boilerplate. Take the section and slot headers verbatim — they are what the compliance grep matches — and write the bullets under each header specific to the agent you are producing. A generated agent carrying this file's generic wording has a gate that checks nothing. Per `rules/reasoning-and-self-critique.md`: `## Reasoning` goes before `## Workflow`; `## Self-Critique` goes after. Read-trigger: agent-writer reads this file before writing any agent file.
 
 ## Canonical `## Reasoning` block
 
 ```markdown
 ## Reasoning
 
-Before executing the workflow, complete this reasoning gate. Do not start the workflow until all four slots are filled. Write the reasoning to the worklog or to a structured note in your task return — do not skip and produce output directly.
+Before executing the workflow, work through this reasoning gate. Do not start the workflow until all four slots are answered.
 
 ### Knowns
 - {What information is confirmed? What inputs are available?}

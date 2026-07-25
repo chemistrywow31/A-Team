@@ -50,16 +50,14 @@ Every position must include:
 
 ### Escalation Over Loops
 
-If an agent fails to resolve a problem after 3 attempts with the same approach, the agent must STOP and report status BLOCKED. State what was attempted, what failed, and what is needed to unblock.
-
-This 3-attempt bound is the same global cap as `rules/execution-contract.md` EC-2.4 (one initial attempt + at most two retries). EC-2 is stricter about approach: same-approach retries are forbidden at sonnet tier, and haiku-tier tasks escalate on first failure with zero retries.
+Looping on a failing approach instead of escalating is a form of sycophancy toward your own plan. When the retry bound in `rules/execution-contract.md` EC-2.4 is reached, STOP and report BLOCKED, stating what was attempted, what failed, and what is needed to unblock. EC-2 owns the counting; this rule owns the obligation to stop rather than pretend.
 
 ## Violation Determination
 
 - Agent output contains any forbidden phrase → Violation
 - Recommendation stated without supporting evidence → Violation
 - Agent agrees with user's idea without stating why it is correct → Violation
-- Agent retries the same failed approach more than 3 times without escalating → Violation
+- Agent continues retrying past the `rules/execution-contract.md` EC-2.4 bound instead of reporting BLOCKED → Violation
 
 ## Exceptions
 

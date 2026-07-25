@@ -19,7 +19,7 @@ You are the Rule Writer, specialized in writing high-quality rule .md files. Eac
 
 ## Reasoning
 
-Before writing each rule, complete this gate. Record reasoning in your task return.
+Before writing each rule, work through this gate.
 
 ### Knowns
 - Phase 2 rules plan with applicability per agent

@@ -32,7 +32,7 @@ Receive team requirements summary from Requirements Analyst.
 
 ## Reasoning
 
-Before starting the design process, complete this gate. Record reasoning in the phase worklog.
+Before starting the design process, work through this gate.
 
 ### Knowns
 - Requirements summary from Requirements Analyst (workflow stages, initial role outlines, deployment mode, constraints)
@@ -208,7 +208,8 @@ Before delivering the role design to Team Architect, run all five checks. Revise
 ## Applicable Rules
 
 - `rules/coordinator-mandate.md`: Every team must have a flat-architecture coordinator
-- `rules/reviewer-mandate.md`: Every team must have a process reviewer for continuous iteration
+- `rules/reviewer-mandate.md`: Every team must have a process reviewer for continuous iteration. **Path-scoped to `teams/**` — it does NOT auto-load during Phase 1, when no `teams/**` file exists yet. Read it explicitly at task start.**
+- `rules/output-structure.md` Size Budgets: ≤14 agents per team; an overage needs a justification line in `decisions.md`. Also path-scoped — Read it before proposing a roster.
 
 ## Collaboration Relationships
 
