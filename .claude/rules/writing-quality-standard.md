@@ -42,9 +42,24 @@ Prohibited words: "try to", "appropriately", "reasonably", "if needed", "as appr
 
 Every generated .md that contains examples must meet these standards:
 
-- Each **skill .md** must contain at least three examples: normal case, edge case, and rejection/failure case. Happy-path-only examples cause Claude to produce plausible output on invalid input.
-- Each **agent .md** must contain an Examples section with at least three cases: normal, edge, and rejection (demonstrating the Uncertainty Protocol).
+- Each **skill .md** and each **agent .md** must contain exactly one worked example: the **rejection case** — the input the agent must refuse, defer, or escalate on, demonstrating the Uncertainty Protocol. One is the floor and the ceiling unless the dispatch asks for more.
+- Do NOT write normal-case or edge-case examples. Examples constrain the model to the exploration space they demonstrate; for normal operation an expressive interface does the job better and costs less. Express the normal path as an enumerated trigger list in `## Uncertainty Protocol` and as named, typed slots in `## Input and Output`, not as a worked scenario.
+- The rejection case is the exception because it carries information no enumeration conveys: *when not to act*. A parameter type cannot express a refusal boundary; a concrete failing input can.
 - Each **rule .md** must contain at least one violation scenario description.
+
+### A Template Outranks Its Own Prose
+
+When a file contains BOTH a policy statement and a template/example block the reader copies, the
+copied block wins — readers fill the slots they are given, they do not diff them against the prose.
+
+So: after changing any policy, sweep every template block, frontmatter example, section skeleton,
+and checklist item that instantiates it — not just the paragraph that states it. Two sites in the
+SAME FILE can disagree, and the copied one is what ships. Measured three times in one pass on
+2026-07-25 (trace: `.worklog/202607/context-engineering-realignment/phase-3-execution/decisions.md` D14).
+
+Compliance check: for each policy statement, grep the same file and its writers for a template block
+or example on the same subject, and confirm the two agree. `scripts/validate-team.sh` cannot catch
+this — the disagreement is between two prose artifacts, so it is a review obligation.
 
 ### Structural Over Instructional
 
@@ -72,8 +87,10 @@ Format: one to two sentences after Violation Determination or within Exceptions,
 - Using descriptive tone instead of imperative sentences → Violation
 - Prohibited vague words appear without accompanying judgment criteria → Violation
 - File exceeds length limit → Violation
-- Skill .md has fewer than three examples (normal, edge, rejection) → Violation
-- Agent .md has no Examples section or fewer than three cases → Violation
+- Skill .md or agent .md has no rejection-case example → Violation
+- Skill .md or agent .md carries normal-case or edge-case examples not requested by the dispatch → Violation
+- Agent .md has no Examples section → Violation
+- A file's template/example block contradicts a policy stated elsewhere in the same file, or in the rule that file implements → Violation
 - Rule .md has no violation determination → Violation
 - Behavioral constraint enforced solely by instruction when a structural alternative exists → Violation
 - Rule with non-obvious compliance cost has no Tradeoff disclosure → Violation

@@ -77,7 +77,7 @@ Core techniques from Anthropic's tutorial and courses, distilled for A-Team's ge
 | File | Purpose |
 |------|---------|
 | `chain-of-thought.md` | Visible reasoning steps before answering |
-| `few-shot-patterns.md` | 3-5 diverse examples = most effective steering tool |
+| `few-shot-patterns.md` | In-prompt few-shot sets: 3-5 diverse examples. Does NOT govern generated `## Examples` sections (one rejection case) |
 | `anti-hallucination.md` | Give-an-out + evidence-first extraction patterns |
 | `complex-prompt-template.md` | 10-element template with assembly order |
 | `xml-tag-separation.md` | Claude-specific XML boundary training advantage |

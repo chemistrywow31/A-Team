@@ -46,9 +46,9 @@ Structure every generated .md file so that:
 
 Placing actionable instructions at the end of a prompt measurably improves instruction adherence. The agent template already follows this order — do not rearrange sections.
 
-### Example Diversity
+### One Example, and It Is the Rejection Case
 
-Every generated .md that contains examples must include the three cases mandated by `rules/writing-quality-standard.md`: normal, edge, rejection. Happy-path-only examples cause Claude to produce plausible-looking output even on garbage or insufficient input.
+Every generated agent .md and skill .md carries exactly one worked example — the rejection case — per `rules/writing-quality-standard.md`. Do not add normal or edge cases. Examples narrow the model to the exploration space they demonstrate, so the normal path is better expressed as an enumerated `## Uncertainty Protocol` trigger list and typed `## Input and Output` slots. The rejection case survives because a refusal boundary is the one thing no parameter type can express.
 
 ### Full Scenario Before/After Examples
 
@@ -94,7 +94,7 @@ Every generated coordinator must include explicit parallel execution guidance. R
 
 ## Violation Determination
 
-- Generated agent has only happy-path examples and no edge/rejection cases → Violation
+- Generated agent has no rejection-case example, or carries normal/edge cases → Violation
 - Behavioral guidance example uses one-line comparison when a Full Scenario Before/After would clarify the mistake → Violation
 - Generated agent has no escape hatch or uncertainty protocol → Violation
 - Generated agent has no `## Reasoning` section before `## Workflow` (see `rules/reasoning-and-self-critique.md`) → Violation
@@ -108,4 +108,4 @@ Every generated coordinator must include explicit parallel execution guidance. R
 ## Exceptions
 
 - Tier 1 agents (simple utilities with fully validated upstream input) may omit escape hatches.
-- External skills (Pattern A direct install) are exempt from example diversity requirements.
+- External skills (Pattern A direct install) keep their upstream examples as-is; the one-rejection-case rule governs authored files, not vendored ones.

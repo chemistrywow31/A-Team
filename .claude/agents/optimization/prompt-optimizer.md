@@ -197,7 +197,7 @@ For each .md file:
    - Unify terminology usage
    - Enhance actionability
    - **Claude 4.6 compliance**: Downgrade urgency language (`CRITICAL`/`MUST`) to normal tone for non-safety items; replace instructional constraints with structural solutions; add escape hatches where missing; eliminate open-ended exploration triggers
-   - **Example coverage**: Verify examples include normal, edge, and rejection cases — add missing cases
+   - **Example economy**: Verify there is exactly ONE example and it is the rejection case. Delete normal and edge cases — they narrow the model's exploration space (`rules/writing-quality-standard.md`). Never add examples during optimization; if the normal path is unclear, sharpen the `## Uncertainty Protocol` trigger list and the `## Input and Output` slots instead.
    - **Script extraction**: For content blocks meeting all three extraction criteria (volume >200 tokens, deterministic, separable), write a script and replace the block with its compact output
 4. **User interaction** (if ambiguity or significant changes exist)
 5. **Verify fidelity**: Confirm role definitions, responsibility scope, collaboration relationships unchanged

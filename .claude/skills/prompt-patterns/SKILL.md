@@ -19,8 +19,16 @@ assets/
 ├── context-strategies/       7 agent context management patterns
 ├── advanced-techniques/      7 core prompt engineering techniques
 ├── claude-4-patterns/        6 Claude 4.6 behavioral patterns
-└── raw/                      4 source files (3311 lines total)
+└── raw/                      4 source snapshots (3311 lines) — provenance only, do not read
 ```
+
+**Version note (checked 2026-07-25).** `raw/` and `claude-4-patterns/` are anchored to Claude 4.x:
+`raw/` contains 52 occurrences of "Opus 4.", 37 of "Sonnet 4.", and zero references to Claude 5.
+Nothing reads `raw/` — `select.py` never emits a `raw/` path, and the `source:` fields in the
+distilled files are citations, not read-triggers. Treat both directories as historical provenance.
+Where they conflict with Anthropic's Claude 5 context-engineering guidance, the newer guidance
+wins: prefer judgment over enumerated prohibitions, interface design over usage examples,
+progressive disclosure over upfront loading, and one statement of each fact over repetition.
 
 ## Selection Methods
 

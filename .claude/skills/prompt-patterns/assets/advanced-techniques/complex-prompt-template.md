@@ -26,7 +26,7 @@ Anthropic's 10-element template is the recommended structure for complex prompts
 | 2 | Task context | Early -- role, goals, background |
 | 3 | Tone context | Early -- communication style |
 | 4 | Task description & rules | After context -- constraints, escape hatches |
-| 5 | Examples | Middle -- `<example>` tags, edge cases |
+| 5 | Examples | Middle -- `<example>` tags. In-prompt few-shot only; a generated file\x27s `## Examples` section carries one rejection case |
 | 6 | Input data | Middle -- XML-tagged variable content |
 | 7 | Immediate task request | Near end -- reiterate what to do |
 | 8 | Precognition | Near end -- "think step by step" |
@@ -60,5 +60,5 @@ When agent-writer constructs agent .md files:
 
 - Map the 10-element template to agent .md sections: frontmatter (element 1-2), Role/Context Tier (element 2-3), Responsibilities/Rules (element 4), Workflow with examples (element 5-6), Output format (element 9).
 - For coordinator agents, the "immediate task request" (element 7) maps to the dispatch instructions -- reiterate the specific task near the end of every Task dispatch.
-- For skill prompts, place the user's input data late in the prompt body and put format instructions after it. Skill-writer must structure SKILL.md examples following this order.
+- For skill prompts, place the user's input data late in the prompt body and put format instructions after it. This governs ELEMENT ORDER, not example count: a generated agent .md or skill SKILL.md carries exactly one example, the rejection case, per `rules/writing-quality-standard.md`. Element 5 above describes few-shot demonstrations inside a prompt — a different artifact.
 - Precognition (element 8) must appear in every agent that makes judgment calls -- embed "analyze first, then decide" before the output format section.

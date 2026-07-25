@@ -143,7 +143,7 @@ For each .md file, check sequentially:
 - [ ] Behavioral constraints use structural solutions (sections, templates) not just instructions
 - [ ] Agent has explicit escape hatch for insufficient data scenarios
 - [ ] No open-ended exploration triggers ("if in doubt, investigate further")
-- [ ] Examples cover normal, edge, and rejection cases (not just happy path)
+- [ ] Exactly one example, and it is the rejection case — normal/edge cases removed, not added
 - [ ] Element ordering: identity/context first, instructions/output format last
 
 ### Consistency Level
