@@ -16,8 +16,12 @@ Used by the fresh-context verifier dispatched by `agents/team-architect.md` (Pha
 
 ## How to Execute
 
-- Level 2 items apply the per-artifact floors canonically defined in `JUDGMENT.md` J5. When this file and J5 disagree, J5 wins — update this file in the same change (single-source rule).
-- Run each check's command from the repo root; `{team}` = `teams/{team-name}`.
+**Run `bash scripts/validate-team.sh {team}` FIRST.** It executes every mechanical check in this file and emits the required `{item} | PASS/FAIL | {evidence}` lines directly. Paste its output as your evidence. Then run only the judgment items below that the script marks SKIP or does not cover — the ones needing a model to read for meaning (Level 4 overlap and coverage analysis, semantic correctness of rules, whether the single rejection-case example names a concrete refusal boundary rather than a vague one).
+
+Do not hand-run a check the script already performs. Prose checklists in this repo were measured at ~1% compliance where nothing executed them; the script exists so that number is not the checklist's fate.
+
+- Level 2 items apply the per-artifact floors canonically defined in `JUDGMENT.md` J5. When this file and J5 disagree, J5 wins — update this file AND `scripts/validate-team.sh` in the same change (single-source rule).
+- Run each remaining check's command from the repo root; `{team}` = `teams/{team-name}`.
 - Record one line per item: `{item} | PASS or FAIL | {file:line or command output}`.
 - Overall PASS requires every applicable item PASS. Return per EC-1 with the full item table INLINE (the harness blocks subagent report-file writes); the dispatching coordinator lands the table at the phase worklog as `verification.md`.
 
@@ -27,9 +31,12 @@ Used by the fresh-context verifier dispatched by `agents/team-architect.md` (Pha
 - 1.2 Coordinator .md sits in `agents/` root; every non-coordinator agent sits in a subfolder — `ls -R {team}/.claude/agents/`
 - 1.3 Every skill is `skills/{name}/SKILL.md` (uppercase filename) — `find {team}/.claude/skills -name SKILL.md`
 - 1.4 `rules/` contains .md files — `ls {team}/.claude/rules/`
-- 1.5 `settings.json` exists and parses — `jq . {team}/.claude/settings.json`
+- 1.5 `settings.json` exists and parses — `python3 -m json.tool {team}/.claude/settings.json` (not `jq` — absent on stock macOS)
 - 1.6 All file and folder names kebab-case — `find {team} -name '*_*' -o -name '* *'` returns nothing
-- 1.7 Entry-point skill exists — `test -f {team}/.claude/skills/boss/SKILL.md`
+- 1.7 Entry-point skill exists, identified by SHAPE not filename — `grep -rl '^disable-model-invocation: *true' {team}/.claude/skills` returns exactly ONE file. The folder name is the team's choice (`callimachus/`, `tongzheng/`, `ventris/` are all valid); a `boss/`-only test false-FAILs the majority of teams. Zero hits → no front door; two or more → ambiguous front door. Both FAIL.
+- 1.8 Runtime advisory exists — `test -f {team}/docs/RUNTIME-SETUP.md`. Produced by `runtime-preflight-advisor` at Phase 3.5. It was absent from 37 of 37 teams because no checklist item looked for it and no dispatch step produced it; both gaps are now closed, and this item is what keeps them closed.
+- 1.9 Advisory is not stale boilerplate — `grep -c 'Probed:' {team}/docs/RUNTIME-SETUP.md` ≥ 1 AND the file names a rollback command (`grep -iE 'rollback|restore|revert'`). Do not anchor the stamp pattern to line start: the generator emits it inside a blockquote as `> Probed: ...`, and `^Probed:` false-FAILs every correct file.
+- 1.10 Size budgets — rule count ≤ 12 and agent count ≤ 14, or the phase `decisions.md` carries a justification line. `ls {team}/.claude/rules/*.md | wc -l`; `find {team}/.claude/agents -name '*.md' | wc -l`
 
 ## Level 2: Content Completeness
 
@@ -37,10 +44,11 @@ Used by the fresh-context verifier dispatched by `agents/team-architect.md` (Pha
 - 2.2 Every agent frontmatter has `name`, `description`, `model` (+ `effort`) — grep each
 - 2.3 Section order in every agent: `## Reasoning` before `## Workflow` before `## Self-Critique` — `grep -n '^## '`
 - 2.4 Reasoning has the 4 canonical slots; Self-Critique has the 5 canonical checks (Tier 1 agents: reduced 2-check form allowed only with a Tier 1 justification) — grep slot headers
-- 2.5 Every agent has `## Boundaries`, `## Uncertainty Protocol`, `## Examples` with normal + edge + rejection cases — grep
+- 2.5 Every agent has `## Boundaries`, `## Uncertainty Protocol`, and an `## Examples` section carrying one rejection case and no normal/edge cases — grep
 - 2.6 Coordinator additionally has: Pre-Dispatch Reasoning, Team Overview, Subordinate Agent List, Task Assignment Strategy, Quality Control Mechanism, Parallelism Strategy (with the >5-items batch rule), Compaction Strategy, Verification Protocol, Correction Loop Bound, User Relay — grep
-- 2.7 Every skill per J5.2: lives at `skills/{name}/SKILL.md`, frontmatter `name` + `description`, 3 examples (normal, edge, rejection), ≤200 lines or progressive-disclosure bundle; entry-point extras are checked in 5.4 — path test + grep + `wc -l`
+- 2.7 Every skill per J5.2: lives at `skills/{name}/SKILL.md`, frontmatter `name` + `description`, one rejection-case example, ≤200 lines or progressive-disclosure bundle; entry-point extras are checked in 5.4 — path test + grep + `wc -l`
 - 2.8 Every rule has Applicability, Rule Content, Violation Determination, Exceptions; ≤100 lines — grep + `wc -l`
+- 2.8b Every agent declares `## Context Tier: {1-4}`, and any Tier 1 agent carries a Tier 1 justification — `grep -c '^## Context Tier' ` per agent; then for Tier 1 hits, grep `Tier 1 justification`. Nothing checked this before, so generated agents omitted the section while items 2.4 and 5.10 silently PRESUMED a declared tier when granting Tier 1 exemptions
 - 2.9 Every external skill (Pattern A/B) has Source Attribution with Origin, Integration, Retrieved, Modifications — grep
 - 2.10 Every agent .md ≤300 lines — `wc -l`
 - 2.11 Generation-artifact hygiene — `grep -rn '</content>\|</invoke>\|</parameter>' {team}` returns nothing; `grep -rn 'TODO\|TBD' {team}` hits only lines that are demonstrably content (e.g., a rule discussing TODO conventions), never unfinished slots (ground truth: alexandria 2026-07 — 14 stray closing tags shipped past producer Self-Critique AND this checklist's verifier; only the design-fidelity auditor caught them)
@@ -67,7 +75,7 @@ Used by the fresh-context verifier dispatched by `agents/team-architect.md` (Pha
 - 5.1 CLAUDE.md contains: deployment mode section with the coordinator-runs-in-main-session statement, worklog + context management section, precedence order, and the generator version stamp `Generated by A-Team on` — grep each
 - 5.2 `rules/` contains the four mandatory rules: worklog, context-management, reasoning-and-self-critique, execution-contract — `ls`
 - 5.3 The team's execution contract keeps EC-1..EC-5 clause numbering — `grep -c 'EC-'`
-- 5.4 `boss/SKILL.md` declares `disable-model-invocation: true`, `allowed-tools: ["Agent"]`, `argument-hint`, and uses main-session adoption. The verifier dispatch supplies the coordinator agent's name. Check: `grep -inE 'subagent_type|spawn' {team}/.claude/skills/boss/SKILL.md` — FAIL if any hit instructs spawning the coordinator (by the supplied name or as "the coordinator"); PASS additionally requires a line instructing the session to Read the coordinator's .md and adopt its workflow
+- 5.4 The entry-point skill found in 1.7 declares `disable-model-invocation: true`, `allowed-tools: ["Agent"]`, `argument-hint`, and uses main-session adoption. The verifier dispatch supplies the coordinator agent's name. Check: `grep -inE 'subagent_type|spawn' {entry-skill-path}` — FAIL if any hit instructs spawning the coordinator (by the supplied name or as "the coordinator"); a negated mention in a "why not to spawn" section is not a hit. PASS additionally requires a line instructing the session to Read the coordinator's .md and adopt its workflow
 - 5.5 Process reviewer exists in its own group folder (teams ≤3 agents: coordinator absorbs it, documented in Responsibilities)
 - 5.6 Code reviewer exists when deliverables include executable artifacts; otherwise a deliverable-QA reviewer — read CLAUDE.md scope
 - 5.7 settings.json has `hooks`, `permissions`, `env`; hook commands anchor paths to `$CLAUDE_PROJECT_DIR`, contain no `jq` dependency, and `permissions.allow` grants nothing destructive and no interpreter/runner wildcards; bare `Write`/`Edit`/`Agent` sit in allow, not ask (permission bands per `rules/settings-json.md`) — `jq` + grep
