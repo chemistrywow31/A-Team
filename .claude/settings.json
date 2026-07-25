@@ -82,7 +82,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "D=\"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\"; mkdir -p \"$D\" && jq -r '\"[\" + (now | todate) + \"] \" + .prompt' >> \"$D/session-ledger.md\" 2>/dev/null || echo 'WARN: session-ledger hook failed (jq missing?)' >&2",
+            "command": "D=\"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\"; mkdir -p \"$D\" && cat >> \"$D/session-events.jsonl\" 2>/dev/null || true",
             "timeout": 10
           }
         ]
@@ -93,7 +93,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "D=\"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\"; mkdir -p \"$D\" && jq '{ts: now, reason: .reason, transcript_path: .transcript_path}' > \"$D/compact-checkpoint.json\" 2>/dev/null || echo 'WARN: compact-checkpoint hook failed (jq missing?)' >&2",
+            "command": "D=\"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\"; mkdir -p \"$D\" && cat > \"$D/compact-checkpoint.json\" 2>/dev/null || true",
             "timeout": 5
           }
         ]

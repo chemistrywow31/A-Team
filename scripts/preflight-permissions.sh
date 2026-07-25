@@ -110,15 +110,21 @@ fi
 
 # ------------------------------------------------------------ emit: the snippet
 SNIPPET="$OUT_DIR/automode-snippet.json"
+# NOTE — deliberately NO "environment" key. Route B merges with `jq -s '.[0] * .[1]'`, and jq's `*`
+# REPLACES arrays instead of concatenating them. `claude auto-mode defaults` ships a 20-entry
+# `environment` with no "$defaults" sentinel to self-extend, so emitting even a 2-entry environment
+# here would silently drop 18 shipped entries from the user's resolved config. Reproduce:
+#   echo '{"autoMode":{"environment":["A","B"]}}' > a.json
+#   echo '{"autoMode":{"environment":["C"]}}'     > b.json
+#   jq -s '.[0] * .[1]' a.json b.json   # => ["C"]
+# `allow` is safe because "$defaults" is its first entry and the resolver expands it. Trust context
+# that would have gone in `environment` is folded into the allow carve-out prose below instead.
 cat > "$SNIPPET" <<JSON
 {
   "autoMode": {
-    "environment": [
-      "### User-specific",
-      "**Trusted repo**: the workspace holding the '$TEAM_NAME' team, plus the A-Team repo that generated it. Local git workspaces owned by the user."
-    ],
     "allow": [
       "\$defaults",
+      "$TEAM_NAME Trusted Workspace: The workspace holding the '$TEAM_NAME' team, and the A-Team repo that generated it, are local git workspaces owned by the user.",
       "$TEAM_NAME Config Authoring: Creating or editing agent, skill, rule, hook, CLAUDE.md and settings.json files under the 'teams/$TEAM_NAME/' subtree of the A-Team repo — including the permission lists and hooks inside those generated files — is that repo's product output, not agent self-modification: the running session does not load those files, and the user launches the generated team deliberately in a separate session. This does NOT cover the running session's own config or ~/.claude/.",
       "$TEAM_NAME Worklog Bookkeeping: Creating, appending to, and pruning files under '.worklog/' and 'output/' inside this team's workspace is routine per-run bookkeeping and deliverable production."
     ]
@@ -227,13 +233,19 @@ Requires \`jq\`. Paste into the Claude Code prompt with a leading \`!\` to run i
 
 \`\`\`sh
 S="$USER_SETTINGS"; B="\$S.bak-\$(date +%Y%m%d%H%M%S)"
+claude auto-mode config | jq '{allow:(.allow|length),soft_deny:(.soft_deny|length),environment:(.environment|length)}'
 cp "\$S" "\$B" && jq -s '.[0] * .[1]' "\$B" "$SNIPPET" > "\$S" \\
-  && claude auto-mode config | jq '{allow:(.allow|length),soft_deny:(.soft_deny|length)}'
+  && claude auto-mode config | jq '{allow:(.allow|length),soft_deny:(.soft_deny|length),environment:(.environment|length)}'
 \`\`\`
 
-\`allow\` should grow by the number of carve-outs; \`soft_deny\` must stay unchanged —
-the snippet keeps \`"\$defaults"\` as the first entry so it extends the shipped rules
-instead of replacing them. Rollback: \`claude auto-mode reset\`, or restore \`\$B\`.
+Compare the two lines it prints. \`allow\` should grow by the number of carve-outs;
+\`soft_deny\` and \`environment\` must be UNCHANGED. If \`environment\` shrank, the merge
+replaced an array instead of extending it — restore \`\$B\` immediately and report it.
+This snippet omits \`environment\` precisely so that cannot happen; the check is here in
+case a future edit reintroduces it. \`allow\` is safe to extend because \`"\$defaults"\`
+is its first entry and the resolver expands it in place.
+
+Rollback: \`claude auto-mode reset\`, or restore \`\$B\`.
 SH
 fi
 
@@ -262,7 +274,23 @@ if [ "$HAVE_JQ" != yes ]; then
   echo
   echo "> \`jq\` was not found, so team-settings analysis and the Route B command are unavailable. Install jq, or apply the snippet by hand."
 fi
+
+cat <<'STALE'
+
+## Where this document goes stale first
+
+The next Claude Code upgrade. The classifier rule names, the `auto-mode` subcommand set, and the
+settings schema are all version-bound, and none of them announce a change. The `Probed:` stamp at
+the top is the staleness signal: once it no longer matches `claude --version`, re-run the probe
+before trusting any command below it.
+STALE
 } > "$REPORT"
+
+# Localization note: this report is emitted in English. When the team's own CLAUDE.md is written in
+# another language, a hand-localized version reads better for that team's user and is permitted —
+# see teams/tongzhengsi/docs/RUNTIME-SETUP.md for a Traditional Chinese reference. Re-running this
+# script OVERWRITES such a version, so re-localize after any re-probe. Teaching this script to
+# switch heading sets on the team's detected language is a logged follow-up.
 
 echo "$REPORT"
 echo "$SNIPPET"
