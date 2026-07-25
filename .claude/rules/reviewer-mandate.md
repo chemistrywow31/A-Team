@@ -1,6 +1,8 @@
 ---
 name: Reviewer Mandate
 description: Mandatory rule that every generated team must include a process reviewer role for continuous iteration
+paths:
+  - "teams/**"
 ---
 
 # Reviewer Mandate

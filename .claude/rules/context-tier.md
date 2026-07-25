@@ -42,14 +42,21 @@ Include the following section in every generated agent file:
 ```markdown
 ## Context Tier: {1|2|3|4}
 
-Model: {model from table above, set in frontmatter}
-Effort: {effort from table above, set in frontmatter}
-
 Tier 1 justification (only if Tier 1 is declared): {state why the task has zero judgment calls}
 
 Startup context:
 - {Exactly what context this agent receives at dispatch}
 ```
+
+Do NOT restate `model` and `effort` in this section. The frontmatter is their single source; a second
+copy drifts from it — that is not hypothetical, it is how `agent-writer.md`'s optional-field table
+came to omit `xhigh` while the same file's own template emitted it. The tier number here plus the
+frontmatter values is the whole declaration, and the tier↔model mapping in the table above is what
+ties them together.
+
+Of the four elements, two do real work and cannot be dropped: the **Tier 1 justification** is what
+licenses the reduced Self-Critique in `rules/reasoning-and-self-critique.md`, and **Startup context**
+tells the coordinator what to put in the dispatch.
 
 ### Frontmatter Requirement
 
@@ -78,6 +85,7 @@ The coordinator must match dispatch context to the agent's tier:
 - Agent declares Tier 1 without justification in the Tier 1 justification field → Violation
 - Agent declares Tier 1 but its workflow section shows judgment calls (tool choice, content selection, structure decisions) → Violation
 - Agent frontmatter `model` or `effort` does not match the declared Context Tier → Violation
+- Context Tier section restates `model` or `effort` instead of relying on frontmatter → Violation
 - Coordinator dispatches full project context to a Tier 1 agent → Violation
 - Tier 3+ agent receives only immediate task input with no upstream context → Violation
 

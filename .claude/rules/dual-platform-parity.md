@@ -1,6 +1,12 @@
 ---
 name: Dual-Platform Parity
 description: One canonical platform tree is the source design; all other platform trees are regenerated from it, version-stamped identically, and diffed before any restructuring
+paths:
+  - "teams/**"
+  - ".codex/**"
+  - ".agents/**"
+  - "agents/**"
+  - "AGENTS.md"
 ---
 
 # Dual-Platform Parity
