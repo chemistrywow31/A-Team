@@ -2,7 +2,9 @@
 
 ## §0 Parameter resolution (recorded per directive)
 
-- `A_TEAM_ROOT` = `/Users/wow/wrk/side_proj/A-Team` — charter: `CLAUDE.md` + `.claude/rules/` (16 files, 82,200 B always-loaded); orchestrator: `.claude/agents/team-architect.md`; subagents: `.claude/agents/**` (12); config: `.claude/settings.json`; Codex mirror: `.codex/` + `AGENTS.md`.
+- `A_TEAM_ROOT` = this repository root — charter: `CLAUDE.md` + `.claude/rules/`; orchestrator: `.claude/agents/team-architect.md`; subagents: `.claude/agents/**`; config: `.claude/settings.json`; Codex tree: `.codex/` + `AGENTS.md` + `agents/**.toml` + `.agents/skills/`. (Paths in this document are repo-relative; the original recorded an absolute local path, which does not belong in a checked-in file.)
+
+> **Counts and byte figures in this document are as-of 2026-07-03 and have since changed.** At the time of writing: 16 rules, 12 subagents, 82,200 B always-loaded. As of 2026-07-25: **18 rules (7 always-on), 13 subagents, 48,429 B always-loaded.** Do not cite this file's numbers as a current baseline — the 82,200 B figure is 70% above the live value. Current measurements: `.worklog/202607/context-engineering-realignment/phase-1-assessment/context-budget.md`.
 - `OUTPUT_ROOT` = edit in place. Audit artifacts (`AUDIT.md`, `CHANGELOG.md`, `VERIFICATION.md`), `JUDGMENT.md`, `templates/` at repo root. Canonical RULES file at `.claude/rules/execution-contract.md` — the only auto-loaded location; a repo-root copy would be dead weight (phase-1 decisions D1).
 - `STRONG`/`MID`/`SMALL` = `opus`/`sonnet`/`haiku` (the identifiers this repo's frontmatter uses).
 - Repo conventions: none found — no package.json anywhere (node_modules is an orphan of the deleted "a-team-draft-system"); no test/lint command. Mechanical checks: `jq`, `wc`, `grep`, `head`.
@@ -10,6 +12,8 @@
 ## Method
 
 Four context-isolated auditors (Cartographer, Token Economist, Failure Analyst, Layer-2 Auditor) + one runtime probe. Full registers with per-defect file:line evidence:
+
+> **These four register files no longer exist.** `.worklog/202607/a-team-hardening/` was deleted at some point after 2026-07-03; the paths below are retained as a record of what was produced, not as working references. Consequence worth stating plainly: this pass's own evidence base is gone, so its findings can no longer be re-verified against their sources. That is the concrete cost of not tracking work products, and it is why the 2026-07-25 pass keeps its registers under `.worklog/202607/context-engineering-realignment/`.
 - `.worklog/202607/a-team-hardening/phase-1-cartography/inventory.md` (171-row file table)
 - `.worklog/202607/a-team-hardening/phase-2-audit/defects-token-waste.md` (TW-1..15)
 - `.worklog/202607/a-team-hardening/phase-2-audit/defects-failure.md` (FL-1..9, EP-1..11, 3 failure traces)
@@ -49,4 +53,4 @@ Baseline: always-loaded set = 82,200 B ≈ 20,550 tok, injected into every sessi
 
 - Stale registered git worktree `.claude/worktrees/dazzling-ellis-43891f` (930,517 B duplicate of the harness at commit 6327257).
 - Orphans: `node_modules/` (~63 MB) + `coverage/` (from deleted a-team-draft-system), `teams-index/` (stale 2026-05-02 scan), `local-ai-work-harness/` (generated team misplaced at root), `xxxteam.md` (scratch).
-- `teams/` = 51 teams, ~4.15 GB, only `life-partners` git-tracked.
+- `teams/` = 51 teams, ~4.15 GB, only `life-partners` git-tracked. *(As of 2026-07-25: 37 directories — 32 Claude teams, 3 Codex mirrors, 1 design blueprint `ducha`, 1 build artifact `teams-index`. `git ls-files teams/` returns 0; `.gitignore:29` excludes them all. The user reviewed this on 2026-07-25 and chose to keep both the ignore rule and `teams-index` as they are.)*

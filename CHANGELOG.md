@@ -1,4 +1,152 @@
-# CHANGELOG.md — A-Team Hardening Pass (2026-07-03)
+# CHANGELOG.md
+
+---
+
+# Context-Engineering Realignment (2026-07-25)
+
+Trigger: Anthropic's 2026-07-24 post "The new rules of context engineering for Claude 5 generation
+models" — >80% of Claude Code's system prompt deleted for Opus 5 / Fable 5 with no measurable eval
+loss. Method: four context-isolated auditors (article alignment, context budget, dead machinery,
+generated-team conformance) + one fresh-context verifier. Registers:
+`.worklog/202607/context-engineering-realignment/phase-1-assessment/` (4 files, 963 lines);
+decisions with per-item rationale in `phase-3-execution/decisions.md` (D1–D11).
+
+## The finding that drove every decision
+
+**Requirements with a mechanical check are met ~100% of the time; requirements without one, ~1%.**
+
+| Requirement | Grepped by something? | Compliance |
+|---|---|---|
+| Agent .md carries `## Reasoning` four slots | yes (`quality-validation` 2.3) | 13/13 = 100% |
+| Directory placement rules | yes | 32/32 teams = 100% |
+| Reasoning slots written out to the worklog | no | 34/2,338 files = 1.5% |
+| Five Self-Critique checks in the worklog | no | 2/2,338 = 0.09% |
+| Agent .md carries `## Responsibilities` | no | 3/13 |
+| Rules ≤100 lines | no (prose only; `wc -l` never run) | 19 violations in 8 teams |
+| `docs/RUNTIME-SETUP.md` present | no (0 hits for `docs/` in the 42-item checklist) | **0/37 teams** |
+
+So the correction was not "delete rules". It was: delete what is provably dead, relocate what is
+spec-not-context, **make the spec executable**, and wire up what was built but never connected.
+
+## Changes
+
+| # | Change | Defect closed |
+|---|---|---|
+| 1 | `scripts/validate-team.sh` (NEW, 26 KB, jq-free, bilingual, 37 checks) — replaces the prose checklist's mechanical half, emits EC-3.6 `{item} | PASS/FAIL | {evidence}` | the ~1% compliance rate above |
+| 2 | Phase 3.5 wired: Step 3.5 in `team-architect.md` + `runtime-preflight-advisor` added to the Subordinate Agents roster (it was absent) + checklist items 1.8/1.9 | `RUNTIME-SETUP.md` 0/37 — a fully built feature, with agent and script, dispatched by nothing |
+| 3 | `skills/` incl. `boss/` reassigned from the coordinator to `skill-writer`; `coordinator-mandate.md` gains an explicit 2-item carve-out list; its violation check re-scoped off a section `team-architect.md` does not have | self-assigned steps have no dispatch record, no EC-1 report, and no producer to bounce — the FAIL path routed to nobody |
+| 4 | Entry-point naming freed: identified by SHAPE (`disable-model-invocation` + `allowed-tools: Agent` + adopt instruction), not the filename `boss` | 10 of 11 "missing boss skill" teams had shipped a *better*-named front door (`callimachus/`, `ventris/`, `tongzheng/`). Real defect count: 1 missing (`u-team`) + 2 ambiguous |
+| 5 | EC-2.4 made sole owner of the retry bound; `anti-sycophancy` and `context-management` now cite it | three-way contradiction: EC-2.2 bans same-approach retries at sonnet while two rules licensed three of them. `context-management.md:49` was unpatched, inside the section agents read for BLOCKED |
+| 6 | "Copy verbatim" → "take the headers, write agent-specific checks"; generic template wording is now the violation | all 13 agents violated the verbatim mandate, and were right to: they share only the 5 headers, and enforcing it would have destroyed the specialization that makes the gates executable |
+| 7 | Runtime write-out mandate for Reasoning slots deleted, authoring requirement kept | 1.5% observed compliance on the unverifiable half; 100% on the grepped half |
+| 8 | Three-example mandate → one rejection case | 3,331 lines across 332 generated agents, enforced in only 22 of 32 teams, while 11 of A-Team's own 13 agents carry zero |
+| 9 | M1 resolved: `.claude/` canonical, `AGENTS.md` rewritten to agree; both entry docs stamped; M4's stamp-diff moved into `team-restructuring-master.md` Step 0 | A-Team violated its own `dual-platform-parity` M1 and M3; the agent M4 names as enforcer contained zero mentions of stamps |
+| 10 | `reviewer-mandate.md` and `dual-platform-parity.md` path-scoped (the latter to the platform globs, NOT `teams/**` — A-Team is itself multi-tree) | 108 lines of `teams/**` spec loaded on every session and every dispatch |
+| 11 | Size budgets added: ≤12 rules, ≤14 agents, escape hatch = one justification line | the "8-rule cap" existed nowhere as a rule — only inside a *filled example* of an EC-1 report |
+| 12 | `.claude/settings.json` hooks de-jq'd; checklist 1.5 switched to `python3 -m json.tool` | A-Team exempted itself from the no-jq portability rule it enforces on output |
+| 13 | `skills/continuous-learning-v2/` DELETED from all 3 trees (153+51+51 lines) | documented `MEMORY.md`, `.claude/instincts/`, `/instinct-status` — none exist; zero hooks drove it; zero referrers |
+| 14 | `AUDIT.md` staleness banners; `prompt-patterns/SKILL.md` version note | AUDIT.md's cited baseline was 70% above the live value, its four register files have been deleted, and `assets/raw/` is 3,311 lines of 4.x-anchored text with zero Claude 5 references |
+
+## Always-on context
+
+| | 2026-07-03 pass | 2026-07-25 pass |
+|---|---:|---:|
+| Always-on rules | 9 | **7** |
+| Lines (CLAUDE.md + unscoped rules) | 782 | **687** |
+| Bytes | 53,539 | **48,429** |
+| Est. tokens | 13,384 | **12,107** |
+
+−95 lines / ≈−1,280 tokens, paid on the main session and on every subagent dispatch (up to 13 per
+run). Deliberately modest: 108 lines came out by scoping and ~26 lines of load-bearing content went
+back in. The large scoping win was already taken in 2026-07-03 (−41%); what remains always-on is
+mostly load-bearing, and the remaining reductions land in on-demand and generated output instead.
+
+## Three premises the audit refuted
+
+Recorded because they were the coordinator's own starting assumptions and were wrong:
+
+1. **"Generated teams are bloated."** `presentation-studio` is 8,231 lines of structure that produced
+   3,704,584 lines of deliverable. Structure is 2.7% of team text; deliverables are 94.2%. Verbatim
+   boilerplate in large teams is 3.6–6.5% of rules+agents, and agent files are 0.0–12.8%
+   generator-derived — the specialists are genuinely written per team.
+2. **"EC-2's escalation ladder is dead code."** True of A-Team's own tree (13/13 opus), false of its
+   output: 195 opus / 116 sonnet / 11 haiku across 332 agents, mixed rosters in 20 of 32 teams. EC-2
+   was kept and its all-opus case documented instead of cut.
+3. **"16 teams are missing their entry-point skill."** 10 of them had themed entry points that were
+   better than the mandated name. The mandate was the defect.
+
+## Rejected
+
+- **R-1 Split EC-2.1/2.2/2.3/2.6 into a path-scoped rule** (auditor recommendation, ~6 always-on
+  lines): REJECTED — six lines does not justify fragmenting a numbered contract across two files with
+  different loading conditions. Fixed the underlying defect instead: EC-2 cited `context-tier.md` as
+  its tier authority while that rule is path-scoped and never loads where EC-2 applies. Mapping now
+  inline.
+- **R-2 Path-scope `coordinator-mandate.md`** (both auditors): REJECTED — the carve-out list added in
+  change 3 governs A-Team's own main-session coordinator, making the file load-bearing outside
+  `teams/**`.
+- **R-3 Delete `prompt-patterns/assets/raw/`** (3,311 lines, zero readers, zero Claude 5 references):
+  user declined 2026-07-25. Staleness note added to `prompt-patterns/SKILL.md` instead.
+- **R-4 Track `teams/` structure in git; remove `teams-index/`**: user declined 2026-07-25. Consequence
+  logged — no output-to-generator feedback loop can be verified, and this assessment cannot be
+  repeated as a diff.
+- **R-5 Mandatory-rules templates** (the 4 rules are independently rewritten in every team: 3,132
+  lines across 103 files, one team's execution contract sharing 0.0% with A-Team's): NOT DONE this
+  pass. Dormant, not broken; queued as follow-up.
+
+## Retrofit (16 teams with run records; scope approved by the user)
+
+`docs/RUNTIME-SETUP.md` + `docs/automode-snippet.json` for 15 teams, and version stamps for 7 that
+had none (dates inferred from the oldest `.claude/` file mtime, marked approximate in an HTML comment
+because these teams predate stamping). `u-team` was excluded on discovery — its charter declares its
+Claude tree a reference-only mirror. Validator: `passed=973 failed=131` → `passed=974 failed=94`,
+zero regressions. D1/D2/D3 and C5 now PASS on all 15; three teams are fully green
+(`alexandria`, `obsidian-pkm-team`, `tongzhengsi`).
+
+The remaining 94 failures are deliberately out of the approved scope: 15 are `docs/RUNTIME-SETUP.md`
+in the 14 never-run teams, and the rest (12 R4, 12 C4, 11 R3, 11 C2, 5 C5, plus cap violations) are
+pre-hardening-cohort rule defects. Retrofitting those is a per-team Phase 7 decision, not a batch fix.
+
+## Corrections caught by verification, not by the author
+
+Five, recorded in `phase-3-execution/decisions.md` D12 with reproduction steps. Two are worth naming
+here because they are defect *classes*, not instances:
+
+- **A rule change is not done until every EMITTER is swept.** The example-mandate change landed in 3
+  of 12 sites on the first pass. The miss that mattered was the `## Examples` skeleton inside
+  `agent-writer.md` and `skill-writer.md`, copied verbatim into every generated agent — and
+  `prompt-optimizer.md:200`, which told Phase 4 to "add missing cases" and would have re-added on
+  every optimization what the rule had just removed. Emitters include templates, writers, optimizers,
+  and checklists.
+- **`scripts/preflight-permissions.sh` silently destroyed user settings.** Its Route B merge used
+  `jq -s '.[0] * .[1]'`; jq's `*` replaces arrays. The snippet carried a 2-entry
+  `autoMode.environment` against a shipped 20 with no `"$defaults"` sentinel, so following the
+  generated instructions dropped 18 entries. Fixed by omitting `environment` entirely; Route B now
+  prints before/after lengths for all three arrays. Verified 20 → 20, 65 → 65. Found by a subagent
+  auditing the tool it had been told to use — the single highest-value finding of the retrofit.
+
+Also: `u-team` was misdiagnosed from a validator FAIL before its charter was read, nearly triggering
+a retrofit that would have broken a documented contract; `context-tier.md`'s mandated section was
+contradictory and was shrunk rather than satisfied; and the dangling decision-record citation in
+`teams/u-team/CLAUDE.md` (the cited file exists nowhere) was removed.
+
+## Follow-ups
+
+- Ship `.claude/templates/mandatory-rules/` so the four mandatory rules stop forking 32 ways (R-5).
+- Teach `scripts/preflight-permissions.sh` to switch heading sets on the team's detected language.
+  15 of the 16 retrofit advisories are hand-localized and a re-probe overwrites them;
+  `teams/tongzhengsi/docs/RUNTIME-SETUP.md` is the Traditional Chinese reference implementation.
+- Generated teams should carry their own `reasoning-self-critique-blocks.md` — the gates occupy
+  22–30% of every generated agent file because the skeleton lives only in A-Team's tree.
+- `flutter-app-dev-team` and `muybridge-motion-studio` each ship two entry-point-shaped skills;
+  pick one front door per team.
+- Re-run the paths-scoping probe after any Claude Code upgrade — the scoping saving rests on it.
+- `JUDGMENT.md` reaches 0 generated teams while 127 of their agents are sonnet or haiku, which is the
+  tier the rubrics were written for. Propagate it or a team-local equivalent.
+
+---
+
+# A-Team Hardening Pass (2026-07-03)
 
 Every change cites its defect IDs from `AUDIT.md` (X-n consolidated; TW/FL/EP/L2 raw registers under `.worklog/202607/a-team-hardening/phase-2-audit/`). Adversary rulings from `.worklog/202607/a-team-hardening/phase-4-adversarial/`.
 
