@@ -100,15 +100,15 @@ Each floor lists the exact check that proves it. A verifier runs these checks; a
 
 ### J5.1 Agent .md
 - SIGNAL: Artifact is an agent file.
-- ACTION: Enforce: frontmatter line 1 with name/description/model; sections `## Reasoning` before `## Workflow` before `## Self-Critique`; `## Boundaries`; `## Uncertainty Protocol`; `## Examples` with normal, edge, and rejection cases; total ≤ 300 lines. Check: `head -1` = `---`; `grep -cE '^(name|description|model):'` returns 3; `grep -n '^## '` for order and presence; `wc -l` for length.
+- ACTION: Enforce: frontmatter line 1 with name/description/model; sections `## Reasoning` before `## Workflow` before `## Self-Critique`; `## Boundaries`; `## Uncertainty Protocol`; `## Examples` containing one rejection case and no normal/edge cases; total ≤ 300 lines. Check: `head -1` = `---`; `grep -cE '^(name|description|model):'` returns 3; `grep -n '^## '` for order and presence; `wc -l` for length.
 - POSITIVE: All greps hit in order, 240 lines. Floor met.
 - NEGATIVE: All sections present but Self-Critique appears before Workflow. Floor failed — order is part of the floor, not a style preference.
 
 ### J5.2 Skill SKILL.md
 - SIGNAL: Artifact is a skill file.
-- ACTION: Enforce: lives at `skills/{name}/SKILL.md`; frontmatter name/description; three examples (normal, edge, rejection); ≤ 200 lines. Check (all skills): path test, `grep -cE '^(name|description):'` returns 2, `grep -c '### '` ≥ 3 in Examples, `wc -l`. Entry-point skills ONLY (`skills/boss/`): additionally grep all three of `disable-model-invocation: true`, `allowed-tools`, `argument-hint` — each must hit; non-entry-point skills are exempt from these three.
-- POSITIVE: 140 lines, three examples, correct folder. Floor met.
-- NEGATIVE: Three examples but all happy-path (no rejection case). Floor failed — diversity is the requirement, not the count.
+- ACTION: Enforce: lives at `skills/{name}/SKILL.md`; frontmatter name/description; one rejection-case example; ≤ 200 lines. Check (all skills): path test, `grep -cE '^(name|description):'` returns 2, an Examples section naming a refusal/defer/escalate case, `wc -l`. Entry-point skills ONLY: additionally grep all three of `disable-model-invocation: true`, `allowed-tools`, `argument-hint` — each must hit; non-entry-point skills are exempt from these three. Identify the entry point by SHAPE, never by folder name: it is the one skill declaring `disable-model-invocation: true`. A check keyed to `skills/boss/` silently skips these three greps for every team that named its entry point after itself (`tongzheng/`, `callimachus/`) — a false PASS, which is worse than no check.
+- POSITIVE: 140 lines, one rejection example, correct folder. Floor met.
+- NEGATIVE: Three happy-path examples and no rejection case. Floor failed — the rejection case is the requirement, and the other two are surplus that narrows the model's exploration space.
 
 ### J5.3 Rule .md
 - SIGNAL: Artifact is a rule file.

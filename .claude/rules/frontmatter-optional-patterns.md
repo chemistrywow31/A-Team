@@ -101,13 +101,15 @@ See `rules/yaml-frontmatter.md` Entry-Point Skill Mandate and the Entry-Point Sk
 
 ```yaml
 ---
-name: Boss
+name: {EntryPointName}                 # Team-chosen, matching the folder: Callimachus, Tongzheng, Ventris
 description: Entry point that makes the current session adopt the {coordinator} workflow to run {workflow}
 disable-model-invocation: true
 allowed-tools: ["Agent"]
 argument-hint: "[team-specific hint]"
 ---
 ```
+
+`disable-model-invocation`, `allowed-tools`, and `argument-hint` are literal — they are what identifies a skill as the entry point. `name` is NOT: it is the one field the team chooses, and it must match the folder name, because the folder name is the slash command.
 
 ### Pattern G: Forked-Context Research Skill
 

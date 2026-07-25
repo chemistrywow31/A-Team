@@ -69,7 +69,7 @@ agent: literature-reviewer   # Must exist in .claude/agents/literature-reviewer.
 
 ### Entry-Point Exception
 
-Entry-point skills (`skills/boss/SKILL.md`, `skills/a-team/SKILL.md`) do not use `context: fork`. They run in the main session, pre-approve the Agent tool with `allowed-tools: ["Agent"]`, and dispatch specialists from there — the coordinator workflow itself must keep the user channel.
+Entry-point skills — identified by `disable-model-invocation: true` plus `allowed-tools` granting Agent, whatever the folder is named — do not use `context: fork`. They run in the main session, pre-approve the Agent tool with `allowed-tools: ["Agent"]`, and dispatch specialists from there — the coordinator workflow itself must keep the user channel.
 
 ## Violation Determination
 

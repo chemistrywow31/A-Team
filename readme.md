@@ -223,14 +223,14 @@ Do not rely on `.codex/skills/` alone if you want Codex to auto-discover project
 /A-Team
 ```
 
-This slash command spawns the Team Architect coordinator and runs the full 6-phase workflow. You can also pass arguments:
+This slash command makes the CURRENT session adopt the Team Architect playbook and run the full 6-phase workflow. It does not spawn the coordinator as a subagent — a spawned coordinator has no Agent tool to dispatch with and no channel to talk to you, which dead-locked a production run in 2026-06. You can also pass arguments:
 
 ```
 /A-Team 自動化測試團隊          # start with a direction
 /A-Team --restructure teams/x   # restructure an existing team
 ```
 
-Every generated team also gets a `/boss` entry-point skill so team members can invoke their coordinator the same way.
+Every generated team also gets its own entry-point skill so team members can invoke their coordinator the same way. The team picks the command name — `/callimachus`, `/tongzheng`, `/ventris` — and A-Team identifies it by shape, not by a fixed filename.
 
 ### Core Workflow
 
@@ -441,7 +441,7 @@ Codex runtime 會從 `.agents/skills/` 掃描 project skills，所以這裡分�
 /A-Team --restructure teams/x   # 重構現有團隊
 ```
 
-每個產出的團隊也會自動生成 `/boss` 入口 skill，讓團隊成員可以用同樣的方式啟動自己的指揮官。
+每個產出的團隊也會自動生成專屬的入口 skill，讓團隊成員可以用同樣的方式啟動自己的指揮官。指令名稱由團隊自訂（`/callimachus`、`/tongzheng`、`/ventris`），A-Team 以結構辨識入口，不綁定固定檔名。
 
 ### A-Team 的工作流程
 

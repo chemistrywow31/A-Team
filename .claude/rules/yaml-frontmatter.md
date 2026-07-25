@@ -78,7 +78,7 @@ Optional: `paths` — glob array scoping when rule loads.
 
 ### Entry-Point Skill Mandate
 
-Every skill serving as a team entry point (e.g., `skills/boss/SKILL.md`, `skills/a-team/SKILL.md`) must declare:
+Every skill serving as a team entry point — the folder name is the team's choice, e.g. `skills/tongzheng/SKILL.md` or `skills/a-team/SKILL.md` — must declare:
 
 ```yaml
 disable-model-invocation: true

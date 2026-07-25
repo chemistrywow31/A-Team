@@ -41,7 +41,7 @@ teams/{team-name}/
     │   └── {group-b}/
     │       └── {agent-3}.md
     ├── skills/
-    │   ├── boss/                     ← Entry-point skill (invokes coordinator)
+    │   ├── {entry-name}/             ← Entry-point skill, team-chosen name (invokes coordinator)
     │   │   └── SKILL.md
     │   ├── {skill-1}/                ← Each skill has its own folder
     │   │   └── SKILL.md              ← Fixed filename (uppercase)
@@ -135,10 +135,11 @@ The advisory must carry a probe stamp (`Probed: {claude version} on {os} at {yyy
 
 ### Entry-Point Skill
 
-Every generated team must include an entry-point skill at `skills/boss/SKILL.md`, invokable as `/boss`. This skill makes the CURRENT session adopt the team coordinator's full workflow, ensuring users always enter through it. Do not spawn the coordinator as a subagent: a spawned coordinator cannot dispatch further agents and cannot converse with the user (production evidence: toeic-daily-prep-team first-run dead-lock, 2026-06, hand-patched).
+Every generated team must include exactly ONE entry-point skill at `skills/{name}/SKILL.md`, invokable as `/{name}`, where the team chooses the name (see below — a generic `boss` is permitted but not preferred). This skill makes the CURRENT session adopt the team coordinator's full workflow, ensuring users always enter through it. Do not spawn the coordinator as a subagent: a spawned coordinator cannot dispatch further agents and cannot converse with the user (production evidence: toeic-daily-prep-team first-run dead-lock, 2026-06, hand-patched).
 
 The entry-point skill must:
-- Use `boss` as the skill folder name and slash command name (consistent across all generated teams)
+- Live in its own skill folder whose name IS the slash command. Name it after the team's coordinator or the team's identity — `callimachus/`, `ventris/`, `tongzheng/`, `forge/` are all correct. A generic `boss/` is permitted but not preferred: a memorable, meaningful command is better product design, and 10 of 11 teams that "violated" the old fixed-name mandate had in fact chosen a better name. Exactly ONE entry-point skill per team; two make the front door ambiguous.
+- Be identifiable structurally rather than by filename: `disable-model-invocation: true` plus `allowed-tools` containing `Agent` plus an instruction to adopt the coordinator playbook in the current session. `scripts/validate-team.sh` finds it by that shape, so the name is free.
 - Instruct the current session to Read the coordinator's .md file and execute its workflow as its own; specialists are then dispatched from the main session via the Agent tool
 - Pass any user-provided arguments into the coordinator workflow context
 - Support bare invocation (no arguments → workflow starts from Phase 1 or the beginning)
@@ -147,7 +148,7 @@ The entry-point skill frontmatter must declare:
 
 ```yaml
 ---
-name: Boss
+name: {EntryPointName}                 # Team-chosen, matching the folder: Callimachus, Tongzheng, Ventris
 description: {Entry point that makes the current session adopt the {coordinator} workflow to run {workflow description}}
 disable-model-invocation: true
 allowed-tools: ["Agent"]
@@ -184,6 +185,14 @@ paths:
 - Each skill must have its own folder, containing `SKILL.md` (uppercase)
 - Rules are in `rules/` directory. Subdirectories are allowed for grouping (e.g., `rules/frontend/`, `rules/backend/`). All `.md` files are discovered recursively
 
+### Size Budgets
+
+- **Rules: ≤ 12 per team.** The four mandatory rules count toward it, leaving ~8 for team-specific constraints.
+- **Agents: ≤ 14 per team**, coordinator included.
+- Exceeding either budget is permitted, but the phase `decisions.md` must carry one line naming what the excess buys. An unexplained overage is a violation.
+
+These are budgets, not targets — a 6-agent team that covers its workflow is better than a 14-agent one that pads. Evidence: across 37 generated teams, agent count correlates with delivered output volume at r = +0.06 (n = 14 teams with run records). The largest roster in the repo (24 agents) produced 12,315 lines of worklog against 13,158 lines of deliverable — a 0.94:1 ceremony-to-product ratio — while a 9-agent team produced 3.7M lines. Roster size does not buy throughput; it buys coordination overhead. Checked by `scripts/validate-team.sh`.
+
 ## Violation Determination
 
 - Team root directory missing `CLAUDE.md` → Violation
@@ -201,8 +210,8 @@ paths:
 - Non-coordinator agent placed directly in `agents/` root directory (same level as coordinator) → Violation
 - Skill exists directly as `.md` file instead of `{skill-name}/SKILL.md` format → Violation
 - File or folder name does not follow kebab-case → Violation
-- Generated team missing entry-point skill at `skills/boss/SKILL.md` → Violation
-- Entry-point skill `skills/boss/SKILL.md` missing `disable-model-invocation: true` → Violation
+- Generated team has zero, or more than one, entry-point skill → Violation. Identify by SHAPE, not filename: `grep -rl \x27^disable-model-invocation: *true\x27 {team}/.claude/skills` must return exactly one file
+- The entry-point skill missing `disable-model-invocation: true` → Violation
 - Entry-point skill missing `allowed-tools: ["Agent"]` → Violation
 - Entry-point skill missing `argument-hint` → Violation
 - Generated team missing `docs/RUNTIME-SETUP.md` → Violation

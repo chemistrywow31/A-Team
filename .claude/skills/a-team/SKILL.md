@@ -29,7 +29,9 @@ When this skill is invoked:
    - `/A-Team` (bare) → begin Phase 1 Discovery from scratch
 4. Dispatch specialists via the Agent tool per the playbook. You keep the user channel; specialists route questions back through `NEEDS_CONTEXT` returns, which you relay and log to `dialogue-log.md`.
 
-## Examples
+## Invocation Modes
+
+Two entry paths and one refusal — these document distinct routing, not example diversity.
 
 ### Normal Case
 
@@ -37,7 +39,7 @@ User: `/A-Team 自動化測試團隊`
 
 Action: Read team-architect.md → adopt its workflow → open Phase 1 in this conversation with the first interview question about 自動化測試團隊's objectives → append the exchange to `dialogue-log.md`.
 
-### Restructuring Case (edge)
+### Restructuring Case (second invocation mode)
 
 User: `/A-Team --restructure teams/english-teaching-content`
 
