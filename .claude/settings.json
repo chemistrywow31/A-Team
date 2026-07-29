@@ -75,6 +75,16 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "L=\"${CLAUDE_PROJECT_DIR:-.}/.claude/settings.local.json\"; case \"$(cat \"$L\" 2>/dev/null)\" in *outputStyle*) : ;; *) printf '%s\n' '<output-mode-first-run>No output style is set for this project yet. Before starting the task: (1) Ask the user ONE question in their language: keep the default output style, or switch to ADHD Friendly (action-first: next action first, numbered steps, progress restated every turn, no preamble — defined in .claude/output-styles/adhd-friendly.md)? Mention the choice persists for every future session and can be changed anytime via /config or by asking. (2) Merge the answer into .claude/settings.local.json as {\"outputStyle\":\"ADHD Friendly\"} or {\"outputStyle\":\"default\"}, creating the file if absent. (3) If ADHD Friendly was chosen, read the style file now and follow it for the rest of this session; the harness applies it automatically from the next session. Then proceed with the task.</output-mode-first-run>' ;; esac",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [

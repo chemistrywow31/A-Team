@@ -29,6 +29,7 @@ This audit compares `CLAUDE.md` and `.claude/` against the active Codex runtime 
 - `.claude/skills/a-team/SKILL.md` was not copied verbatim because Codex entry is `AGENTS.md` plus repo skills, not a Claude slash-command entrypoint.
 - `.claude/skills/prompt-patterns/assets/raw/*` was not copied because those files are Claude-version-specific research notes, not canonical Codex rules.
 - `.claude/skills/skill-creator` scripts were not duplicated because Codex has a system `skill-creator` skill and this repo keeps only a lightweight bridge.
+- `.claude/output-styles/` was not copied because output styles are a Claude Code runtime feature (selected via `outputStyle` in project-local settings, main-session only, first-run ask via SessionStart hook); Codex has no equivalent surface, so the output-mode component is Claude-tree-only.
 - `.claude/` was not modified; it remains the legacy/source design.
 
 ## Validation Notes

@@ -81,6 +81,8 @@ Beyond the baseline `permissions`, teams add allow entries for tools their pipel
 
 Generated teams only produce `settings.json`. Users create `settings.local.json` at their discretion.
 
+One designed exception: the output-mode first-run hook (baseline, `rules/hooks-integration.md`) has the session merge the user's chosen `outputStyle` into `.claude/settings.local.json` — written only as the user's explicit answer to the first-run question. That is a user-preference record, not team configuration, and is legitimate: unlike `autoMode` (above), `outputStyle` IS honored from project-local settings.
+
 ### Precedence
 
 Precedence: Managed (org-wide) > User (`~/.claude/settings.json`) > Project (`.claude/settings.json`) > Local (`.claude/settings.local.json`). Generated team settings operate at project scope — users may override but organizations may force back.

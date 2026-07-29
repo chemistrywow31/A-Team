@@ -1,5 +1,5 @@
 {
-  "_comment": "Baseline hook set for generated teams (rules/hooks-integration.md). Portable: no jq (not preinstalled on stock macOS), every path anchored to CLAUDE_PROJECT_DIR (bare relative paths created nested .worklog trees in production), non-blocking failures suppressed. session-events.jsonl accumulates the RAW UserPromptSubmit event JSON, one object per line (the user's text is inside the .prompt field — consumers must parse JSON, not expect plain text). Name its consumer in the team CLAUDE.md; teams handling secrets drop that hook or add redaction.",
+  "_comment": "Baseline hook set for generated teams (rules/hooks-integration.md). Portable: no jq (not preinstalled on stock macOS), every path anchored to CLAUDE_PROJECT_DIR (bare relative paths created nested .worklog trees in production), non-blocking failures suppressed. session-events.jsonl accumulates the RAW UserPromptSubmit event JSON, one object per line (the user's text is inside the .prompt field — consumers must parse JSON, not expect plain text). Name its consumer in the team CLAUDE.md; teams handling secrets drop that hook or add redaction. The matcher:startup SessionStart entry is the output-mode first-run ask (rules/output-structure.md, Output Mode Component): it stays silent whenever settings.local.json already names an outputStyle, and its guard must read ONLY settings.local.json — this file names outputStyle in the command text, so reading settings.json would self-match and suppress the ask forever.",
   "hooks": {
     "SessionStart": [
       {
@@ -7,6 +7,16 @@
           {
             "type": "command",
             "command": "mkdir -p \"${CLAUDE_PROJECT_DIR:-.}/.worklog/$(date +%Y%m)\" 2>/dev/null || true",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "L=\"${CLAUDE_PROJECT_DIR:-.}/.claude/settings.local.json\"; case \"$(cat \"$L\" 2>/dev/null)\" in *outputStyle*) : ;; *) printf '%s\n' '<output-mode-first-run>No output style is set for this project yet. Before starting the task: (1) Ask the user ONE question in their language: keep the default output style, or switch to ADHD Friendly (action-first: next action first, numbered steps, progress restated every turn, no preamble — defined in .claude/output-styles/adhd-friendly.md)? Mention the choice persists for every future session and can be changed anytime via /config or by asking. (2) Merge the answer into .claude/settings.local.json as {\"outputStyle\":\"ADHD Friendly\"} or {\"outputStyle\":\"default\"}, creating the file if absent. (3) If ADHD Friendly was chosen, read the style file now and follow it for the rest of this session; the harness applies it automatically from the next session. Then proceed with the task.</output-mode-first-run>' ;; esac",
             "timeout": 5
           }
         ]

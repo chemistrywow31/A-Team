@@ -72,6 +72,7 @@ Every generated team must include:
 - A code reviewer (separate from QA testing) when the team's deliverables include executable artifacts; a deliverable-QA reviewer otherwise
 - Worklog rule, context management rule, and execution contract rule in `rules/`
 - Worklog and context management section, precedence order, and generator version stamp in CLAUDE.md
+- The output-mode component: `.claude/output-styles/adhd-friendly.md` copied verbatim from A-Team, plus the first-run ask hook in `settings.json` — the first session asks once, the choice persists in `settings.local.json` (`.claude/rules/output-structure.md`, Output Mode Component)
 - `docs/RUNTIME-SETUP.md` from Phase 3.5 — what the user must configure outside the team before first run
 
 Some runtime configuration cannot ship inside a generated team. Claude Code's auto-mode carve-outs are honored only from user settings, and no agent may write them — attempting it is a classified violation. A-Team's answer is advisory: probe the live runtime, emit a document plus a user-run command. See `.claude/rules/settings-json.md` (Auto Mode Reality) and `scripts/preflight-permissions.sh`.

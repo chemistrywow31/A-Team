@@ -22,6 +22,7 @@ Every generated team must include `.claude/settings.json` (or `.claude/hooks.jso
 | Event | Purpose | Hook type | Blocking? |
 |-------|---------|-----------|-----------|
 | `SessionStart` | Ensure `.worklog/{yyyymm}/` exists for the current month | `command` | No |
+| `SessionStart` (matcher `startup`) | First-run output-mode ask: inject the ask-once instruction when `.claude/settings.local.json` names no `outputStyle`; silent on every later session (`rules/output-structure.md`, Output Mode Component) | `command` | No |
 | `UserPromptSubmit` | Log the user's initial request to a session ledger | `command` | No |
 | `PreCompact` | Write a compaction checkpoint snapshotting current phase state | `command` | No |
 | `Stop` | Warn when the month's worklog directory is missing (advisory; a real triad check is a team-specific addition) | `command` | No (advisory) |
@@ -42,7 +43,7 @@ Beyond the baseline, teams may add hooks for team-specific concerns:
 
 - Hooks must not block the main flow unless the operation is truly dangerous (e.g., a production API write without authorization). Default: non-blocking.
 - Hooks must not exceed 10 second timeout — long hooks cripple session startup.
-- Hooks must not depend on tools not preinstalled in the user's shell. Guaranteed set: `mkdir`, `cat`, `echo`, `test`, `date`, `ls`. `jq` is NOT preinstalled on stock macOS — capture hook stdin with `cat` instead of parsing it (avoid `python`, `node` entirely).
+- Hooks must not depend on tools not preinstalled in the user's shell. Guaranteed set: `mkdir`, `cat`, `echo`, `printf`, `test`, `date`, `ls`, plus shell syntax (`case`). `jq` is NOT preinstalled on stock macOS — capture hook stdin with `cat` instead of parsing it (avoid `python`, `node` entirely).
 - Anchor every hook path to `"${CLAUDE_PROJECT_DIR:-.}"` — hooks can run with a cwd outside the project root; bare relative `.worklog/` paths created nested worklog trees in ground truth (toeic, 2026-06).
 - The `UserPromptSubmit` capture file accumulates full prompt text. Name its consumer in the team's CLAUDE.md (dialogue review, worklog audit). Teams handling secrets or PII must drop this hook or add redaction before append.
 

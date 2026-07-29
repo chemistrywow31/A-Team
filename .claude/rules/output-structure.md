@@ -54,6 +54,8 @@ teams/{team-name}/
     │   ├── {rule-2}.md
     │   └── {subdirectory}/           ← Optional grouping (e.g., frontend/, backend/)
     │       └── {rule-3}.md
+    ├── output-styles/
+    │   └── adhd-friendly.md          ← Output-mode component, copied verbatim from A-Team (see below)
     └── settings.json                 ← Hooks, permissions, env (per rules/settings-json.md)
 ```
 
@@ -160,6 +162,16 @@ argument-hint: "[team-specific hint]"
 - `allowed-tools: ["Agent"]` pre-approves the Agent tool so the main-session coordinator can dispatch specialists without a mid-workflow permission prompt.
 - `argument-hint` provides autocomplete guidance for the team's expected arguments.
 
+### Output Mode Component
+
+Every generated team ships a user-selectable output mode (mandated for teams stamped 2026-07-28 or later):
+
+- `.claude/output-styles/adhd-friendly.md` — copied VERBATIM from A-Team's `.claude/output-styles/adhd-friendly.md`. Single source: do not rewrite it per team; a second maintained copy drifts. It is an action-first style for readers with ADHD, adapted from ayghri/i-have-adhd (MIT; attribution inside the file).
+- The first-run ask hook — already inside `.claude/templates/hooks-baseline.json`, so copying the baseline hooks object per `rules/hooks-integration.md` delivers it. On the first `startup` session with no `outputStyle` in `.claude/settings.local.json`, it injects an instruction to ask the user ONCE (default or ADHD Friendly), merge the answer into `settings.local.json`, and proceed. Every later session is silent.
+- Nothing else: no CLAUDE.md prose and no RUNTIME-SETUP entry for this feature. The hook message itself tells the user the choice is permanent-but-changeable (`/config` → Output style); an always-loaded copy of that fact would be decoration (CLAUDE.md, Boil the Lake).
+
+Output styles apply to the MAIN session only — exactly the coordinator's user channel. Specialist dispatches and EC-1 reports are never reshaped. The style governs structure, not language: the team's communication-language rule still applies. Checked by `scripts/validate-team.sh` O1/O2, date-gated by the generator stamp.
+
 ### Path-Scoped Rules
 
 Rules in `.claude/rules/` support an optional `paths` field in YAML frontmatter. Use this to scope rules to specific file types, reducing context consumption and improving adherence:
@@ -221,6 +233,7 @@ These are budgets, not targets — a 6-agent team that covers its workflow is be
 - Agent Teams mode team missing File Ownership section in any agent .md → Violation
 - Agent Teams mode team CLAUDE.md missing the known-limitations list → Violation
 - Generated team missing baseline hook set in `settings.json` → Violation (see `rules/hooks-integration.md`)
+- Team stamped 2026-07-28 or later missing `.claude/output-styles/adhd-friendly.md`, or its `settings.json` missing the output-mode first-run hook → Violation (validate-team.sh O1/O2; earlier teams are exempt, not retro-failed)
 
 ## Exceptions
 
