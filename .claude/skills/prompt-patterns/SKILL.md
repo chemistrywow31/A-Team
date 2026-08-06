@@ -11,6 +11,10 @@ A curated library of prompt engineering patterns distilled from Anthropic's offi
 
 Use this skill when generating or optimizing agent prompts, skill prompts, rule files, or CLAUDE.md content for a target team. Do not load the entire library — select only the patterns relevant to the current generation task.
 
+## A-Team Return Contract
+
+This repository-specific contract is not attributed to the Anthropic sources below. For A-Team task returns, use only the statuses in `.claude/rules/execution-contract.md` EC-1. Missing required evidence or context uses `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {missing}` in `CONCLUSIONS`; never use `INSUFFICIENT_DATA` as a report status.
+
 ## Assets Structure
 
 ```

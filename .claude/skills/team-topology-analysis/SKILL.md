@@ -7,83 +7,45 @@ description: Provide framework for analyzing team structure rationality and eval
 
 ## Description
 
-Provide framework for analyzing team structure rationality, used to evaluate whether collaboration topology between agents is efficient and whether bottlenecks or redundancies exist.
+Evaluate whether a proposed team graph supports safe handoffs, coordinator-owned delegation, useful parallelism, and clear ownership in a shared filesystem.
 
-## Belongs To
+## Users
 
-This skill belongs exclusively to `agents/discovery/role-designer.md`
+- `role-designer`
+- `team-architect`
 
 ## Core Knowledge
 
-### Topology Patterns
+- Prefer direct-specialist topologies. The coordinator stays user-facing; do not add a sub-coordinator.
+- Only the main-session coordinator delegates through the Claude Task/Agent tool. Specialists cannot dispatch other agents.
+- Stable task paths use phase-purpose names so joins, follow-ups, and worklog evidence stay traceable.
+- All agents share one filesystem. Parallel branches need explicit owned paths, forbidden paths, and the non-reversion rule.
+- Treat each Task/Agent dispatch as fresh specialist context. Pass the task identity, artifact paths, ownership boundaries, and acceptance criteria; do not assume access to the coordinator's conversation.
+- A specialist that needs user input returns `NEEDS_CONTEXT`; the coordinator relays the question and re-dispatches the task with the answer.
 
-#### 1. Pipeline Topology
-```
-A → B → C → D
-```
-- Applicable scenario: Work has strict sequential order
-- Advantages: Clear responsibilities, predictable process
-- Risk: Any blocked node causes entire chain to stall
+## Application Guide
 
-#### 2. Hub & Spoke Topology
-```
-    B
-    ↑
-A ← Coordinator → C
-    ↓
-    D
-```
-- Applicable scenario: Multiple parallel work streams coordinated by one coordinator
-- Advantages: Flexible assignment, easy to add/remove nodes
-- Risk: Coordinator becomes single point of bottleneck
-
-#### 3. Hybrid Topology
-```
-Coordinator → [GroupA: A1 → A2] → Review → [GroupB: B1, B2] → Final
-```
-- Applicable scenario: Complex teams with some sequential work, some parallel
-- Usually the recommended final pattern
-
-### Topology Health Check
-
-1. **Bottleneck detection**: Is any agent the upstream of 3+ other agents simultaneously?
-2. **Island detection**: Is any agent without any interaction with other team members?
-3. **Cycle detection**: Does A→B→C→A circular dependency exist? (review cycles excluded)
-4. **Coordinator load**: Does coordinator directly manage more than 7 agents? If so, recommend splitting into separate teams.
-
-## Agent Teams Mode Considerations
-
-### Shared Task List Patterns
-- Use task dependencies (`blockedBy`) to enforce sequential gates
-- Parallel agents claim tasks independently — no coordinator bottleneck
-- Task ownership prevents duplicate work on the same deliverable
-
-### File Ownership Rules
-- Parallel agents must write to non-overlapping file sets
-- Define ownership in each agent's "Communication Patterns" section
-- On conflict: coordinator mediates, or designate a primary owner
-
-### Communication Decision Framework
-
-| Scenario | Channel | Rationale |
-|----------|---------|-----------|
-| Agent needs input from specific peer | Direct message | Avoids noise for others |
-| Architecture decision change | Broadcast | Affects all agents |
-| Task reassignment or priority change | Via coordinator | Coordinator tracks assignments |
-| Review feedback | Direct message | Only reviewer ↔ author |
-
-### Coordinator Bottleneck Mitigation
-- Allow peer-to-peer communication for review pairs
-- Limit broadcast to 2-3 defined critical triggers
-- Coordinator focuses on: task assignment, dependency resolution, final quality gate
-- Avoid routing routine status updates through coordinator
+1. Map the workflow stages, deliverables, and review relationships before drawing the graph.
+2. Choose the lightest topology that preserves clear ownership: pipeline for strict sequence, hub-and-spoke for coordinator-driven parallel work, hybrid for mixed staged and parallel work.
+3. Assign stable task paths and disjoint file ownership to every branch that can run in parallel.
+4. Define each coordinator-to-specialist Task/Agent handoff: input paths, owned and forbidden paths, acceptance criteria, return state, and downstream verification.
+5. Reject or flatten any topology that requires a specialist to dispatch another agent; all specialist work must be dispatched directly by the coordinator.
+6. Flag bottlenecks, cycles, review loops without exit criteria, and shared-file hotspots before accepting the topology.
 
 ## Quality Checkpoints
 
-- [ ] Every agent has at least one upstream or downstream connection
-- [ ] Coordinator is at the logical center of topology
-- [ ] No meaningless circular dependencies
-- [ ] Parallel work agents are correctly grouped
-- [ ] (Agent Teams) File ownership is non-overlapping between parallel agents
-- [ ] (Agent Teams) Communication channels are defined for every peer-to-peer pair
-- [ ] (Agent Teams) Broadcast triggers are limited and clearly defined
+- [ ] The coordinator is the only user-facing hub and does not depend on a sub-coordinator.
+- [ ] Parallel branches own different files or one explicit primary owner mediates writes.
+- [ ] Every Task/Agent dispatch originates from the main-session coordinator; specialists never dispatch.
+- [ ] Task paths and join boundaries are explicit enough to support worklog tracing.
+- [ ] The topology can finish without circular dependency outside intentional review loops.
+
+## Example
+
+### Input
+
+`Frontend, backend, and QA all need to edit the same API schema at the same time.`
+
+### Output
+
+Reject the topology as unsafe for a shared filesystem; assign one schema owner, route feedback through review or coordinator, and keep the other roles read-only on that file.

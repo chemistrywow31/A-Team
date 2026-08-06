@@ -1,6 +1,6 @@
 ---
 name: Codex Native Output
-description: Keep generated teams authored in canonical Codex format and retain mapping for future format conversion
+description: Keep A-Team root Codex surfaces as projections and require each generated team to declare its own canonical authority
 ---
 
 # Codex Native Output
@@ -11,62 +11,56 @@ description: Keep generated teams authored in canonical Codex format and retain 
 
 ## Rule Content
 
+### Separate A-Team Root Authority From Generated-Team Authority
+
+- A-Team root repository authority remains `.claude/`. Root Codex surfaces in this repo are regenerated projections.
+- Generated teams do not inherit that authority automatically. Discovery must decide whether a generated team is Codex canonical, Claude canonical, or dual-surface with one canonical source.
+
 ### Confirm Delivery Format During Discovery
 
 Before Planning, confirm:
 
 - the requested delivery format: `codex-native`, `claude-compatible`, `dual-format`, or `let A-Team decide`
-- the canonical authored format: always `codex-native`
+- the generated team's canonical authority
 - whether conversion-ready mapping must be retained for later Claude <-> Codex transformation
 
-### Author The Canonical Package First
+### Author The Chosen Canonical Surface First
 
-The source of truth for generated teams is the Codex package:
+- If the generated team is Codex canonical, author `AGENTS.md`, `.codex/`, `agents/`, and `.agents/skills/` first.
+- If the generated team is Claude canonical, author `CLAUDE.md` and `.claude/` first, then regenerate any requested Codex projection.
+- A dual-surface team still has one canonical source. Never let both surfaces diverge as peers.
 
-- `AGENTS.md`
-- `.codex/`
-- `agents/`
-- `.agents/skills/`
+### Retain Mapping When More Than One Surface Exists
 
-Write this package first even when the user signals future Claude compatibility needs. Do not treat `.claude/` as the authored output surface during normal generation.
+Every generated team with more than one surface, or with explicit future conversion retention, must include:
 
-### Retain Round-Trip Mapping
+- `.codex/docs/format-mapping.md`
+- `.codex/docs/format-mapping.manifest.yaml`
 
-Every generated team must include `.codex/docs/format-mapping.md`.
-Every generated team must include `.codex/docs/format-mapping.manifest.yaml`.
-
-The human-readable mapping file must record:
+Those artifacts must record:
 
 - requested delivery format
-- canonical authored format
-- Codex -> Claude path mapping
-- Claude -> Codex path mapping
-- lossy or unsupported conversions
-- round-trip preservation notes
-
-The manifest must record:
-
-- artifact ids
-- source and target paths
-- relation shape
-- transform mode
+- canonical authority
+- runnable vs reference-only or activation-gated state
+- Codex <-> Claude path mapping
+- platform-only files
+- lossy or manual steps
 - reverse strategy or canonical source
-- validation and sidecar requirements for lossy conversions
 
-### Protect Conversion Boundaries
+### Protect Projection Boundaries
 
-- Keep stable file and directory names in the canonical Codex package whenever possible
-- If a direct Claude equivalent does not exist, note the fallback or manual step in the mapping artifact
-- Do not modify `.claude/` unless the user explicitly requests a conversion task
+- Non-canonical surfaces are regenerated, not hand-edited.
+- A reference-only surface stays reference-only until the user approves activation and the mapping artifacts are updated.
+- If a direct counterpart does not exist, record the fallback or manual step in the mapping artifacts.
 
 ## Violation Determination
 
-- Discovery output omits the requested delivery format or canonical authored format -> Violation
-- Generation writes only Claude-format artifacts without the canonical Codex package -> Violation
-- `.codex/docs/format-mapping.md` is missing or incomplete -> Violation
-- `.codex/docs/format-mapping.manifest.yaml` is missing or incomplete -> Violation
-- `.claude/` is modified during normal generation without explicit user approval -> Violation
+- Discovery omits requested format, canonical authority, or mapping-retention need -> Violation
+- A generated team surface is written first even though another surface was declared canonical -> Violation
+- A multi-surface or conversion-retained team omits `.codex/docs/format-mapping.md` or `.codex/docs/format-mapping.manifest.yaml` -> Violation
+- Mapping artifacts omit canonical authority, surface state, or platform-only files -> Violation
+- A non-canonical surface is hand-edited as if it were canonical -> Violation
 
 ## Exceptions
 
-If the user explicitly asks for a format conversion task in the current run, generate or update the canonical Codex package first unless the user explicitly waives future round-trip support.
+- A true single-surface team may omit mapping artifacts unless the user explicitly requests future conversion support.

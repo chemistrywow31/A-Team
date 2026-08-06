@@ -24,7 +24,7 @@ Use this skill when writing or reviewing prompts for Codex teams. It converts br
 - Use `## Input and Output` for handoff contracts.
 - Use `## Completion Contract` for status, artifacts, changed files, worklog paths, and blockers.
 - Use `## Preflight` and `## Verification` for concise decision notes and quality checks.
-- Use `## Uncertainty Protocol` for `INSUFFICIENT_DATA`, `NEEDS_CONTEXT`, and `BLOCKED`.
+- Use only EC-1 report statuses. Missing required evidence or context uses `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {missing}` in `CONCLUSIONS`; never use `INSUFFICIENT_DATA` as a status.
 
 ### Codex Adaptation Rules
 
@@ -66,4 +66,4 @@ When examples are included, cover:
 
 ### Output
 
-Add `## Evidence Requirements`, `## Verification`, and `## Completion Contract` sections. Require each finding to cite a file path or worklog entry, and require `INSUFFICIENT_DATA` when evidence is missing.
+Add `## Evidence Requirements`, `## Verification`, and `## Completion Contract` sections. Require each finding to cite a file path or worklog entry; when required evidence is missing, return `STATUS: NEEDS_CONTEXT` and put `INSUFFICIENT_DATA: {missing}` in `CONCLUSIONS`.

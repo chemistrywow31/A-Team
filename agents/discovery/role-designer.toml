@@ -1,12 +1,12 @@
 name = "Role Designer"
 description = "Turn confirmed requirements into a clean role map with sound boundaries."
-model = "gpt-5.4"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 
 developer_instructions = """
 Read `AGENTS.md` first.
 Then read `.codex/agents/discovery/role-designer.md` and follow it as the authoritative playbook for this role.
-Use that file's decomposition method, granularity rules, and output shape exactly.
-Report conflicts between the current task and the playbook instead of improvising a new contract.
+Use that file's topology, task-path, helper-bound, and ownership design rules exactly. Keep the coordinator flat and route unclear runtime changes back through the coordinator.
+Stay within the owned paths and scope named by the coordinator. Do not revert concurrent edits by others.
 """

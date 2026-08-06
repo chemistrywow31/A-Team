@@ -14,7 +14,8 @@
 #
 # Output: one line per check, in the EC-3.6 verifier verdict format
 #   {check-id} {check-name} | PASS|FAIL|SKIP | {evidence}
-# so a fresh-context verifier can paste it directly as its evidence.
+# Store these lines in verifier-owned evidence files and return the criterion
+# lines with those evidence paths in the EC report; do not paste raw output.
 #
 # Exit: 0 when every check passed, 1 when any check FAILed.
 #
@@ -111,6 +112,26 @@ firstmatch_section() {
 	printf '%s' "$_fs"
 }
 
+# Surface-specific detector for Claude mirrors that are intentionally non-runnable.
+# Generic "for reference only" prose must not trip this (example: legal disclaimers).
+claude_reference_only_declared() {
+	# $1=file -> emits the first matching paragraph snippet, else nothing
+	[ -f "$1" ] || return 1
+	awk '
+	BEGIN { RS=""; IGNORECASE=1 }
+	{
+		p = tolower($0)
+		if (p ~ /claude/ && p ~ /(reference[- ]only|not a runnable|not runnable|compatibility mirror)/) {
+			gsub(/\n/, " ", $0)
+			gsub(/  +/, " ", $0)
+			print substr($0, 1, 160)
+			exit 0
+		}
+	}
+	END { exit 1 }
+	' "$1"
+}
+
 # ---------------------------------------------------------------- team detection
 
 # Prints a skip reason when the directory is not a Claude Code team, else nothing.
@@ -120,7 +141,7 @@ not_a_claude_team() {
 
 	if [ ! -d "$_d/.claude" ]; then
 		if [ -f "$_d/AGENTS.md" ] && [ ! -f "$_d/CLAUDE.md" ]; then
-			echo "no .claude/ directory; AGENTS.md present (Codex-only tree)"
+			echo "no .claude/ directory; AGENTS.md present (Codex-only tree; validate with scripts/validate_codex_team.py)"
 			return 0
 		fi
 		echo "no .claude/ directory"
@@ -148,9 +169,11 @@ not_a_claude_team() {
 	# omits an entry-point skill, settings.json, and model/effort frontmatter, so
 	# the runnable-team checks would FAIL it forever and re-provoke a retrofit that
 	# breaks its stated contract. Verified case: teams/u-team.
-	if [ -f "$_d/CLAUDE.md" ] &&
-	   grep -qiE '(reference[- ]only|not a runnable|NOT a runnable|唯讀鏡像|參考用鏡像)' "$_d/CLAUDE.md" 2>/dev/null; then
-		echo "charter declares a reference-only mirror: $(firstmatch '(reference[- ]only|not a runnable|NOT a runnable)' "$_d/CLAUDE.md")"
+	_ref=$(
+		claude_reference_only_declared "$_d/CLAUDE.md" 2>/dev/null || true
+	)
+	if [ -n "$_ref" ]; then
+		echo "charter declares a Claude-specific reference-only mirror: $(printf '%s' "$_ref" | oneline)"
 		return 0
 	fi
 
@@ -717,6 +740,9 @@ Usage:
 
 Output: {check-id} {check-name} | PASS|FAIL|SKIP | {evidence}   (EC-3.6 format)
 Exit:   0 = all checks passed, 1 = at least one FAIL.
+
+Store criterion lines in verifier-owned evidence files; return those paths in
+the EC report rather than pasting raw validator output.
 
 Mechanical checks only. Judgment items (responsibility overlap, semantic rule
 correctness, example diversity) remain in .claude/skills/quality-validation/

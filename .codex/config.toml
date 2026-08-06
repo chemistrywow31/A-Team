@@ -1,25 +1,26 @@
-# Project defaults for Codex in this repository.
-# A-Team is optimized for coordination-heavy sessions.
+# Project-local Codex runtime for A-Team.
+# Keep root defaults here and agent-specific behavior in `agents/**/*.toml`.
 
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
-disable_response_storage = true
-
-# Basic permission posture (parity with .claude/settings.json permission bands):
-# run shell steps inside a workspace-scoped sandbox and only escalate for
-# approval when a command fails or needs to leave the sandbox.
-approval_policy = "on-failure"
+approval_policy = "on-request"
 sandbox_mode = "workspace-write"
-
-# Prefer Codex-native project docs, but still load legacy teams that only ship CLAUDE.md.
-project_doc_fallback_filenames = ["AGENTS.md", "CLAUDE.md"]
+project_doc_fallback_filenames = ["CLAUDE.md"]
 
 [features]
 multi_agent = true
 
+[features.multi_agent_v2]
+enabled = true
+max_concurrent_threads_per_session = 7
+expose_spawn_agent_model_overrides = true
+wait_agent_enabled = true
+
 [agents]
-max_threads = 6
-max_depth = 1
+enabled = true
+default_subagent_model = "gpt-5.6-terra"
+default_subagent_reasoning_effort = "high"
+interrupt_message = true
 
 [agents.team_architect]
 description = "Coordinate A-Team discovery, planning, generation, review, and delivery."

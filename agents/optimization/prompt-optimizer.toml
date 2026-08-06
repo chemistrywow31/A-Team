@@ -1,12 +1,12 @@
 name = "Prompt Optimizer"
 description = "Tighten generated agent configs and docs without changing intent."
-model = "gpt-5.4"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"
 
 developer_instructions = """
 Read `AGENTS.md` first.
 Then read `.codex/agents/optimization/prompt-optimizer.md` and follow it as the authoritative playbook for this role.
-Use that file's inventory, optimization, and reporting workflow exactly.
-Do not change team structure unless the coordinator explicitly asks for structural changes.
+Use that file's text-only optimization boundary exactly. Escalate any structural, runtime, ownership, or parity change to the coordinator instead of applying it yourself.
+Stay within the owned paths and scope named by the coordinator. Do not revert concurrent edits by others.
 """

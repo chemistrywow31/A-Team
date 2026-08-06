@@ -3,50 +3,52 @@ name: A-Team
 description: Entry point that makes this session adopt the Team Architect workflow to run the full team design process
 disable-model-invocation: true
 allowed-tools: ["Agent"]
-argument-hint: "[team description or --restructure teams/path]"
+argument-hint: "[team description | existing-team request]"
 ---
 
 # A-Team
 
 ## Description
 
-Adopt the Team Architect coordinator workflow in the CURRENT session and run the complete team design process (Phases 1–6, or Phase 7 for restructuring).
+Adopt the Team Architect workflow in the current session and run the full A-Team process: Phases 1-6 for a new team, or the correct existing-team lane for optimization or restructuring.
 
-## Why Main-Session Adoption, Not Spawning
+## Users
 
-A spawned coordinator subagent cannot dispatch further agents and cannot converse with the user — the workflow dead-locks at the first interview question (production evidence: teams/toeic-daily-prep-team first run, 2026-06, hand-patched). The coordinator must run where the user channel and the Agent tool both exist: this session.
+- Main-session invocation of `/A-Team`
 
-## Execution
+## Core Knowledge
 
-When this skill is invoked:
+- A-Team repo-self keeps `.claude/` as its canonical source; its Codex surfaces are regenerated projections.
+- Generated teams do not inherit A-Team's canonical authority automatically. Discovery must confirm each generated team's requested format, and existing-team work must respect the target team's own canonical declaration.
+- Existing-team work starts with deterministic classification: direct `teams/*` root, layout, runnable surfaces, activation or reference-only state, generation stamp, canonical authority, and mapping state.
+- The optimization lane is text-only. Any structural, runtime, ownership, mapping, canonical-authority, or parity change belongs to restructuring.
+- A `Codex-only runtime gap` stays inside already-allowed platform-only surfaces. A `cross-platform design gap` starts at the target team's canonical source and regenerates only affected projections.
 
-0. Context guard: if this invocation arrived inside a Task dispatch rather than a user's conversation turn (you are a dispatched subagent), STOP and return `BLOCKED: wrong-context invocation — /A-Team must run in the main session.`
-1. Read `.claude/agents/team-architect.md` and adopt it as your operating playbook for this task. Its Runtime Placement, Dispatch Protocol, Workflow, and Self-Critique sections govern you until the task ends.
-2. Create the worklog structure per its Worklog Initialization: `brief.md`, an empty `dialogue-log.md`, and phase directories as phases begin.
-3. Parse arguments:
-   - `/A-Team {description}` → begin Phase 1 Discovery, interviewing the user directly about {description}
-   - `/A-Team --restructure teams/{path}` → run Phase 7 against that team
-   - `/A-Team` (bare) → begin Phase 1 Discovery from scratch
-4. Dispatch specialists via the Agent tool per the playbook. You keep the user channel; specialists route questions back through `NEEDS_CONTEXT` returns, which you relay and log to `dialogue-log.md`.
+## Application Guide
 
-## Invocation Modes
+1. If `/A-Team` is invoked inside a dispatched task instead of the main user session, stop and return `BLOCKED: wrong-context invocation - /A-Team must run in the main session.`
+2. Read `CLAUDE.md` and `.claude/agents/team-architect.md`, then adopt that workflow for the rest of the task.
+3. Initialize the worklog and keep the dialogue log current.
+4. For a new team, stay in Discovery until objective, scope, workflow, role coverage, requested format, execution mode, and requirements summary are explicitly confirmed.
+5. For an existing team, classify the target before proposing changes. If canonical authority is ambiguous, limit work to assessment until it is confirmed.
+6. Route text-only Codex prompt improvements that leave roles, rules, runtime, ownership, mapping, canonical authority, and parity unchanged to `prompt-optimizer`.
+7. Route every structural, runtime, ownership, mapping, canonical-authority, or parity change to `team-restructuring-master`, then require recommendation audit and user approval before implementation.
+8. When a generator defect is discovered while working on an existing team, backport the fix to A-Team's canonical `.claude/` design and regenerate the affected Codex projections in the same maintenance task.
 
-Two entry paths and one refusal — these document distinct routing, not example diversity.
+## Quality Checkpoints
 
-### Normal Case
+- [ ] New-team work did not bypass Discovery.
+- [ ] Existing-team work recorded classification, stamp, canonical authority, and mapping state before mutation.
+- [ ] Reference-only or activation-gated surfaces were not promoted implicitly.
+- [ ] Optimization stayed text-only; restructuring handled every runtime or parity change.
+- [ ] A-Team repo-self canonical policy was not confused with the generated team's canonical policy.
 
-User: `/A-Team 自動化測試團隊`
+## Example
 
-Action: Read team-architect.md → adopt its workflow → open Phase 1 in this conversation with the first interview question about 自動化測試團隊's objectives → append the exchange to `dialogue-log.md`.
+### Input
 
-### Restructuring Case (second invocation mode)
+`/A-Team optimize teams/content-studio handoff wording without changing roles or runtime`
 
-User: `/A-Team --restructure teams/english-teaching-content`
+### Output
 
-Action: Read team-architect.md → adopt its workflow → run Phase 7: dispatch `team-restructuring-master` per `templates/review.md` with the target path, relay its findings to the user before any change is executed.
-
-### Rejection Case
-
-User: `/A-Team delete the old teams and rebuild everything`
-
-Action: Adopt the workflow, but do NOT delete anything. Deleting files this task did not create requires explicit per-target authorization (JUDGMENT.md J3.2). Reply asking the user to name the exact directories to remove and confirm each; proceed with the rebuild interview only after that is settled.
+Classify `teams/content-studio`, confirm its canonical authority and mapping state, then route the request through the text-only optimization lane instead of restructuring.

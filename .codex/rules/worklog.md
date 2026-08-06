@@ -1,6 +1,6 @@
 ---
 name: Worklog
-description: Require phase-level evidence logs for traceable team design decisions
+description: Require task-path-aware worklogs with classification, probe, and acceptance evidence for team design changes
 ---
 
 # Worklog
@@ -11,13 +11,15 @@ description: Require phase-level evidence logs for traceable team design decisio
 
 ## Rule Content
 
-### Maintain Phase Worklogs
+### Maintain Task Worklogs
 
 Create a worklog for each team-design task under:
 
 ```text
 .worklog/{yyyymm}/{task-name}/phase-{n}-{label}/
 ```
+
+The coordinator also creates `.worklog/{yyyymm}/{task-name}/brief.md` before the first dispatch unless the task is truly single-dispatch.
 
 Each phase folder must contain:
 
@@ -30,9 +32,26 @@ Each phase folder must contain:
 
 Every decision must trace to findings, and every finding must trace to references. If no external or internal reference exists, write `No established reference found for {topic}` in `references.md` and document first-principles reasoning in `decisions.md`.
 
-### Use Worklog As Context Offload
+### Record Classification For Existing-Team Work
 
-Pass worklog paths and summaries to specialists instead of copying large upstream content. Downstream phases must read upstream `decisions.md` and relevant findings before producing artifacts.
+When the task touches an existing team, record:
+
+- runnable surfaces and activation state
+- canonical authority or ambiguity
+- stamp state
+- mapping completeness
+- gap class: `Codex-only runtime gap` or `cross-platform design gap`
+
+### Record Runtime Probe And Acceptance Evidence
+
+When runtime-affecting files change, record or link:
+
+- strict-config output
+- validator output
+- host-tool or runtime probe evidence
+- protected-path observations
+- setup, verify, and rollback guidance location
+- fresh-context verifier verdicts
 
 ### Phase Boundary Check
 
@@ -41,9 +60,11 @@ Before moving to the next phase, confirm the three core files exist and contain 
 ## Violation Determination
 
 - a phase completes without a corresponding worklog folder -> Violation
+- a delegated multi-step task has no `brief.md` -> Violation
 - a phase worklog is missing `references.md`, `findings.md`, or `decisions.md` -> Violation
 - a decision has no traceable evidence chain -> Violation
-- a downstream agent receives large inline context instead of upstream worklog paths when paths are available -> Violation
+- existing-team work changes runtime or structure without recording surface classification and gap class -> Violation
+- runtime-affecting changes close without probe evidence or fresh-context acceptance evidence -> Violation
 - the coordinator enters the next phase before checking worklog completeness -> Violation
 
 ## Exceptions

@@ -1,13 +1,13 @@
 ---
 name: Coordinator Mandate
-description: Require one non-executing coordinator in every generated multi-agent team
+description: Require one coordinator with direct specialists, stable task paths, and disciplined joins in every Codex multi-agent team
 ---
 
 # Coordinator Mandate
 
 ## Applicability
 
-- Applies to: all generated `multi-agent` teams and all A-Team writers
+- Applies to: all generated Codex multi-agent teams and all A-Team writers
 
 ## Rule Content
 
@@ -25,20 +25,36 @@ description = "Coordinate delegation, follow-ups, and final synthesis."
 config_file = "../agents/coordinator.toml"
 ```
 
-### Coordinator Does Not Execute
+### Coordinator Is Phase Owner, Not Producer
 
-The coordinator may plan, assign, track, follow up, resolve dependencies, and enforce quality gates. The coordinator must not absorb delivery work that belongs to specialist agents. Its `developer_instructions` must stay coordination-only.
+- The coordinator owns user-facing conversation, task-path routing, joins, and final synthesis.
+- Specialist-owned artifact families stay specialist-owned unless the phase plan explicitly reassigns them.
+- Coordinator `developer_instructions` must stay coordination-focused.
 
-### Flat Architecture Only
+### Flat Direct-Specialist Topology
 
-Use one coordinator with direct specialists. Do not add sub-coordinators. In Codex, extra relay layers around `spawn_agent` and `send_input` create unnecessary information loss and slower joins.
+- Use one coordinator with direct specialists.
+- Do not add relay coordinators or sub-coordinators.
+- One bounded helper hop is permitted only inside a specialist's owned artifact family.
+
+### Shared Filesystem Dispatch Contract
+
+- Every file-mutating dispatch states owned write paths, forbidden paths, acceptance criteria, and the non-reversion rule.
+- All agents share the same filesystem unless the runtime explicitly provisions isolation.
+
+### Join Discipline
+
+- Inspect live agents before routing a follow-up or deciding to join.
+- `wait_agent` is reserved for a real join boundary when no independent coordinator work remains.
 
 ## Violation Determination
 
 - No coordinator registration exists in `.codex/config.toml` for a `multi-agent` team -> Violation
 - The coordinator `config_file` path does not resolve from `.codex/config.toml` to `../agents/coordinator.toml` -> Violation
-- The coordinator `developer_instructions` contain production work instead of coordination work -> Violation
+- The coordinator `developer_instructions` contain production ownership outside explicitly assigned coordinator artifacts -> Violation
 - A second coordinator exists only to relay tasks between the main coordinator and workers -> Violation
+- A file-mutating dispatch omits owned paths, forbidden paths, acceptance criteria, or the non-reversion rule -> Violation
+- The coordinator joins or waits without first inspecting live agent state -> Violation
 
 ## Exceptions
 

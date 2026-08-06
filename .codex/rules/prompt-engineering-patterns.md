@@ -19,7 +19,7 @@ When behavior can be enforced through sections, templates, or fixed slots, use s
 | --- | --- | --- |
 | scope creep | `Do not do extra work` | `## Boundaries` with explicit exclusions |
 | unsupported claims | `Be evidence-based` | `## Evidence` with required references |
-| guessing | `Do not hallucinate` | `INSUFFICIENT_DATA: {missing input}` |
+| guessing | `Do not hallucinate` | `STATUS: NEEDS_CONTEXT` plus `INSUFFICIENT_DATA: {missing input}` in `CONCLUSIONS` |
 | poor handoffs | `Summarize clearly` | completion contract with status, changed files, blockers |
 
 ### Separate Instructions From Data
@@ -32,7 +32,12 @@ Place identity and scope first, reference material next, then workflow, output c
 
 ### Include Uncertainty Protocols
 
-Every non-trivial agent must define when to return `INSUFFICIENT_DATA`, `NEEDS_CONTEXT`, or `BLOCKED`, and who receives the escalation.
+Every non-trivial agent must define an EC-compatible uncertainty protocol:
+
+- use `STATUS: NEEDS_CONTEXT` for an informational gap
+- put `INSUFFICIENT_DATA: {missing input}` in `CONCLUSIONS` as a marker, not a fifth status
+- use `STATUS: BLOCKED` for a hard blocker that more information cannot resolve
+- name the escalation recipient
 
 ### Show Edge And Rejection Behavior
 
@@ -51,6 +56,7 @@ Generated coordinators must list safe parallel groups, sequential gates, owned w
 - a behavioral constraint is only stated as a negative instruction when a structural slot could enforce it -> Violation
 - variable data is mixed into imperative instructions without labels or fences -> Violation
 - non-trivial agent has no uncertainty protocol -> Violation
+- prompt uses `INSUFFICIENT_DATA` as a status or defines any status outside the four EC-1 statuses -> Violation
 - generated coordinator lacks a parallelism strategy -> Violation
 - examples show only the happy path when examples exist -> Violation
 

@@ -1,94 +1,64 @@
 ---
 name: Context Management
-description: Mandatory context isolation and offloading rules to prevent context bloat in multi-agent workflows
+description: Keep multi-agent work path-driven, minimally scoped, and resumable in Claude subagent mode without replaying whole conversations
 ---
 
 # Context Management
 
 ## Applicability
 
-- Applies to: All agents (coordinator has additional responsibilities)
+- Applies to: all agents; the coordinator owns dispatch shape and resume discipline
 
 ## Rule Content
 
-### Coordinator Must Include Worklog Paths in Task Dispatch
+### Dispatch By Task Path And File Paths
 
-When the coordinator dispatches a task to any agent via the Task tool, the dispatch must include:
+- Every delegation dispatch must include:
+  1. the stable task path
+  2. the current worklog path
+  3. upstream reference paths the agent must read
+  4. the narrow task scope
+  5. owned write paths and forbidden paths
+  6. acceptance criteria
+  7. the BRIEF path from `rules/execution-contract.md` EC-5.1 when one exists
 
-1. **Current worklog path**: The directory where this agent must write its outputs (e.g., `.worklog/202603/english-teaching-team/phase-2-planning/`)
-2. **Upstream reference paths**: Paths to relevant upstream phase worklogs that this agent must read for context (e.g., `.worklog/202603/english-teaching-team/phase-1-discovery/decisions.md`)
-3. **Task scope summary**: A concise description of what this specific task must accomplish (not the entire project context)
-4. **Acceptance criteria**: 1–5 mechanically checkable conditions the deliverable must meet — a fresh-context verifier checks exactly these per `rules/execution-contract.md` EC-3
-5. **Scope fence**: an explicit OUT list — files and directories this agent must not touch
-6. **BRIEF path**: the task's `.worklog/{yyyymm}/{task-name}/brief.md` per EC-5.1
+Pass paths, not document dumps. The dispatched agent reads the files itself.
 
-Before any dispatch, read the matching delegation template in `templates/` (search / implementation / refactoring / research / review) and fill every slot. The coordinator must not pass full upstream content inline. Pass paths; let the agent read what it needs.
+### Pass The Smallest Effective Context
 
-### XML Tag Separation in Dispatch
+- Default to a fresh Task dispatch plus file paths.
+- Inline only the smallest extra context the specialist needs when that context is not already captured in files.
+- If the coordinator uses a non-default model or other runtime override, state the override in the dispatch rather than assuming the specialist infers it from prior conversation.
 
-When the coordinator must include variable data in a Task dispatch (task scope, user requirements, small inline context), wrap each variable block in descriptive XML tags. This prevents Claude from confusing data content with dispatch instructions:
+### Re-Dispatch With Deltas, Not Replays
 
-```
-<task_scope>Write the rule file for test coverage requirements.</task_scope>
-<upstream_decisions>Phase 1 decided: minimum 80% coverage, integration tests required.</upstream_decisions>
-<worklog_path>.worklog/202603/team-name/phase-3-generation/</worklog_path>
-```
+- A corrective or resumed Task on an existing task path carries only what changed: new evidence, invalidated assumptions, updated acceptance criteria, or path changes.
+- Do not resend the whole conversation or the whole worklog unless the prior task failed to capture required context in files.
 
-Instructions remain outside the tags. Data goes inside.
+### Corrections Happen Between Task Runs
 
-### Agent Return Format
+- Specialists report `BLOCKED` or `NEEDS_CONTEXT` when work is unsafe, invalidated, or missing required input.
+- The coordinator corrects direction by issuing a new Task dispatch after the current specialist return, not by layering hidden side-channel instructions into an active run.
+- When user input is required, the specialist ends with `NEEDS_CONTEXT` and a QUESTIONS block. The coordinator relays the questions, appends the exchange to `dialogue-log.md`, and re-dispatches with the answers.
 
-Every task return follows the six-field report schema in `rules/execution-contract.md` EC-1: `STATUS` / `CONCLUSIONS` (max 10 lines) / `EVIDENCE` (file:line) / `ARTIFACTS` (paths, including worklog files) / `RISKS/UNKNOWNS` / `NEXT` — max 40 lines total; any product over 30 lines goes to a file with the path in ARTIFACTS (EC-1.3). Agents must not return full file contents, complete research dumps, or unstructured narratives. The worklog contains the detail; the return contains the summary. A malformed return bounces once with the schema attached; the second violation counts as a failed attempt (EC-1.6).
+### Resume From Worklog
 
-### Completion Status Protocol
+After interruption or compaction, restore state from:
 
-The four statuses, their definitions, and the coordinator's handling of each live in `rules/execution-contract.md` EC-1.1 and EC-1.5. Retry bounds live in EC-2.4. Do not restate either here — a second copy is how the two drifted apart.
-
-Two consequences worth stating at this point of use: accepting DONE requires the fresh-context verification in EC-3, so a producer's own claim never completes acceptance; and when the missing context in NEEDS_CONTEXT is user input (a QUESTIONS block), the coordinator relays the questions to the user, appends the exchange to the task's `dialogue-log.md`, and re-dispatches with the answers.
-
-### Task Isolation via Subagents
-
-Every independent unit of work must be executed as a separate Task (subagent). This ensures natural context isolation:
-- Each Task starts with a fresh context window
-- The coordinator's context accumulates only summaries, not execution details
-- Parallel tasks cannot pollute each other's context
-
-The coordinator must not perform execution work inline (per `rules/coordinator-mandate.md`). All execution goes through Task dispatch.
-
-### Phase-End Archival
-
-At the end of each phase, the coordinator must:
-
-1. Verify the phase worklog is complete (all three core files present and populated)
-2. Write a phase completion summary to the coordinator's own tracking (not to the worklog)
-3. Release all phase-specific context — subsequent phases read from worklog, not from memory
-
-### Worklog-Based Context Recovery
-
-When work is interrupted or context must be reset:
-1. Read the latest phase worklog to restore context
-2. Read `decisions.md` from all completed phases for the decision chain
-3. Resume from the last completed phase boundary
-
-This enables any agent (or a new session) to pick up work without the original context.
-
-### Context Budget Awareness
-
-Since agents cannot directly measure context window usage, use these proxy indicators:
-
-- **Task count proxy**: After dispatching 5 or more sequential tasks within a single phase, the coordinator must pause and write an interim summary to the worklog before continuing
-- **Conversation round proxy**: If an agent's work requires more than 10 back-and-forth exchanges with the coordinator, the agent must summarize progress to the worklog and the coordinator must consider splitting the remaining work into a new Task
-- **Output size proxy**: If an agent's response exceeds 3000 words, it must be split — summary returned to coordinator, full content written to worklog
+1. the task BRIEF
+2. the current phase `decisions.md`
+3. the latest relevant `findings.md`
+4. pending verifier or audit notes, if any
 
 ## Violation Determination
 
-- Coordinator dispatches a Task without the worklog path, acceptance criteria, or scope fence → Violation
-- Coordinator dispatches a Task with full upstream content inline instead of passing worklog paths → Violation
-- Agent returns raw unstructured output exceeding 500 words without worklog reference → Violation
-- Coordinator performs execution work inline instead of dispatching a Task → Violation
-- Phase transition occurs without phase-end archival verification → Violation
+- A dispatch omits the stable task path, worklog path, owned paths, forbidden paths, acceptance criteria, or BRIEF path when one exists -> Violation
+- A dispatch pastes upstream documents inline when file paths would suffice -> Violation
+- A corrective or resumed Task replays unchanged full context instead of passing the delta -> Violation
+- A specialist attempts to rely on an undeclared side-channel correction instead of a new Task dispatch -> Violation
+- A resumed task skips the worklog recovery order above and proceeds from memory alone -> Violation
 
 ## Exceptions
 
-- During Phase 1 Discovery, the coordinator may participate in user-facing conversation directly (this is coordination, not execution)
-- Ad-hoc investigation requests to Domain Researcher may include inline context when the context is too small to justify a worklog write (under 200 words)
+- Phase 1 user conversation is coordination, not delegated execution.
+- Inline context under 200 words is allowed for a micro-dispatch when no useful file path exists yet.

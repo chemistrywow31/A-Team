@@ -47,16 +47,24 @@ Point out issues directly when the user's ideas are unreasonable — always prov
 |-------|---------|----------|
 | 1. Discovery | Requirements interview + role decomposition + domain research | `requirements-analyst`, `role-designer`, `domain-researcher` |
 | 2. Planning | Skill/rule planning with external skill search | `skill-planner` |
-| 3. Generation | CLAUDE.md + folder structure + file generation | `rule-writer`, `skill-writer`, `agent-writer` |
-| 3.5 Preflight | Probe the live permission runtime, write `docs/RUNTIME-SETUP.md` | `runtime-preflight-advisor` |
+| 3. Generation | Canonical entry document + requested runtime projection | `rule-writer`, `skill-writer`, `agent-writer` |
+| 3.5 Preflight | Probe the selected live runtime, write `docs/RUNTIME-SETUP.md` | `runtime-preflight-advisor` |
 | 4. Optimization | Prompt review and refinement (optional) | `prompt-optimizer` |
 | 5. Review | Structure validation + user feedback | `team-architect` |
 | 6. Dialogue Review | Consultation quality audit (mandatory) | `dialogue-reviewer` |
-| 7. Restructuring | Evaluate and restructure existing teams (on-demand) | `team-restructuring-master` |
+| 7. Evolution | Optimize or restructure an existing generated team, including its Codex runtime (on-demand) | `prompt-optimizer`, `team-restructuring-master` |
 
 Cross-phase support agents (available at any phase):
 - `domain-researcher` — External domain investigation and best practice research
 - `decision-auditor` — Independent audit of design decisions at phase boundaries
+
+## Existing-Team Codex Evolution
+
+Existing A-Team outputs are not assumed to share one runtime layout or one canonical authority. Before changing a team, classify its layout and runnable surfaces, compare generation stamps, and read its mapping/manifest. Respect the team's explicit canonical declaration; an ambiguous declaration permits assessment only, and a reference-only mirror is never promoted implicitly.
+
+Use the optimization lane only when roles, rules, runtime, ownership, mapping, canonical authority, and parity behavior stay unchanged: `prompt-optimizer` tightens the owned Codex text, then `decision-auditor` verifies it. Any structural, runtime, ownership, mapping, or parity change uses the restructuring lane: `team-restructuring-master` produces the smallest-change plan, `decision-auditor` audits the recommendation, the user approves it, targeted writers implement it, and fresh verification plus runtime preflight close the change.
+
+Classify every restructuring gap as either `Codex-only runtime gap` or `cross-platform design gap`. A platform-only change must already be allowed by the team's mapping inventory. A cross-platform gap starts at that team's declared canonical source and regenerates only affected projections. If the gap exposes an A-Team generator defect, backport the fix to this repository's canonical `.claude/` design and regenerate A-Team's Codex surfaces in the same maintenance task.
 
 ## Worklog
 
@@ -70,17 +78,23 @@ Every generated team must include:
 - A coordinator (flat architecture, no sub-coordinators; runs in the main session, never spawned)
 - A process reviewer (separate from QA)
 - A code reviewer (separate from QA testing) when the team's deliverables include executable artifacts; a deliverable-QA reviewer otherwise
-- Worklog rule, context management rule, and execution contract rule in `rules/`
-- Worklog and context management section, precedence order, and generator version stamp in CLAUDE.md
-- The output-mode component: `.claude/output-styles/adhd-friendly.md` copied verbatim from A-Team, plus the first-run ask hook in `settings.json` — the first session asks once, the choice persists in `settings.local.json` (`.claude/rules/output-structure.md`, Output Mode Component)
+- Worklog, context management, reasoning/self-critique, and execution contract rules in the selected runtime tree
+- Worklog/context, precedence, deployment, and generator-stamp sections in the selected root entry document
+- A format mapping and machine-readable manifest whenever conversion retention or dual-format output is requested
 - `docs/RUNTIME-SETUP.md` from Phase 3.5 — what the user must configure outside the team before first run
+
+Claude-runnable output additionally includes the output-mode component: `.claude/output-styles/adhd-friendly.md` copied verbatim from A-Team, plus the first-run ask hook in `settings.json`. Codex-runnable output instead includes project `.codex/config.toml`, a runtime agent registry, runtime-discoverable `.agents/skills/`, strict-config validation, and a current Subagents/multi-agent preflight.
 
 Some runtime configuration cannot ship inside a generated team. Claude Code's auto-mode carve-outs are honored only from user settings, and no agent may write them — attempting it is a classified violation. A-Team's answer is advisory: probe the live runtime, emit a document plus a user-run command. See `.claude/rules/settings-json.md` (Auto Mode Reality) and `scripts/preflight-permissions.sh`.
 
 ## Dual-Platform
 
-This repo maintains four trees: `.claude/` (canonical source design), `.codex/` + `AGENTS.md` (Codex runtime), `agents/**.toml` (Codex runtime registry), `.agents/skills/` (Codex skill surface). **`.claude/` is canonical; the other three are regenerated from it and never hand-edited** (`rules/dual-platform-parity.md` M1/M2). Fix defects in `.claude/` first, then regenerate. `AGENTS.md` is the Codex entrypoint; `.codex/docs/claude-adaptation-audit.md` is the M5 platform-only inventory.
+This A-Team repository maintains four trees: `.claude/` (canonical source design), `.codex/` + `AGENTS.md` (Codex runtime), `agents/**.toml` (Codex runtime registry), and `.agents/skills/` (Codex skill surface). **For A-Team itself, `.claude/` is canonical; the other three are regenerated from it and never fixed in isolation** (`rules/dual-platform-parity.md` M1/M2). `AGENTS.md` is the Codex entrypoint; `.codex/docs/claude-adaptation-manifest.toml` is the machine-readable M5 inventory and `.codex/docs/claude-adaptation-audit.md` explains its adaptation decisions.
+
+Generated teams follow the format and canonical authority confirmed during their own Discovery, not A-Team's self-hosting authority automatically. Their mapping artifacts control future conversion and restructuring.
+
+The Codex projection prefers current Subagents / multi-agent tools and explicitly enables the v2 task-path runtime. Agents share the same filesystem, so every parallel dispatch carries non-overlapping path ownership. Standard `workspace-write` protects `.codex/` and `.agents/`; project config cannot authorize its own rewrite, so preflight documents the required approval/bootstrap posture.
 
 ---
 
-Generated by A-Team on 2026-07-25
+Generated by A-Team on 2026-08-05

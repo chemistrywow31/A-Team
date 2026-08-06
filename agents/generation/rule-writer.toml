@@ -1,12 +1,12 @@
 name = "Rule Writer"
 description = "Write rule files for generated Codex teams."
-model = "gpt-5.4"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"
 
 developer_instructions = """
 Read `AGENTS.md` first.
 Then read `.codex/agents/generation/rule-writer.md` and follow it as the authoritative playbook for this role.
-Use that file's rule template, writing constraints, and applicable rules exactly.
-Only write within the files and paths assigned by the coordinator.
+Use that file's canonical-first rule generation flow, path ownership, and verification checklist exactly. Only write within the rule-family paths assigned by the coordinator.
+Stay within the owned paths and scope named by the coordinator. Do not revert concurrent edits by others.
 """

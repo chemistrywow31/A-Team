@@ -49,17 +49,11 @@ Every generated .md that contains examples must meet these standards:
 
 ### A Template Outranks Its Own Prose
 
-When a file contains BOTH a policy statement and a template/example block the reader copies, the
-copied block wins — readers fill the slots they are given, they do not diff them against the prose.
+When a file contains BOTH a policy statement and a template/example block the reader copies, the copied block wins — readers fill the slots they are given, they do not diff them against the prose.
 
-So: after changing any policy, sweep every template block, frontmatter example, section skeleton,
-and checklist item that instantiates it — not just the paragraph that states it. Two sites in the
-SAME FILE can disagree, and the copied one is what ships. Measured three times in one pass on
-2026-07-25 (trace: `.worklog/202607/context-engineering-realignment/phase-3-execution/decisions.md` D14).
+After changing any policy, sweep every template block, frontmatter example, section skeleton, and checklist item that instantiates it. Two sites in the same file can disagree, and the copied one ships. Evidence: `.worklog/202607/context-engineering-realignment/phase-3-execution/decisions.md` D14.
 
-Compliance check: for each policy statement, grep the same file and its writers for a template block
-or example on the same subject, and confirm the two agree. `scripts/validate-team.sh` cannot catch
-this — the disagreement is between two prose artifacts, so it is a review obligation.
+For each policy statement, grep the same file and its writers for a template or example on the same subject and confirm agreement. `scripts/validate-team.sh` cannot detect prose contradictions.
 
 ### Structural Over Instructional
 
@@ -67,7 +61,7 @@ When a behavioral constraint can be enforced by prompt structure (dedicated sect
 
 - Use dedicated sections (`## Boundaries`, `## Uncertainty Protocol`) instead of inline prohibitions
 - Use output templates with labeled slots instead of "output in X format" instructions
-- Use escape hatch phrases (`INSUFFICIENT_DATA`, `BLOCKED`) instead of "don't guess"
+- For informational gaps, use `STATUS: NEEDS_CONTEXT` and put `INSUFFICIENT_DATA: {missing}` in `CONCLUSIONS`; for hard blockers, use `STATUS: BLOCKED`
 
 ### Tradeoff Disclosure for Rules
 
@@ -93,6 +87,7 @@ Format: one to two sentences after Violation Determination or within Exceptions,
 - A file's template/example block contradicts a policy stated elsewhere in the same file, or in the rule that file implements → Violation
 - Rule .md has no violation determination → Violation
 - Behavioral constraint enforced solely by instruction when a structural alternative exists → Violation
+- Template or example uses `INSUFFICIENT_DATA` as a status, or defines a status outside the four EC-1 statuses → Violation
 - Rule with non-obvious compliance cost has no Tradeoff disclosure → Violation
 
 ## Exceptions

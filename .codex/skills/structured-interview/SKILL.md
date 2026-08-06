@@ -7,53 +7,45 @@ description: Extract precise team requirements through staged, single-direction 
 
 ## Description
 
-Use this skill to turn vague user wishes into a confirmed requirements summary with explicit scope, workflow, role coverage, and constraints.
+Extract precise team requirements through staged, single-direction questioning that confirms requested format, canonical policy, workflow, and operating constraints before planning starts.
 
 ## Users
 
 - `.codex/agents/discovery/requirements-analyst.md`
 - `.codex/agents/team-architect.md`
 
-## Core Methods
+## Core Knowledge
 
-### Funnel Method
+- Discovery is format-neutral. Do not assume Codex or Claude is the canonical target for a generated team.
+- A-Team repo-self uses `.claude/` as its own canonical source, but generated teams can be Claude-canonical, Codex-canonical, dual, or not yet confirmed.
+- Existing-team requests need two clarifications: the user-visible change type and the target team's actual classified state.
+- One response should move only one discovery direction at a time.
 
-1. requested format question
-2. open goal question
-3. scope boundary question
-4. concretization follow-up
-5. playback and confirmation
+## Application Guide
 
-### Follow-Up Triggers
+1. Start by identifying whether the request is for a new team or an existing team.
+2. Confirm the requested delivery format, runnable surfaces, and whether mapping or conversion artifacts must be retained.
+3. If the request targets an existing team, ask for the exact path and whether the user expects text-only optimization or structural/runtime/parity change. Do not assume canonical authority until classification confirms it.
+4. Ask for the objective and how success will be judged.
+5. Ask what the team must not do so scope is bounded by exclusion as well as inclusion.
+6. Ask for the workflow and handoff sequence, not just the desired outcome.
+7. Ask for role coverage, execution mode, shared-worktree risks, and any task-path or ownership constraints that affect coordination.
+8. After several rounds, play back a concise requirements summary and ask for explicit confirmation before moving to planning.
 
-Ask a follow-up when the user:
+## Quality Checkpoints
 
-- asks for Claude or another non-Codex format without clarifying whether Codex-native canonical output is acceptable
-- uses vague filler words
-- skips workflow details
-- implies a missing stage
-- asks for conflicting outcomes
-
-### Reverse Validation
-
-Use counterfactuals:
-
-- what work breaks if role X disappears
-- what risk appears if roles Y and Z merge
-- what failure mode is most likely
-
-## Rhythm
-
-- one direction per response
-- interim summary every 3-4 rounds
-- stop when the user starts repeating already-confirmed information
+- [ ] Requested format and runnable surfaces were confirmed explicitly.
+- [ ] Canonical authority was confirmed or marked ambiguous instead of assumed.
+- [ ] Workflow, scope exclusions, and role coverage were captured separately.
+- [ ] Existing-team requests distinguished text-only optimization from structural/runtime/parity change.
+- [ ] The final requirements summary is specific enough for planning without further interpretation.
 
 ## Example
 
 ### Input
 
-`我想做一個內容團隊。`
+`I want A-Team to improve an existing research team.`
 
 ### Output
 
-`先確認你要的團隊格式：要以 Codex-native 交付、Claude 相容格式，還是先以 Codex 為 canonical 並保留 mapping 供之後雙向轉換？`
+Ask for the exact team path, then ask whether the user wants text-only prompt optimization or a structural/runtime/parity change, and only after that confirm the desired format and canonical authority.

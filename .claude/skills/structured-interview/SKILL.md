@@ -7,42 +7,45 @@ description: Provide in-depth interview methodology for extracting clear actiona
 
 ## Description
 
-Provide in-depth interview methodology for extracting clear, actionable requirements from vague user descriptions.
+Extract precise team requirements through staged, single-direction questioning that confirms requested format, canonical policy, workflow, and operating constraints before planning starts.
 
 ## Users
 
-- `requirements-analyst`: For user interviews during the requirements exploration phase
-- `team-architect`: For initial requirements assessment and direction confirmation
+- `requirements-analyst`
+- `team-architect`
 
-## Core Methods
+## Core Knowledge
 
-### Funnel Questioning Method
+- Discovery is format-neutral. Do not assume Codex or Claude is the canonical target for a generated team.
+- A-Team repo-self uses `.claude/` as its own canonical source, but generated teams can be Claude-canonical, Codex-canonical, dual, or not yet confirmed.
+- Existing-team requests need two clarifications: the user-visible change type and the target team's actual classified state.
+- One response should move only one discovery direction at a time.
 
-From broad to narrow, progressively converge:
+## Application Guide
 
-1. **Open exploration**: "What goal do you want to achieve?" — Let users describe freely
-2. **Boundary confirmation**: "What does this team NOT need to handle?" — Define scope by exclusion
-3. **Concretization follow-up**: "What specifically do you mean by X? Can you give an example?" — Eliminate ambiguity
-4. **Verification playback**: "My understanding is Y, is that correct?" — Confirm consensus
+1. Start by identifying whether the request is for a new team or an existing team.
+2. Confirm the requested delivery format, runnable surfaces, and whether mapping or conversion artifacts must be retained.
+3. If the request targets an existing team, ask for the exact path and whether the user expects text-only optimization or structural/runtime/parity change. Do not assume canonical authority until classification confirms it.
+4. Ask for the objective and how success will be judged.
+5. Ask what the team must not do so scope is bounded by exclusion as well as inclusion.
+6. Ask for the workflow and handoff sequence, not just the desired outcome.
+7. Ask for role coverage, execution mode, shared-worktree risks, and any task-path or ownership constraints that affect coordination.
+8. After several rounds, play back a concise requirements summary and ask for explicit confirmation before moving to planning.
 
-### Follow-up Triggers
+## Quality Checkpoints
 
-Must follow up when encountering these signals:
-- User uses vague words: "roughly", "probably", "things like that", "etc."
-- User skips process details: States results directly without explaining process
-- User's description has logical gaps: Missing B between A and C
-- User's requirements have implicit conflicts: Demanding both "fast" and "high quality"
+- [ ] Requested format and runnable surfaces were confirmed explicitly.
+- [ ] Canonical authority was confirmed or marked ambiguous instead of assumed.
+- [ ] Workflow, scope exclusions, and role coverage were captured separately.
+- [ ] Existing-team requests distinguished text-only optimization from structural/runtime/parity change.
+- [ ] The final requirements summary is specific enough for planning without further interpretation.
 
-### Reverse Validation Method
+## Example
 
-After user provides requirements, validate with opposite questions:
-- "If role X didn't exist, which work would have no one doing it?"
-- "If Y and Z were merged into one role, what problems would arise?"
-- "What's the most likely reason this team would fail?"
+### Input
 
-## Interview Rhythm Control
+`I want A-Team to improve an existing research team.`
 
-- Focus each response on one direction only, don't ask multiple unrelated questions simultaneously
-- Provide an interim summary every 3-4 rounds to confirm direction is correct
-- Control total interview rounds to 8-15, adjusted by complexity
-- When user starts repeating previously stated content, that dimension is fully explored — move to next dimension
+### Output
+
+Ask for the exact team path, then ask whether the user wants text-only prompt optimization or a structural/runtime/parity change, and only after that confirm the desired format and canonical authority.

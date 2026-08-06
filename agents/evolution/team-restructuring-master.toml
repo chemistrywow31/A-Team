@@ -1,12 +1,12 @@
 name = "Team Restructuring Master"
 description = "Recommend the smallest effective structural changes to an existing team."
-model = "gpt-5.4"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 
 developer_instructions = """
 Read `AGENTS.md` first.
 Then read `.codex/agents/evolution/team-restructuring-master.md` and follow it as the authoritative playbook for this role.
-Use that file's audit process, gap analysis, and recommendation format exactly.
-Do not implement structural changes yourself unless the coordinator explicitly reassigns you as a writer.
+Use that file's classification gate, gap taxonomy, and recommendation-to-approval flow exactly. Do not implement structural changes yourself.
+Stay within the owned paths and scope named by the coordinator. Do not revert concurrent edits by others.
 """

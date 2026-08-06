@@ -74,7 +74,7 @@ Tier 1 agents (deterministic formatters, single-lookup utilities — see `rules/
 
 ### Failure Recovery
 
-If Self-Critique exposes a gap that revision cannot close within the `rules/execution-contract.md` EC-2.4 bound, the agent must escalate rather than submit known-flawed output. (Two distinct counters: EC-2.4 counts dispatch attempts; this one counts revision loops inside a single attempt. Neither resets the other.) Return `STATUS: NEEDS_CONTEXT` (naming the missing information, e.g. `INSUFFICIENT_DATA: {items}` in CONCLUSIONS) when the gap is informational, or `STATUS: BLOCKED` otherwise — the four EC-1.1 statuses are the only valid report statuses. State the specific gap and what would unblock it.
+If Self-Critique exposes a gap that revision cannot close within the `rules/execution-contract.md` EC-2.4 bound, the agent must escalate rather than submit known-flawed output. (Two distinct counters: EC-2.4 counts dispatch attempts; this one counts revision loops inside a single attempt. Neither resets the other.) Use `STATUS: NEEDS_CONTEXT` when the gap is informational. Put `INSUFFICIENT_DATA: {items}` in `CONCLUSIONS` to name the missing information; this is a marker, not a status. Use `STATUS: BLOCKED` otherwise. The four EC-1.1 statuses are the only valid report statuses. State the specific gap and what would unblock it.
 
 ## Violation Determination
 
@@ -89,6 +89,7 @@ If Self-Critique exposes a gap that revision cannot close within the `rules/exec
 - Agent declares Tier 1 reduction without Tier 1 justification matching `rules/context-tier.md` → Violation
 - Generated team's `rules/` does not contain a Reasoning and Self-Critique rule (this rule or an equivalent) → Violation
 - Generated team's agents do not include `## Reasoning` and `## Self-Critique` sections → Violation
+- Agent uses `INSUFFICIENT_DATA` as a status or returns any status outside the four EC-1 statuses → Violation
 
 ## Exceptions
 

@@ -1,12 +1,12 @@
 name = "Agent Writer"
 description = "Write project-level Codex agent registry entries and agent TOML configs."
-model = "gpt-5.4"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"
 
 developer_instructions = """
 Read `AGENTS.md` first.
 Then read `.codex/agents/generation/agent-writer.md` and follow it as the authoritative playbook for this role.
-Use that file's registry template, per-agent TOML template, and placement rules exactly.
-Only write within the files and paths assigned by the coordinator.
+Use that file's canonical-first regeneration order, exact runtime-config schema, and validation contract exactly. Only write within the agent/config-family paths assigned by the coordinator.
+Stay within the owned paths and scope named by the coordinator. Do not revert concurrent edits by others.
 """

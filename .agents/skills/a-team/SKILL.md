@@ -7,75 +7,46 @@ description: Start the A-Team Codex coordinator workflow for designing or restru
 
 ## Description
 
-Use this skill when the user asks A-Team to design, generate, review, or restructure an agent team. This is the Codex-native entry skill; it complements `AGENTS.md` instead of replacing it.
+Use this skill when the user asks A-Team to design, generate, review, optimize, or restructure an agent team in the Codex runtime.
 
 ## Users
 
-- Team Architect
-- Users invoking A-Team explicitly with `$a-team`, `A-Team`, or equivalent wording
+- `.codex/agents/team-architect.md`
+- Users invoking A-Team with `$a-team`, `A-Team`, or equivalent wording
 
 ## Core Knowledge
 
-- `AGENTS.md` is the project-level runtime contract.
-- `.codex/agents/team-architect.md` is the coordinator playbook.
-- `.codex/config.toml` registers specialist subagents when multi-agent delegation is available.
-- Generated teams must be written under `teams/{team-name}/`.
-- `.claude/` remains legacy/source design and must not be modified unless explicitly requested.
+- `AGENTS.md` is the Codex runtime contract and `.codex/agents/team-architect.md` is the coordinator playbook.
+- A-Team repo-self keeps `.claude/` as its canonical source, but generated teams can declare Claude, Codex, dual, or another explicit canonical policy.
+- Existing-team work starts with deterministic classification: target root, layout, runnable surfaces, activation or reference-only state, generation stamp, canonical authority, and mapping state.
+- `prompt-optimizer` owns text-only Codex improvements that leave roles, rules, runtime, ownership, mapping, canonical authority, and parity unchanged.
+- `team-restructuring-master` owns every structural, runtime, ownership, mapping, canonical-authority, or parity change and classifies `Codex-only runtime gap` versus `cross-platform design gap`.
 
-## Trigger Rules
-
-Use this skill when the request matches one of these intents:
-
-- create a new Codex team
-- design a multi-agent workflow
-- generate team files under `teams/{team-name}/`
-- restructure an existing generated team
-- compare or adapt Claude team assets into Codex-native output
-
-Do not use this skill for unrelated coding tasks inside this repository.
-
-## Execution
+## Application Guide
 
 1. Read `AGENTS.md`.
 2. Read `.codex/agents/team-architect.md`.
-3. If the request targets an existing team with new feedback or requirements, run Phase 7 Team Restructuring.
-4. Otherwise start Phase 1 Discovery and keep discovery open until objectives, scope, workflow, role coverage, output format, execution mode, and requirements summary are confirmed.
-5. Use registered specialists when delegation is available and useful. If delegation is unavailable, execute locally and state the fallback in the worklog or final response.
-6. Keep canonical output Codex-native unless the user explicitly requests conversion artifacts.
+3. For a new team, stay in Discovery until objective, scope, workflow, role coverage, requested format, execution mode, canonical authority, and requirements summary are explicitly confirmed.
+4. For an existing team, classify the target before mutating it. If canonical authority is ambiguous, limit work to assessment until it is confirmed.
+5. Route text-only Codex prompt improvements to `prompt-optimizer`; route every structural/runtime/parity change to `team-restructuring-master`, then require recommendation audit and user approval before implementation.
+6. Give every dispatch a stable phase-purpose task path plus owned paths, forbidden paths, acceptance criteria, and the shared-filesystem non-reversion rule.
+7. Use `spawn_agent` for a new bounded task, `send_message` for a non-triggering update, `followup_task` for a new or corrective turn on an existing idle agent, `interrupt_agent` only when work is invalidated or unsafe, `list_agents` before routing or join decisions, and `wait_agent` only at a real join boundary.
+8. Respect the target team's own canonical declaration, mapping artifacts, and reference-only surfaces. If a generator defect is discovered, fix A-Team's canonical `.claude/` source and then regenerate the affected Codex projection.
 
-## Input Handling
+## Quality Checkpoints
 
-### With Arguments
+- [ ] Discovery stayed open for new teams until requirements were explicitly confirmed.
+- [ ] Existing-team work recorded classification, stamp, canonical authority, and mapping state before mutation.
+- [ ] Reference-only or activation-gated surfaces were not promoted implicitly.
+- [ ] Optimization stayed text-only; restructuring handled every runtime or parity change.
+- [ ] Task paths, lifecycle tools, and shared-filesystem ownership rules were applied consistently.
 
-Treat the arguments as the initial team brief. Extract objective, target team name, requested format, and existing team path when present.
+## Example
 
-### Without Arguments
+### Input
 
-Ask one focused discovery question: what team the user wants A-Team to design or restructure.
+`$a-team optimize teams/content-studio handoff wording without changing roles or runtime`
 
-## Boundaries
+### Output
 
-- Do not modify `.claude/` unless the user explicitly asks for Claude conversion or legacy updates.
-- Do not bypass Discovery for a new team.
-- Do not use Claude-only fields such as `allowed-tools`, `disable-model-invocation`, or `context: fork` in Codex-native skills.
-- Do not place generated runtime agent configs under `.codex/agents/`; use project-root `agents/`.
-
-## Examples
-
-### Normal Case
-
-Input: `$a-team design a research writing team for long-form technical articles`
-
-Output: Start Discovery, confirm requested format and execution mode, then produce the requirements summary before planning.
-
-### Restructuring Case
-
-Input: `$a-team restructure teams/content-studio because review handoffs are too slow`
-
-Output: Run Phase 7, inspect the existing team, classify the handoff problem, and recommend the smallest effective structural change.
-
-### No Arguments
-
-Input: `$a-team`
-
-Output: Ask what team the user wants designed or restructured, then continue Discovery in the user's language.
+Classify `teams/content-studio`, confirm its canonical authority and mapping state, then route the request through the text-only optimization lane instead of restructuring.

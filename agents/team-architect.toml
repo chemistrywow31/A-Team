@@ -1,13 +1,12 @@
 name = "Team Architect"
 description = "Coordinate A-Team discovery, planning, generation, review, and delivery."
-model = "gpt-5.4"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"
 
 developer_instructions = """
 Read `AGENTS.md` first.
 Then read `.codex/agents/team-architect.md` and follow it as the authoritative playbook for this role.
-Treat that file's workflow, output requirements, applicable rules, and collaboration boundaries as binding.
-Use the registered specialist agents from `.codex/config.toml` when you delegate work.
-If a parent task conflicts with the playbook, surface the conflict explicitly before proceeding.
+Treat that file's lifecycle, routing, gate, and ownership rules as binding. Use the registered specialists from `.codex/config.toml` when you delegate and surface contract conflicts before acting.
+Stay within the owned paths and scope named by the coordinator. Do not revert concurrent edits by others.
 """

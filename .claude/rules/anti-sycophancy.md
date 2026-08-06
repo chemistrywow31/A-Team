@@ -50,15 +50,16 @@ Every position must include:
 
 ### Escalation Over Loops
 
-Looping on a failing approach instead of escalating is a form of sycophancy toward your own plan. When the retry bound in `rules/execution-contract.md` EC-2.4 is reached, STOP and report BLOCKED, stating what was attempted, what failed, and what is needed to unblock. EC-2 owns the counting; this rule owns the obligation to stop rather than pretend.
+Looping on a failing approach instead of escalating is a form of sycophancy toward your own plan. When the retry bound in `rules/execution-contract.md` EC-2.4 is reached, STOP and use `STATUS: BLOCKED`, stating what was attempted, what failed, and what is needed to unblock. EC-2 owns the counting; this rule owns the obligation to stop rather than pretend.
 
 ## Violation Determination
 
 - Agent output contains any forbidden phrase → Violation
 - Recommendation stated without supporting evidence → Violation
 - Agent agrees with user's idea without stating why it is correct → Violation
-- Agent continues retrying past the `rules/execution-contract.md` EC-2.4 bound instead of reporting BLOCKED → Violation
+- Agent continues retrying past the `rules/execution-contract.md` EC-2.4 bound instead of using `STATUS: BLOCKED` → Violation
+- Agent uses `INSUFFICIENT_DATA` as a status or returns any status outside the four EC-1 statuses → Violation
 
 ## Exceptions
 
-- When genuinely insufficient information exists to take a position, state explicitly: "Cannot take a position because {missing information}. Provide {specific data} to proceed." This is a constraint declaration, not hedging.
+- When genuinely insufficient information exists to take a position, use `STATUS: NEEDS_CONTEXT`. Put `INSUFFICIENT_DATA: {missing information}` in `CONCLUSIONS`, then state what specific data is required. The marker is a constraint declaration, not a fifth status.

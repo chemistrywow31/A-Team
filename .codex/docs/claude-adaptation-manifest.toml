@@ -1,0 +1,84 @@
+spec_version = 1
+generated_on = "2026-08-05"
+canonical_root = ".claude/"
+human_audit = ".codex/docs/claude-adaptation-audit.md"
+
+[[platform_only]]
+path = ".codex/config.toml"
+kind = "codex_runtime_config"
+
+[[platform_only]]
+path = "agents/"
+kind = "codex_agent_registry"
+
+[[platform_only]]
+path = ".agents/skills/"
+kind = "codex_runtime_skill_mirror"
+
+[[platform_only]]
+path = ".codex/docs/claude-to-codex-mapping.md"
+kind = "format_mapping"
+
+[[platform_only]]
+path = ".codex/docs/claude-adaptation-audit.md"
+kind = "adaptation_audit"
+
+[[platform_only]]
+path = ".codex/docs/claude-adaptation-manifest.toml"
+kind = "m5_inventory"
+
+[[platform_only]]
+path = ".codex/docs/RUNTIME-SETUP.md"
+kind = "codex_runtime_advisory"
+
+[[platform_only]]
+path = ".codex/rules/codex-runtime-config.md"
+kind = "codex_config_rule"
+
+[[platform_only]]
+path = ".codex/rules/codex-agent-config-patterns.md"
+kind = "codex_agent_toml_rule"
+
+[[platform_only]]
+path = ".codex/rules/context-isolation.md"
+kind = "codex_context_fork_rule"
+
+[[platform_only]]
+path = "scripts/preflight-codex-runtime.sh"
+kind = "codex_runtime_probe"
+
+[[platform_only]]
+path = "scripts/validate_codex_team.py"
+kind = "codex_team_validator"
+
+[[deliberately_not_copied]]
+path = ".claude/settings.json"
+reason = "Claude Code project settings and hooks have no direct Codex runtime equivalent."
+
+[[deliberately_not_copied]]
+path = ".claude/settings.local.json"
+reason = "Claude Code local settings are user/runtime state, not a Codex project artifact."
+
+[[deliberately_not_copied]]
+path = ".claude/output-styles/"
+reason = "Claude Code output styles are not a Codex runtime surface."
+
+[[deliberately_not_copied]]
+path = ".claude/rules/settings-json.md"
+reason = "Portable intent is adapted into codex-runtime-config.md."
+
+[[deliberately_not_copied]]
+path = ".claude/rules/hooks-integration.md"
+reason = "Claude hook semantics are not copied; portable behavior is adapted explicitly."
+
+[[deliberately_not_copied]]
+path = ".claude/rules/frontmatter-optional-patterns.md"
+reason = "Codex agent configuration uses TOML; intent is adapted into codex-agent-config-patterns.md."
+
+[[deliberately_not_copied]]
+path = ".claude/rules/skill-context-fork.md"
+reason = "Codex selective forks and subagent isolation are specified in context-isolation.md."
+
+[[deliberately_not_copied]]
+path = ".claude/skills/prompt-patterns/assets/raw/"
+reason = "Claude-version research assets are retained as source/reference material, not runtime payload."

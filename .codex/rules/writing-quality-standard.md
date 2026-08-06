@@ -44,6 +44,12 @@ Do not use vague phrases unless followed by explicit criteria:
 - when examples are used to teach behavior, include normal, edge, and rejection or escalation cases
 - every rule must include violation determination
 
+### Use EC Status Vocabulary
+
+- Use `STATUS: NEEDS_CONTEXT` for informational gaps.
+- Put `INSUFFICIENT_DATA: {missing}` in `CONCLUSIONS`; treat it as a marker, not a fifth status.
+- Use `STATUS: BLOCKED` for hard blockers.
+
 ## Violation Determination
 
 - descriptive prose replaces imperative instructions -> Violation
@@ -51,6 +57,7 @@ Do not use vague phrases unless followed by explicit criteria:
 - a file exceeds its size budget -> Violation
 - a skill has no example -> Violation
 - behavioral examples omit edge or rejection behavior when those cases are necessary to clarify the boundary -> Violation
+- a template or example uses `INSUFFICIENT_DATA` as a status or defines a status outside the four EC-1 statuses -> Violation
 - a rule has no violation determination -> Violation
 
 ## Exceptions

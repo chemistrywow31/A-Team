@@ -1,59 +1,57 @@
 ---
 name: Context Management
-description: Keep Codex multi-agent work isolated, resumable, and summary-driven
+description: Keep Codex multi-agent work path-driven, v2-lifecycle correct, and resumable without replaying whole context
 ---
 
 # Context Management
 
 ## Applicability
 
-- Applies to: `team-architect` and every generated `multi-agent` coordinator or specialist
+- Applies to: `team-architect` and every generated Codex multi-agent coordinator or specialist
 
 ## Rule Content
 
-### Dispatch With Paths, Not Dumps
+### Dispatch By Stable Task Path
 
-When spawning a specialist, include:
+- Every delegation branch uses a stable phase-purpose task path such as `discovery_requirements`, `planning_skill_plan`, `generation_rules`, `generation_agents`, `restructure_assessment`, or `review_runtime_preflight`.
+- Every dispatch must include the stable task path, worklog or BRIEF paths, owned write paths, forbidden paths, acceptance criteria, and the shared-filesystem non-reversion rule.
 
-1. the current worklog path
-2. upstream worklog paths the specialist must read
-3. the narrow task scope
-4. owned write paths and read-only reference paths
-5. expected completion contract
+### Use The V2 Lifecycle Tools Exactly
 
-Do not paste full upstream documents into the dispatch when the files are available locally.
+- `spawn_agent` starts new bounded independent work.
+- `send_message` carries a non-triggering update to an existing branch.
+- `followup_task` gives an idle existing agent a new or corrective turn.
+- `interrupt_agent` is reserved for unsafe work, invalidated work, or non-owned writes.
+- `list_agents` is required before routing a follow-up to an existing branch or before a join decision.
+- `wait_agent` is used only at a real join boundary when no independent coordinator work remains.
 
-### Use Codex Delegation Semantics
+### Pass Paths, Not Dumps
 
-Use `spawn_agent` for bounded independent work, `send_input` for follow-up instructions, and `wait` only when the next coordinator step is blocked on a result. Do not use Claude-only terms such as `Task tool`, `Agent tool`, or `context: fork` in generated Codex teams.
+Do not paste full upstream documents into a dispatch when the files are available locally. The receiving agent reads the files itself.
+
+### Follow Up With Deltas
+
+- A follow-up on an existing task path carries only the delta: changed assumptions, invalidated evidence, updated acceptance criteria, or new paths.
+- Do not clone a new branch for the same task path unless the prior branch was invalidated or closed.
 
 ### Return Structured Summaries
 
-Every specialist must end with one status:
-
-- `DONE`: task completed
-- `DONE_WITH_CONCERNS`: task completed with issues the coordinator must evaluate
-- `BLOCKED`: task cannot continue without a specific action or information
-- `NEEDS_CONTEXT`: task lacks required input
-
-Return only the summary, decisions, changed files, worklog paths, and blockers. Put long findings in the worklog.
-
-### Split Noisy Work
-
-Delegate codebase exploration, web research, broad audits, and verbose test runs to specialists when the work can run without blocking the coordinator's immediate next step.
+- Every specialist return follows `rules/execution-contract.md`.
+- Long findings, research notes, and logs go to the worklog or owned artifact files, not the return message.
 
 ### Resume From Worklog
 
-After interruption or compaction, restore state by reading the latest phase `decisions.md`, then `findings.md`, then pending audit notes.
+After interruption or compaction, restore state from the task BRIEF, the current phase `decisions.md`, the latest relevant `findings.md`, and pending verifier notes.
 
 ## Violation Determination
 
-- spawned specialist receives no worklog path for phase work -> Violation
-- dispatch includes full upstream documents when paths would suffice -> Violation
-- generated Codex team uses Claude-only `Task tool` or `Agent tool` terminology -> Violation
-- specialist returns an unstructured long narrative instead of a status summary -> Violation
-- coordinator waits on a non-blocking specialist instead of doing independent work -> Violation
+- A dispatch omits the stable task path, worklog or BRIEF path, owned paths, forbidden paths, acceptance criteria, or non-reversion rule -> Violation
+- A coordinator uses `send_message` as if it were a new work turn, or uses `followup_task` on a running branch -> Violation
+- A coordinator routes or joins without checking live agent state first -> Violation
+- `wait_agent` is used while independent coordinator work still remains -> Violation
+- A dispatch includes full upstream documents when file paths would suffice -> Violation
+- A specialist returns an unstructured long narrative instead of the execution-contract summary -> Violation
 
 ## Exceptions
 
-Inline execution is allowed for small coordinator tasks that create fixed runtime scaffolding, such as `AGENTS.md`, `.codex/config.toml`, or mapping manifests.
+- Inline context under 200 words is allowed for a micro-dispatch when no useful file path exists yet.

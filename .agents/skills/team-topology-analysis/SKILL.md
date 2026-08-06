@@ -7,52 +7,45 @@ description: Evaluate whether a proposed agent graph supports safe handoffs and 
 
 ## Description
 
-Use this skill to judge whether a proposed team graph is clean, bottlenecked, or over-coordinated.
+Evaluate whether a proposed team graph supports safe handoffs, bounded delegation, useful parallelism, and clear ownership in a shared filesystem.
 
 ## Users
 
 - `.codex/agents/discovery/role-designer.md`
+- `.codex/agents/team-architect.md`
 
-## Topology Patterns
+## Core Knowledge
 
-### Pipeline
+- Prefer direct-specialist topologies. The coordinator stays user-facing; do not add a sub-coordinator.
+- A specialist may create one nested helper only for bounded, independent evidence or verification inside that specialist's owned artifact family.
+- Stable task paths use phase-purpose names so joins, follow-ups, and worklog evidence stay traceable.
+- All agents share one filesystem. Parallel branches need explicit owned paths, forbidden paths, and the non-reversion rule.
+- Full-history forks are the default. Use `fork_turns = "none"` or a bounded positive fork only when isolation or a model or effort override requires it.
+- Join points are explicit. Do not stop the coordinator at `wait_agent` while independent work still exists.
 
-`A -> B -> C`
+## Application Guide
 
-Good for strict stage-by-stage work. Risk: one blocked node stalls the chain.
-
-### Hub And Spoke
-
-`Coordinator -> specialists`
-
-Good for coordinator-driven parallel work. Risk: the coordinator becomes a bottleneck.
-
-### Hybrid
-
-`Coordinator -> stage group -> review -> stage group`
-
-Usually the best default for non-trivial teams.
-
-## Codex Multi-Agent Considerations
-
-- parallel agents must own different files
-- the coordinator must define when to `spawn_agent`
-- follow-up work must be explicit enough for `send_input`
-- join points must be documented so `wait` happens only at real synchronization boundaries
+1. Map workflow stages, deliverables, and review relationships before drawing the graph.
+2. Choose the lightest topology that preserves clear ownership: pipeline for strict sequence, hub-and-spoke for coordinator-driven parallel work, hybrid for mixed staged and parallel work.
+3. Assign stable task paths and disjoint file ownership to every branch that can run in parallel.
+4. Define the lifecycle for each edge: `spawn_agent` for new bounded work, `send_message` for non-triggering updates, `followup_task` for a corrective or new idle-agent turn, `interrupt_agent` only for invalid or unsafe work, `list_agents` before joins or reroutes, and `wait_agent` only at a real synchronization boundary.
+5. Check whether any specialist would need more than one helper hop. If yes, the design is too deep for the runtime contract.
+6. Flag bottlenecks, cycles, review loops without exit criteria, and shared-file hotspots before accepting the topology.
 
 ## Quality Checkpoints
 
-- every agent has at least one upstream or downstream connection
-- the coordinator is central but not overloaded
-- no meaningless circular dependency exists
-- parallel work is backed by non-overlapping file ownership
+- [ ] The coordinator is the only user-facing hub and does not depend on a sub-coordinator.
+- [ ] Parallel branches own different files or one explicit primary owner mediates writes.
+- [ ] Nested delegation is bounded to one helper hop inside the owner's artifact family.
+- [ ] Task paths and join boundaries are explicit enough to support worklog tracing.
+- [ ] The topology can finish without circular dependency outside intentional review loops.
 
 ## Example
 
 ### Input
 
-`前端、後端、QA 三個角色都要直接改同一份 API schema。`
+`Frontend, backend, and QA all need to edit the same API schema at the same time.`
 
 ### Output
 
-`拓撲有衝突；應指定單一 schema owner，其他角色只讀或透過 reviewer/coordinator 提出變更。`
+Reject the topology as unsafe for a shared filesystem; assign one schema owner, route feedback through review or coordinator, and keep the other roles read-only on that file.

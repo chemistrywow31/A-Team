@@ -1,6 +1,6 @@
 ---
 name: Conversation Protocol
-description: Regulate interview flow so discovery is complete before planning or generation
+description: Regulate discovery so requested format, canonical authority, and scope are explicit before planning or generation
 ---
 
 # Conversation Protocol
@@ -23,7 +23,8 @@ Do not enter Planning or Generation until all of the following are true:
 2. The workflow stages are identified from input to final output.
 3. Each workflow stage has at least one candidate role.
 4. The requested delivery format is confirmed or explicitly delegated.
-5. The user has confirmed the requirements summary.
+5. The generated team's canonical authority and mapping-retention need are confirmed.
+6. The user has confirmed the requirements summary.
 
 ### Delivery Format Is Part Of Discovery
 
@@ -31,10 +32,21 @@ Before Planning, confirm which team format the user wants: `codex-native`, `clau
 
 Also confirm:
 
-- Codex remains the canonical authored format
+- whether the generated team's canonical authority will be Codex, Claude, or a dual-surface package with one canonical source
 - whether conversion-ready mapping must be retained for later Claude <-> Codex transformation
 
 Ask this early in discovery. Do not bury it as a minor preference under generic output requirements.
+
+### Existing-Team Discovery Must Classify The Current Surface
+
+Before proposing structural or runtime changes to an existing team, classify:
+
+- runnable surfaces and activation state
+- current canonical authority or ambiguity
+- stamp state
+- mapping completeness
+
+Do not assume Codex is canonical just because a Codex surface exists.
 
 ### One Direction Per Turn
 
@@ -64,7 +76,9 @@ Whenever you challenge an assumption, provide a concrete alternative.
 
 ## Violation Determination
 
-- Planning starts before the five discovery criteria are satisfied -> Violation
+- Planning starts before the six discovery criteria are satisfied -> Violation
+- Discovery omits requested format, canonical authority, or mapping-retention need -> Violation
+- Existing-team planning starts without surface classification when runtime or structural changes are in scope -> Violation
 - One response contains four or more unrelated questions -> Violation
 - Five consecutive rounds pass without an interim summary -> Violation
 - A clear structural issue is noticed but not surfaced -> Violation

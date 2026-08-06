@@ -1,63 +1,50 @@
 ---
 name: Coordinator Mandate
-description: Mandatory rule that every generated team must have a coordinator role
+description: Require one coordinator with direct specialists, stable task paths, and coordinator-only delegation in Claude subagent mode
 ---
 
 # Coordinator Mandate
 
 ## Applicability
 
-- Applies to: All agents (all members of the design team must understand and follow this rule)
+- Applies to: all agents; the coordinator carries the additional obligations below
 
 ## Rule Content
 
-### Coordinator Must Exist
+### Coordinator Must Exist And Own Coordination
 
-Every generated team structure must contain at least one coordinator role. The coordinator's .md file is placed at the root level of the `agents/` directory (not inside subfolders).
+- Every generated multi-agent team must contain exactly one coordinator role.
+- The coordinator is the sole user-facing phase owner. It may synthesize only the artifact families explicitly assigned to it by the phase plan.
+- Specialist-owned artifact families stay specialist-owned. The coordinator must not absorb them to "move faster."
 
-### Coordinator Does Not Execute
+### Flat Direct-Specialist Topology
 
-The coordinator role is only responsible for: task planning, task assignment, progress tracking, quality control. The coordinator must not simultaneously undertake execution responsibilities of other agents in the team.
+- All phase specialists are direct children of the coordinator.
+- Sub-coordinators are prohibited.
+- In Claude subagent mode, only the coordinator delegates via the Task tool. Specialists must not dispatch nested helpers or other specialists.
 
-Two carve-outs, both narrow and both declared here rather than assumed:
+### Stable Task Paths And Lifecycle Discipline
 
-1. **User-facing conversation** — interviewing, relaying questions, presenting results. This is coordination, not execution (`rules/context-management.md` Exceptions). Only the main session has a user channel, so it cannot be delegated.
-2. **The team charter (`CLAUDE.md`)** — the coordinator is the only role holding the full cross-phase picture the charter must summarize. It writes this one file directly.
+- Every Task dispatch uses a stable phase-purpose task path such as `discovery_requirements`, `planning_skill_plan`, `generation_rules`, `generation_agents`, `restructure_assessment`, or `review_runtime_preflight`.
+- A resumed or corrective Task for the same logical work keeps the same task path and carries only the delta: new evidence, corrected assumptions, updated criteria, or path changes.
+- Do not stop for a Task result while independent coordinator work remains. Wait only at a real join boundary where the next coordinator step depends on that result.
 
-Everything else the coordinator might be tempted to write itself — agent files, skill files (including the team's entry-point skill), rule files, `settings.json` — goes to the owning writer via dispatch. The reason is mechanical, not stylistic: a self-assigned step produces no dispatch record, no EC-1 report, and no producer to bounce a failure back to, so a verification FAIL on it routes to nobody. Production evidence: `skills/boss/SKILL.md` was self-assigned to the coordinator and is absent from 11 teams generated after the step was introduced.
+### Shared Filesystem Ownership
 
-A carve-out file still requires fresh-context verification per `rules/execution-contract.md` EC-3 — writing it directly changes who produces it, never who accepts it.
-
-### Flat Architecture
-
-Every team must use a flat architecture: one coordinator directly manages all worker agents. Sub-coordinators are prohibited because they add context relay overhead and degrade information quality in Claude Code's Task tool.
-
-### Worktree Isolation for File-Mutating Agents
-
-When the coordinator dispatches an agent that will modify files (Edit, Write, Bash that touches the working tree), evaluate whether to use `isolation: "worktree"` in the Agent tool parameters. Worktree isolation creates a fresh git worktree for the agent, sandboxing its writes from the main working tree.
-
-**Use worktree isolation when**:
-- The agent runs experimental changes that may need to be discarded
-- Multiple agents need to modify the same files in parallel without conflict
-- The agent's work crosses a major refactor boundary that may need rollback
-- A code review agent rewrites code in place to demonstrate suggestions
-
-**Do not use worktree isolation when**:
-- The agent's output is the worklog or a single new file (no existing-file mutation)
-- The agent must observe the latest user changes in the main worktree
-- The agent's work is small and atomic (single function edit) — overhead exceeds benefit
-- The team is in Agent Teams mode (worktree isolation interacts unpredictably with shared task lists)
-
-After a worktree-isolated agent completes, the coordinator must decide: merge (cherry-pick or rebase the worktree's commits), discard, or hand off to a review agent before merging. The decision must be logged in `decisions.md` with rationale.
+- Assume agents share the same filesystem unless the runtime explicitly provisions isolation.
+- Every dispatch must state owned write paths, forbidden paths, acceptance criteria, and the non-reversion rule: do not revert edits you did not make.
+- Unexpected foreign edits in an owned path are handled by adapting the task or escalating a real conflict, never by blind overwrite.
 
 ## Violation Determination
 
-- Generated team structure has no coordinator .md file in `agents/` root directory → Violation
-- Coordinator's .md assigns itself the production of any file ANYWHERE in the file (not only in a "Responsibilities" section) beyond the two declared carve-outs → Violation. Check: grep the coordinator .md for self-authoring phrases (`you write this directly`, `write ... yourself`, `you generate`) and confirm each hit targets `CLAUDE.md` or a user-facing conversation step.
-- Team contains a sub-coordinator agent whose sole purpose is to coordinate other agents → Violation
-- Coordinator dispatches a file-mutating agent without considering worktree isolation (and the choice is not documented in worklog) → Violation
-- Coordinator merges a worktree-isolated agent's changes without logging the merge decision → Violation
+- A generated multi-agent team has no coordinator role, or more than one role claims coordinator authority -> Violation
+- The coordinator writes an artifact family owned by a specialist with no explicit phase-plan reassignment -> Violation
+- A sub-coordinator exists, or a specialist delegates nested work in subagent mode -> Violation
+- A Task dispatch lacks a stable task path, or a resumed task abandons that path without invalidation rationale -> Violation
+- A file-mutating dispatch omits owned paths, forbidden paths, acceptance criteria, or the non-reversion rule -> Violation
+- The coordinator waits while independent coordinator work still remains -> Violation
 
 ## Exceptions
 
-This rule has no exceptions.
+- Single-agent teams do not require a coordinator role.
+- User-facing conversation in the main session remains coordination, not specialist execution.

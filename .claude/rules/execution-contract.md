@@ -1,6 +1,6 @@
 ---
 name: Execution Contract
-description: Binding runtime contract for reporting, escalation, verification, precedence, and context economy
+description: Bind every dispatch and specialist return to stable task paths, acceptance criteria, escalation, and fresh-context acceptance
 ---
 
 # Execution Contract
@@ -8,9 +8,7 @@ description: Binding runtime contract for reporting, escalation, verification, p
 ## Applicability
 
 - Applies to: all agents (coordinator and every dispatched agent)
-- Generated teams: every generated team must include this contract in its `rules/` (see `rules/output-structure.md`)
-- Cite clauses by number when resolving disputes or writing dispatches, e.g. "per EC-2.4"
-- Directive mapping: EC-1 = §7.1, EC-2 = §7.2, EC-3 = §7.3, EC-4 = §7.4, EC-5 = §7.5
+- Generated teams must include this contract in `rules/` (see `rules/output-structure.md`). Cite clauses by number when resolving disputes. Directive mapping: EC-1 = §7.1, EC-2 = §7.2, EC-3 = §7.3, EC-4 = §7.4, EC-5 = §7.5.
 
 ## EC-1 Reporting Contract
 
@@ -21,34 +19,20 @@ description: Binding runtime contract for reporting, escalation, verification, p
   4. `ARTIFACTS:` paths to every file produced or updated, including worklog files — mark newly created files with `(new)`
   5. `RISKS/UNKNOWNS:` issues the coordinator must know; write "none" when none exist
   6. `NEXT:` exactly one recommendation
-- **EC-1.2** `STATUS: DONE` with an empty `EVIDENCE` field is invalid. Compliance check: the coordinator rejects any DONE report whose EVIDENCE field cites zero files or commands.
-- **EC-1.3** Any product longer than 30 lines — code, analysis, research notes, logs — must be written to a file. The report carries the path plus a summary of at most 3 lines.
-- **EC-1.4** Do not paste file contents, diffs, transcripts, or raw tool output into a report or a dispatch. Write the content to a file and send the path.
-- **EC-1.5** Status handling by the coordinator: DONE → dispatch verification per EC-3, then proceed. DONE_WITH_CONCERNS → log each concern to the worklog, resolve or accept explicitly, then proceed. BLOCKED → resolve the named blocker before re-dispatch; re-dispatching unchanged is forbidden. NEEDS_CONTEXT → provide the named missing items and re-dispatch.
-- **EC-1.6** Bounce protocol: a report violating EC-1.1–EC-1.4 is returned to the producer once, with this schema attached. A second schema violation on the same task counts as a failed attempt under EC-2.4.
-- **EC-1.7** NEEDS_CONTEXT is bounded: name every missing item you can identify in a single return — withholding known items for later rounds is a violation. The coordinator re-dispatches only after supplying every named item; re-dispatching with the same items still missing is forbidden — if an item cannot be supplied (no file exists, no user answer available), treat the subtask as BLOCKED instead. Backstop: more than 3 NEEDS_CONTEXT rounds on the same subtask → BLOCKED. QUESTIONS blocks relayed to the user are the designed exception: each relay returns with new user answers and does not count against the cap, but obeys `rules/conversation-protocol.md` interview limits.
-
-### Filled example
-
-```
-STATUS: DONE
-CONCLUSIONS:
-- Generated 5 rule files for teams/demo-team/, including the 4 mandatory rules.
-- All files pass the 100-line limit; worklog.md defines the evidence chain.
-- One planned rule (api-format) merged into coding-standard to stay within the 8-rule cap.
-EVIDENCE: teams/demo-team/.claude/rules/worklog.md:1-62, wc -l output in worklog findings.md
-ARTIFACTS: teams/demo-team/.claude/rules/ (5 files), .worklog/202607/demo-team/phase-3-generation/findings.md
-RISKS/UNKNOWNS: api-format merge widens coding-standard scope; verifier must check the Applicability line.
-NEXT: dispatch a fresh-context verifier per EC-3 against the Phase 2 rules plan.
-```
+- **EC-1.2** The first line under `CONCLUSIONS` must restate the stable task path and whether the acceptance criteria were met, partially met, or not met.
+- **EC-1.3** `STATUS: DONE` with an empty `EVIDENCE` field is invalid. A verifier return must cite evidence per acceptance criterion, not only one aggregate claim.
+- **EC-1.4** `ARTIFACTS` must list every file produced or updated and identify which owned write paths were actually touched.
+- **EC-1.5** Any product longer than 30 lines — code, analysis, research notes, logs — must be written to a file. The report carries the path plus a summary of at most 3 lines.
+- **EC-1.6** Do not paste file contents, diffs, transcripts, or raw tool output into a report or a dispatch. Write the content to a file and send the path.
+- **EC-1.7** Status handling by the coordinator: DONE → dispatch verification per EC-3, then proceed. DONE_WITH_CONCERNS → log each concern to the worklog, resolve or accept explicitly, then proceed. BLOCKED → resolve the named blocker before re-dispatch; re-dispatching unchanged is forbidden. NEEDS_CONTEXT → provide the named missing items and re-dispatch.
+- **EC-1.8** Bounce protocol: a report violating EC-1.1–EC-1.6 is returned to the producer once, with this schema attached. A second schema violation on the same task counts as a failed attempt under EC-2.4.
+- **EC-1.9** NEEDS_CONTEXT is bounded: name every missing item you can identify in a single return. Withholding known items for later rounds is a violation. More than 3 NEEDS_CONTEXT rounds on the same subtask → BLOCKED, except user-question relays governed by `rules/conversation-protocol.md`.
+- **EC-1.10** Every dispatch must include: the stable task path, goal, worklog or BRIEF paths, owned write paths, forbidden paths, acceptance criteria, and any non-default runtime choice that changes task behavior.
+- **EC-1.11** A corrective or resumed dispatch on an existing task path must carry only the delta: changed assumptions, invalidated evidence, updated criteria, or new paths. Replaying unchanged full context is a violation.
 
 ## EC-2 Escalation Ladder
 
-Tier names map to models as: SMALL = `haiku`, MID = `sonnet`, STRONG = `opus`. That mapping is stated here rather than by reference because `rules/context-tier.md` is path-scoped to `teams/**` and does not load in the sessions where this ladder applies.
-
-The ladder is keyed to the model actually running the task — the Agent tool's `model` parameter when the dispatch sets one, else the agent's `model:` frontmatter. A tier written into the dispatch prompt text is a comment, not a control: it does not change which model executes. Coordinators that intend a tier must pass the `model` parameter.
-
-The same task follows EC-2.1 when run on haiku and EC-2.2 when run on sonnet. Where every agent in a tree is `opus` — as in A-Team's own `.claude/agents/` — EC-2.1/2.2/2.3/2.6 have no trigger and EC-2.4/2.5/2.7 carry the whole ladder. They are retained because generated teams do run mixed rosters: across 332 generated agents, 35% are sonnet and 3% haiku, in 20 of 32 teams.
+Tier names map to models as SMALL = `haiku`, MID = `sonnet`, STRONG = `opus`; this mapping is inline because `rules/context-tier.md` is path-scoped to `teams/**`. The ladder follows the model actually running the task: the Task tool's `model` parameter when set, else the agent's `model:` frontmatter. A tier in prompt text is only a comment; coordinators that intend a tier must pass the parameter. The same task follows EC-2.1 on haiku and EC-2.2 on sonnet. In all-opus trees such as A-Team's `.claude/agents/`, EC-2.1/2.2/2.3/2.6 do not trigger and EC-2.4/2.5/2.7 carry the ladder. Mixed generated rosters still require every clause: across 332 generated agents, 35% are sonnet and 3% haiku, in 20 of 32 teams.
 
 - **EC-2.1** haiku-tier task fails its acceptance check → zero retries at haiku. Escalate to the next tier up immediately (haiku → sonnet → opus; skipping straight to opus is permitted only when the failure needs expertise sonnet lacks — the `JUDGMENT.md` J1.3 signal; name that reason in the escalation), attaching the task, the failed check output, and artifact paths.
 - **EC-2.2** sonnet-tier task fails → one retry, changed approach only. Re-running the same approach is forbidden. A second consecutive failure on the same subtask → escalate to opus.
@@ -92,14 +76,17 @@ Two conflicting rules at the same level: the rule with the narrower Applicabilit
 ## Violation Determination
 
 - Task return missing any EC-1.1 field, or fields out of order → violation (bounce per EC-1.6)
-- DONE status with empty EVIDENCE → violation
+- `CONCLUSIONS` does not restate task path plus criteria state → violation
+- DONE status with empty EVIDENCE, or verifier EVIDENCE that does not address each criterion → violation
+- `ARTIFACTS` omits touched owned paths or created files → violation
+- Dispatch missing the stable task path, owned paths, forbidden paths, or acceptance criteria → violation
 - File contents, diffs, or transcripts pasted into a report or dispatch → violation
 - Retry of the same approach after failure at sonnet tier, or any retry at haiku tier → violation
 - Fourth attempt on the same acceptance criteria → violation, with exactly one exception: the single EC-2.4 escalation attempt at a higher tier that has not yet attempted. A fifth attempt is never legal
 - Escalation delivered without the failure trace → violation
 - Artifact accepted with no fresh-context verifier verdict → violation
 - Producer or dispatching coordinator acting as sole acceptor → violation
-- Dispatch missing the BRIEF path (once the task's BRIEF exists) → violation
+- Dispatch missing the BRIEF path once the task's BRIEF exists → violation
 - Message exceeding 60 lines, or task report exceeding 40 lines, without a dispatch-raised cap → violation (bounce per EC-1.6)
 
 ## Exceptions

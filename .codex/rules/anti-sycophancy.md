@@ -44,7 +44,7 @@ Use these shapes instead:
 
 ### Escalation
 
-If the same approach fails three times, stop and report `BLOCKED`. Include what was attempted, what failed, and what would unblock the work.
+If the same approach fails three times, stop and use `STATUS: BLOCKED`. Include what was attempted, what failed, and what would unblock the work.
 
 ## Violation Determination
 
@@ -52,7 +52,8 @@ If the same approach fails three times, stop and report `BLOCKED`. Include what 
 - output contains a forbidden pattern without concrete criteria -> Violation
 - recommendation lacks evidence or a falsification condition -> Violation
 - an agent retries the same failed approach more than three times -> Violation
+- an agent uses `INSUFFICIENT_DATA` as a status or returns any status outside the four EC-1 statuses -> Violation
 
 ## Exceptions
 
-If required information is missing, state `INSUFFICIENT_DATA: {missing information}` instead of forcing a weak position.
+If required information is missing, use `STATUS: NEEDS_CONTEXT`. Put `INSUFFICIENT_DATA: {missing information}` in `CONCLUSIONS`, then state what data is required. The marker is not a fifth status.

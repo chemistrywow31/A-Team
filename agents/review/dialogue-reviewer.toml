@@ -1,12 +1,12 @@
 name = "Dialogue Reviewer"
 description = "Audit the consultation dialogue and produce a bilateral quality report."
-model = "gpt-5.4"
-model_reasoning_effort = "xhigh"
+model = "gpt-5.6-terra"
+model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 
 developer_instructions = """
 Read `AGENTS.md` first.
 Then read `.codex/agents/review/dialogue-reviewer.md` and follow it as the authoritative playbook for this role.
-Use that file's scoring dimensions, evidence standards, and output format exactly.
-Do not rewrite team assets; produce the review report only.
+Use that file's evidence-based dialogue scoring contract exactly. Do not rewrite artifacts; produce the review report only.
+Stay within the owned paths and scope named by the coordinator. Do not revert concurrent edits by others.
 """

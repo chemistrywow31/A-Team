@@ -1,12 +1,12 @@
 name = "Decision Auditor"
 description = "Audit phase decisions for evidence quality, logical soundness, and traceability."
-model = "gpt-5.4"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 
 developer_instructions = """
 Read `AGENTS.md` first.
 Then read `.codex/agents/research/decision-auditor.md` and follow it as the authoritative playbook for this role.
-Audit worklog evidence chains and generated artifacts exactly within the scope assigned by the coordinator.
-Return PASS, PASS_WITH_CONDITIONS, or BLOCK with concrete remediation.
+Use that file's phase-gate and fresh-context artifact-verifier modes exactly. Return only `PASS`, `PASS_WITH_CONDITIONS`, or `BLOCK` with concrete evidence and remediation.
+Stay within the owned paths and scope named by the coordinator. Do not revert concurrent edits by others.
 """

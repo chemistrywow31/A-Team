@@ -1,61 +1,84 @@
 ---
 name: Codex Runtime Config
-description: Map Claude settings and hook concepts to Codex project-local runtime configuration
+description: Require current project-local Codex v2 config, protected-path awareness, and no home-directory dependency
 ---
 
 # Codex Runtime Config
 
 ## Applicability
 
-- Applies to: `team-architect`, `agent-writer`, and generated multi-agent teams
+- Applies to: `team-architect`, `agent-writer`, `runtime-preflight-advisor`, and every generated Codex runnable surface
 
 ## Rule Content
 
-### Use Project-Local Codex Configuration
+### Use Project-Local `.codex/config.toml`
 
-Generated Codex teams must use `teams/{team-name}/.codex/config.toml` as the runtime switch. Do not require users to edit `~/.codex/config.toml` for a generated team to work.
+- Generated Codex teams must boot from `teams/{team-name}/.codex/config.toml`.
+- `codex exec --strict-config` must load that file without unknown-field or deprecated-field errors.
+- Do not require users to edit `~/.codex/config.toml` for baseline execution.
 
-### Register Agents From `.codex/config.toml`
+### Use The Current V2 Multi-Agent Schema
 
-For `multi-agent` teams:
+For current A-Team and generated Codex multi-agent surfaces, use:
 
 ```toml
+model = "gpt-5.6-sol"
+model_reasoning_effort = "xhigh"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+project_doc_fallback_filenames = ["CLAUDE.md"]
+
 [features]
 multi_agent = true
 
+[features.multi_agent_v2]
+enabled = true
+max_concurrent_threads_per_session = 7
+expose_spawn_agent_model_overrides = true
+wait_agent_enabled = true
+
 [agents]
-max_threads = 6
-max_depth = 1
+enabled = true
+default_subagent_model = "gpt-5.6-terra"
+default_subagent_reasoning_effort = "high"
+interrupt_message = true
 
 [agents.coordinator]
 description = "Coordinate delegation, quality gates, and delivery."
 config_file = "../agents/coordinator.toml"
 ```
 
-Resolve `config_file` relative to the `.codex/` directory.
+Do not generate or keep stale v1 fields such as `disable_response_storage`, `max_threads`, or `max_depth`.
 
-### Treat Claude Settings As Non-Portable
+### Register Agents Relative To `.codex/`
 
-Do not generate `.claude/settings.json`, Claude permission allowlists, Claude Agent Teams flags, or Claude hook events for Codex-native output. Convert portable intent as follows:
+- Resolve every `config_file` relative to the `.codex/` directory.
+- For project-root runtime TOMLs, register `../agents/...`.
+- Each `[agents.{id}]` entry must include `description` and `config_file`.
 
-- settings defaults -> `.codex/config.toml`
-- permission bands -> `approval_policy` + `sandbox_mode`: the Claude allow band maps to `sandbox_mode = "workspace-write"` with `approval_policy = "on-failure"` (routine sandboxed work proceeds without prompts); ask-band intent stays covered by sandbox escalation prompts; never default to `danger-full-access` or `approval_policy = "never"`
-- skill discovery -> `.agents/skills/`
-- lifecycle bookkeeping -> worklog and optional Codex hooks
-- Agent Teams flags -> `[features] multi_agent = true`
+### Respect Approval And Protected-Path Limits
 
-### Hooks Are Optional
+- Use `approval_policy = "on-request"` and `sandbox_mode = "workspace-write"` unless a stricter user requirement applies.
+- Standard `workspace-write` protects `.codex/` and `.agents/`. Project config must not claim it can authorize rewriting its own protected metadata or bypass host approval.
+- Runtime-affecting changes must document setup, verify, and rollback guidance in `docs/RUNTIME-SETUP.md`.
 
-Codex supports hooks, but generated teams must not depend on hooks for correctness. If hooks are generated, keep them advisory and document the non-hook fallback in `AGENTS.md`.
+### Model Defaults Belong In Config
+
+- Root or project default guidance is `gpt-5.6-sol` at `xhigh`.
+- Default subagent guidance is `gpt-5.6-terra` at `high`.
+- Role-specific overrides belong in `agents/**/*.toml` or explicit `spawn_agent` parameters, not only in prose.
 
 ## Violation Determination
 
-- generated Codex team requires editing `~/.codex/config.toml` -> Violation
-- generated Codex package contains `.claude/settings.json` as a runtime requirement -> Violation
-- `config_file` paths are written as if they resolve from project root -> Violation
-- hooks are required for correctness with no fallback -> Violation
-- `multi-agent` team omits `[features] multi_agent = true` -> Violation
+- A Codex runnable surface has no project-local `.codex/config.toml`, or `codex exec --strict-config` rejects it -> Violation
+- A multi-agent Codex config omits `[features.multi_agent_v2]`, omits required v2 keys, or still uses `disable_response_storage`, `max_threads`, or `max_depth` -> Violation
+- A generated Codex team requires editing `~/.codex/config.toml` for baseline execution -> Violation
+- Any `[agents.{id}]` entry resolves `config_file` from the wrong base path or omits `description` -> Violation
+- A rule or setup document claims project config can bypass protected metadata restrictions on `.codex/` or `.agents/` -> Violation
+- Approval guidance defaults to `on-failure` or `never` without explicit user approval and recorded rationale -> Violation
 
 ## Exceptions
 
-If the user explicitly requests a Claude-compatible or dual-format export, write Claude settings only as compatibility artifacts and keep Codex runtime canonical.
+- Claude-only or reference-only surfaces are out of scope.
+- A single-agent Codex surface may omit the multi-agent v2 block and agent registry.
+- A user-approved tighter runtime profile is allowed when strict-config still passes and the rationale is recorded.

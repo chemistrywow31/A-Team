@@ -1,39 +1,55 @@
 ---
 name: Context Isolation
-description: Replace Claude context-fork patterns with Codex subagent isolation and summary handoffs
+description: Isolate Codex work through bounded delegation depth, owned paths, and narrow forks instead of Claude frontmatter
 ---
 
 # Context Isolation
 
 ## Applicability
 
-- Applies to: `skill-writer`, `agent-writer`, `team-architect`
+- Applies to: `team-architect`, `agent-writer`, `skill-writer`, and every generated Codex multi-agent runtime
 
 ## Rule Content
 
-### Do Not Use Claude `context: fork`
+### Direct Specialists Plus One Helper Hop
 
-Codex skills are repo-discoverable instructions under `.agents/skills/`. Do not add Claude-only skill frontmatter such as `context: fork`, `agent`, `allowed-tools`, or `disable-model-invocation` to Codex-native skills unless a documented Codex runtime supports it.
+- The coordinator delegates directly to specialists.
+- A specialist may spawn at most one nested helper, and only for bounded independent evidence collection or verification inside that specialist's owned artifact family.
+- A nested helper may not delegate again, reassign ownership, or cross artifact families.
 
-### Use Subagents For Noisy Work
+### Shared Filesystem Ownership
 
-When a skill requires large exploration, research, verbose tests, or broad audits, route that work through a specialist registered in `.codex/config.toml`. The skill should explain when to delegate, and the coordinator should spawn the specialist.
+- Assume every agent sees the same workspace unless the runtime explicitly provisions isolation.
+- Every dispatch must name owned write paths and forbidden paths.
+- Agents must not revert, overwrite, or clean up edits they did not make.
+- If unexpected foreign edits appear inside an owned path, adapt to them or escalate the conflict. Do not blindly overwrite.
+
+### Isolation Comes From Task Scope, Not Claude Frontmatter
+
+- Do not use Claude-only `context: fork` frontmatter in Codex-native skills.
+- Codex isolation comes from task-scoped agents, worklog paths, owned paths, and narrow forks.
+- Runtime permissions belong in `.codex/config.toml` and `agents/**/*.toml`, not in skill frontmatter.
+
+### Fork Override Rule
+
+- Full-history forks inherit the parent model and reasoning effort.
+- Any explicit model or reasoning override requires `fork_turns = "none"` or a positive bounded fork.
+- Override plus omitted or `all` fork history is forbidden.
 
 ### Return Summaries Only
 
-Isolated work must return a summary with status, key outcomes, changed files, worklog paths, and blockers. Store bulky findings in the worklog or generated artifacts.
-
-### Keep Skills Instruction-Focused
-
-Skills should define reusable method, checklist, examples, and escalation criteria. Agent selection and runtime permissions belong in `.codex/config.toml` and `agents/**/*.toml`.
+Isolated work returns the execution-contract summary only. Bulky findings stay in the worklog or owned artifacts.
 
 ## Violation Determination
 
-- Codex-native skill uses Claude-only `context: fork` or `allowed-tools` frontmatter -> Violation
-- noisy research or exploration runs inline when a registered specialist exists and the coordinator is not blocked -> Violation
-- skill embeds agent runtime permissions instead of method guidance -> Violation
-- isolated work returns raw dumps instead of structured summaries -> Violation
+- A specialist spawns more than one helper, or a helper spawns another helper -> Violation
+- A helper writes outside the parent specialist's owned artifact family -> Violation
+- A dispatch omits owned paths or a branch reverts non-owned edits -> Violation
+- A Codex-native skill uses Claude-only `context: fork` frontmatter -> Violation
+- Runtime permissions are embedded in skill frontmatter instead of config or TOML -> Violation
+- A model or reasoning override is combined with full-history inheritance -> Violation
+- Isolated work returns raw dumps instead of the structured summary -> Violation
 
 ## Exceptions
 
-If a user explicitly asks for Claude-compatible skill export, include Claude-only frontmatter in the compatibility artifact and mark it as non-canonical in the mapping docs.
+- If the user explicitly asks for a Claude-compatible compatibility surface, Claude-only frontmatter may appear there when the mapping docs mark it non-canonical.

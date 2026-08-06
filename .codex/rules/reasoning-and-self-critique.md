@@ -56,7 +56,7 @@ Before delegating, coordinators must note:
 
 ### Escalate Known Gaps
 
-If verification exposes a gap that cannot be fixed after three attempts, return `INSUFFICIENT_DATA` or `BLOCKED` instead of submitting known-bad output.
+If verification exposes a gap that cannot be fixed after three attempts, do not submit known-bad output. Use `STATUS: NEEDS_CONTEXT` for an informational gap and put `INSUFFICIENT_DATA: {missing}` in `CONCLUSIONS` as a marker. Use `STATUS: BLOCKED` for a hard blocker. These four EC-1 statuses are the only valid report statuses.
 
 ## Violation Determination
 
@@ -64,6 +64,7 @@ If verification exposes a gap that cannot be fixed after three attempts, return 
 - coordinator has no pre-dispatch note requirement -> Violation
 - agent exposes private chain-of-thought instead of concise decision notes -> Violation
 - output is submitted after verification identifies an unresolved blocker -> Violation
+- output uses `INSUFFICIENT_DATA` as a status or returns any status outside the four EC-1 statuses -> Violation
 
 ## Exceptions
 
