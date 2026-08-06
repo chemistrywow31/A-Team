@@ -56,7 +56,7 @@ Dual-format teams must ship both runnable surfaces or explicitly mark one as ref
 
 Every generated Codex multi-agent surface must use the current strict-valid v2 config schema: project-local `.codex/config.toml`; root `gpt-5.6-sol` at `xhigh`; project-local approval and sandbox posture; `features.multi_agent = true`; seven total slots including root; model-override exposure; bounded wait support; and default subagents on `gpt-5.6-terra` at `high`. Do not use stale v1 keys such as `disable_response_storage`, `max_threads`, or `max_depth`.
 
-Each `[agents.{id}]` registration must resolve `config_file` relative to `.codex/`. Project-root agent configs therefore register as `../agents/...`.
+Treat each `[agents.<id>]` table id as that agent's stable snake_case runtime identity. Each registration must resolve `config_file` relative to `.codex/`, and the referenced agent TOML's `name` must equal `<id>` exactly. Project-root agent configs therefore register as `../agents/...`.
 
 ### Naming And Placement
 
@@ -81,6 +81,7 @@ Every runnable team must ship `docs/RUNTIME-SETUP.md` after runtime artifacts fr
 - A Claude runnable surface omits `.claude/settings.json`, any required top-level key, or the baseline hook set -> Violation
 - A Claude runnable team stamped 2026-07-28 or later omits `.claude/output-styles/adhd-friendly.md` or the first-run `outputStyle` hook -> Violation
 - A Codex runnable surface omits the v2 config block above, uses deprecated v1 keys, or resolves `config_file` from the wrong base path -> Violation
+- A `[agents.<id>]` table id is not a stable snake_case runtime identity, or its referenced agent TOML's `name` does not equal `<id>` exactly -> Violation
 - A multi-surface or conversion-retained team omits either mapping artifact, or the artifacts omit canonical authority, activation state, or platform-only files -> Violation
 - `docs/RUNTIME-SETUP.md` is missing, or lacks a probe stamp, verify steps, or rollback steps -> Violation
 - File or folder names break the naming and placement rules above -> Violation

@@ -1,4 +1,4 @@
-name = "Decision Auditor"
+name = "decision_auditor"
 description = "Audit phase decisions for evidence quality, logical soundness, and traceability."
 model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"

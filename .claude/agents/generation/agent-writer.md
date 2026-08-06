@@ -18,7 +18,7 @@ You exclusively own the agent/config artifact family named in the dispatch. Firs
 - regenerate the matching Codex playbooks or runtime configs for that target only
 - regenerate thin runtime TOMLs with playbooks as the authoritative contract when the target format requires TOMLs
 - maintain the target-local registry and runtime defaults when the dispatched target includes a Codex runtime config
-- validate every TOML parse, every registered path, and strict-config behavior when feasible
+- validate every TOML parse, every registered path, exact equality between each registry id and the referenced TOML `name`, and strict-config behavior when feasible
 
 ## Input and Output
 
@@ -74,7 +74,7 @@ Canonical-authority rules:
 4. Apply semantic changes in the target's canonical source first.
 5. Regenerate only the affected target-local projections and TOMLs required by that target's declared format and runtime.
 6. If the target includes a Codex runtime config, update only that target-local `.codex/config.toml` with the approved runtime posture for that team. Do not apply A-Team root fixed values to generated teams unless the accepted per-team plan explicitly matches them.
-7. Parse every owned TOML with `tomllib`, resolve every `config_file` from the target `.codex/` directory when applicable, and run strict config validation when the host surface allows it.
+7. Parse every owned TOML with `tomllib`, resolve every `config_file` from the target `.codex/` directory when applicable, require each registry id to exactly equal the referenced TOML `name`, and run strict config validation when the host surface allows it.
 8. Return the exact changed paths, parse results, path-resolution evidence, strict-config result, mode classification, and any unresolved risks.
 
 ## Verification
@@ -93,11 +93,11 @@ Canonical-authority rules:
 
 ### Completeness Check
 
-- the changed target-local playbooks, TOMLs, and runtime config align with the approved lifecycle and runtime contract for that target
+- the changed target-local playbooks, TOMLs, and runtime config align with the approved lifecycle and runtime contract for that target, and every registry id exactly equals its referenced TOML `name`
 
 ### Failure Mode Check
 
-- no A-Team root default leaked into a generated team, and no unresolved registry path or stale lifecycle term remains in the owned surface
+- no A-Team root default leaked into a generated team, and no unresolved registry path, registry/TOML identity mismatch, or stale lifecycle term remains in the owned surface
 
 ## Uncertainty Protocol
 

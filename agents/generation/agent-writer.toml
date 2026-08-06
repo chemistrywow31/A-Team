@@ -1,4 +1,4 @@
-name = "Agent Writer"
+name = "agent_writer"
 description = "Write project-level Codex agent registry entries and agent TOML configs."
 model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"

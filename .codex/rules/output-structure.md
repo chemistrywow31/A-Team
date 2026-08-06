@@ -40,7 +40,7 @@ Declare canonical authority and the generator stamp in `CLAUDE.md`. Apply the ou
 
 ### Naming And Entry Documents
 
-- Use kebab-case for team, folder, markdown, TOML, rule, and skill folder names; use snake_case for registry ids.
+- Use kebab-case for team, folder, markdown, TOML, rule, and skill folder names; use stable snake_case runtime identities for agent registry ids.
 - Treat `CLAUDE.md`, `AGENTS.md`, and `SKILL.md` as the only uppercase filenames.
 - Place coordinator TOML at `agents/coordinator.toml` and specialist TOMLs under `agents/{group}/`.
 - Put universal Codex runtime guidance in root `AGENTS.md`; keep role and file constraints in authoritative playbooks or `.codex/rules/`.
@@ -54,7 +54,7 @@ Every runnable Codex surface must include `.codex/config.toml`. Multi-agent conf
 - `[features.multi_agent_v2] enabled = true`, `max_concurrent_threads_per_session = 7`, `expose_spawn_agent_model_overrides = true`, and `wait_agent_enabled = true`
 - `[agents] enabled = true`, `default_subagent_model = "gpt-5.6-terra"`, `default_subagent_reasoning_effort = "high"`, and `interrupt_message = true`
 
-Each `[agents.<id>]` entry must include `description` and `config_file`. Resolve `config_file` relative to `.codex/`; use `../agents/...` for project-root configs. Each agent TOML must include `name`, `description`, `model`, `model_reasoning_effort`, `sandbox_mode`, and nonempty `developer_instructions`.
+Treat each `[agents.<id>]` table id as the agent's stable snake_case runtime identity. Require each entry to include `description` and `config_file`. Resolve `config_file` relative to `.codex/`; use `../agents/...` for project-root configs. Require the referenced agent TOML's `name` to equal `<id>` exactly and to also include `description`, `model`, `model_reasoning_effort`, `sandbox_mode`, and nonempty `developer_instructions`.
 
 ### Shared Deliverables
 
@@ -71,6 +71,7 @@ Every runnable team must ship `docs/RUNTIME-SETUP.md` after runtime artifacts fr
 - a multi-agent team omits `agents/`, `[features] multi_agent = true`, or the `[features.multi_agent_v2]` block -> Violation
 - coordinator or specialist TOML placement breaks the rules above -> Violation
 - an agent registry entry is incomplete or its `config_file` does not resolve from `.codex/` -> Violation
+- an `[agents.<id>]` table id is not a stable snake_case runtime identity, or its referenced agent TOML's `name` does not equal `<id>` exactly -> Violation
 - an agent TOML misses a required runtime key -> Violation
 - a skill exists only in `.codex/skills/` or only in `.agents/skills/` -> Violation
 - a Claude runnable surface omits `.claude/settings.json`, any required top-level key, or baseline hooks -> Violation

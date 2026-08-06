@@ -1,4 +1,4 @@
-name = "Team Restructuring Master"
+name = "team_restructuring_master"
 description = "Recommend the smallest effective structural changes to an existing team."
 model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"

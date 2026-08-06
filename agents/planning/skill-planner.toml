@@ -1,4 +1,4 @@
-name = "Skill Planner"
+name = "skill_planner"
 description = "Plan shared skills, specialist skills, and enforceable rules."
 model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"

@@ -463,6 +463,28 @@ def extract_registry_paths(root: Path, cfg: dict) -> tuple[list[tuple[str, str, 
     return entries, issues
 
 
+def registry_identity_problems(registry_entries: list[tuple[str, str, Path]]) -> list[str]:
+    """Return registry-resolution failures for referenced runtime agent TOMLs."""
+    problems: list[str] = []
+    for role, _, path in registry_entries:
+        if not path.exists():
+            problems.append(f"{role}->{relpath(path)} missing")
+            continue
+        if not path.is_file():
+            problems.append(f"{role}->{relpath(path)} is not a regular file")
+            continue
+        data, err = parse_toml(path)
+        if err:
+            problems.append(f"{role}->{relpath(path)} parse error: {err}")
+            continue
+        name = data.get("name")
+        if not isinstance(name, str) or not name.strip():
+            problems.append(f"{role}->{relpath(path)} missing nonempty name")
+        elif name != role:
+            problems.append(f"{role}->{relpath(path)} name {name!r} does not equal registry id {role!r}")
+    return problems
+
+
 def codex_multi_agent_enabled(cfg: dict) -> bool:
     features = cfg.get("features", {})
     return isinstance(features, dict) and features.get("multi_agent") is True
@@ -499,9 +521,9 @@ def codex_surface_runnable(root: Path, cfg: dict, cfg_err: str | None, agent_tom
         return False, "; ".join(registry_issues[:3])
     if not registry_entries:
         return False, "no explicit [agents.<id>] registry entries"
-    missing = [f"{role}->{relpath(path)}" for role, _, path in registry_entries if not path.exists()]
-    if missing:
-        return False, f"unresolved config_file paths: {', '.join(missing[:3])}"
+    registry_problems = registry_identity_problems(registry_entries)
+    if registry_problems:
+        return False, f"registry contract failed: {'; '.join(registry_problems[:3])}"
     return True, None
 
 
@@ -824,10 +846,9 @@ def validate_repo_self(reporter: Reporter, root: Path) -> None:
     else:
         reporter.emit("R3", "config-toml-parses", "PASS", relpath(root / ".codex/config.toml"))
         registry_entries, registry_issues = extract_registry_paths(root, cfg)
-        registry_missing = [f"{role}->{relpath(path)}" for role, _, path in registry_entries if not path.exists()]
-        if registry_issues or registry_missing:
-            problems = registry_issues + registry_missing
-            reporter.emit("R4", "registry-resolution", "FAIL", "; ".join(problems[:6]))
+        registry_problems = registry_issues + registry_identity_problems(registry_entries)
+        if registry_problems:
+            reporter.emit("R4", "registry-resolution", "FAIL", "; ".join(registry_problems[:6]))
         else:
             reporter.emit(
                 "R4",
@@ -837,11 +858,12 @@ def validate_repo_self(reporter: Reporter, root: Path) -> None:
             )
 
         missing_keys: list[str] = []
+        parsed_agent_tomls = 0
         for _, _, path in registry_entries:
             data, err = parse_toml(path)
             if err:
-                missing_keys.append(f"{relpath(path)} parse error: {err}")
                 continue
+            parsed_agent_tomls += 1
             for key in REQUIRED_AGENT_KEYS:
                 if key not in data or not isinstance(data[key], str) or not data[key].strip():
                     missing_keys.append(f"{relpath(path)} missing {key}")
@@ -849,7 +871,7 @@ def validate_repo_self(reporter: Reporter, root: Path) -> None:
             "R5",
             "agent-toml-required-keys",
             "PASS" if not missing_keys else "FAIL",
-            f"checked {len(registry_entries)} agent TOMLs" if not missing_keys else "; ".join(missing_keys[:6]),
+            f"checked {parsed_agent_tomls} parseable agent TOMLs" if not missing_keys else "; ".join(missing_keys[:6]),
         )
 
         problems = v2_config_problems(cfg)
@@ -988,10 +1010,7 @@ def validate_team(reporter: Reporter, root: Path, classify_only: bool) -> None:
     registry_entries, registry_issues = extract_registry_paths(root, cfg) if not cfg_err else ([], [cfg_err])
     config_targets = {path.resolve() for _, _, path in registry_entries}
     unregistered = [relpath(path) for path in agent_tomls if path.resolve() not in config_targets] if registry_entries else []
-    registry_problems = list(registry_issues)
-    registry_problems.extend(
-        f"{role}->{relpath(path)} missing" for role, _, path in registry_entries if not path.exists()
-    )
+    registry_problems = registry_issues + registry_identity_problems(registry_entries)
     if registry_entries and unregistered:
         registry_problems.append(f"unregistered agent TOMLs: {', '.join(unregistered[:4])}")
     if not registry_entries:

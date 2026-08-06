@@ -13,6 +13,7 @@ For the A-Team repository itself, `.claude/` is the canonical source design and 
 - Change the declared canonical source first, then regenerate only affected projections
 - Generated Codex agents use project-level registration in `.codex/config.toml` plus per-agent TOML files under `agents/`
 - Inside `.codex/config.toml`, every `config_file` is resolved relative to `.codex/`. For team-local runtime agent configs stored under project-root `agents/`, generated entries therefore use `../agents/...`.
+- Each `[agents.<id>]` table id is the stable snake_case runtime identity. The referenced TOML must repeat that identity exactly in `name`; display labels belong in descriptions or playbook prose, not in the runtime identity field.
 
 ## Mapping Table
 
@@ -49,7 +50,7 @@ Deterministic field mapping:
 
 | Codex source | Claude target | Mode | Notes |
 | --- | --- | --- | --- |
-| `[agents.<id>]` table name | output file identity | adapted | use the id for stable conversion bookkeeping |
+| `[agents.<id>]` table name plus referenced TOML `name` | output file identity | adapted | require exact equality and use the stable snake_case id for conversion bookkeeping |
 | `[agents.<id>].description` | summary line or frontmatter description | adapted | keep wording stable when possible |
 | `config_file` | playbook and target identity | adapted | resolve it relative to `.codex/config.toml`, then use the same grouped path under `.codex/agents/` and `.claude/agents/` |
 | `.codex/agents/{path}.md` body | markdown body | adapted | preserve role intent and section contract; translate Codex lifecycle tools, bounded helper rules, path references, and fork semantics into Claude-valid Task/Agent behavior |
@@ -64,7 +65,7 @@ Section handling:
 - tool names are not copied verbatim: Claude subagent mode keeps coordinator-only Task/Agent delegation, while Codex v2 may allow one bounded specialist helper hop
 - runtime-only TOML keys that Claude cannot express must be retained in a sidecar when round-trip fidelity is required
 - Codex-native research agents such as `agents/research/domain-researcher.toml` and `agents/research/decision-auditor.toml` map to `.claude/agents/research/*.md` when exporting to Claude
-- `name` and `description` in TOML are runtime metadata in Codex and map to Claude frontmatter or heading metadata during export
+- TOML `name` is the Codex runtime identity and must equal the registry id exactly; `description` or playbook prose carries any human-facing display label during export
 
 ### Claude -> Codex
 
@@ -83,6 +84,7 @@ Deterministic field mapping:
 
 | Claude source | Codex target | Mode | Notes |
 | --- | --- | --- | --- |
+| stable role identity derived from the canonical path/role vocabulary | `[agents.<id>]` table id and referenced TOML `name` | adapted | emit the same snake_case value in both places; a mismatch is invalid |
 | file path | `config_file` | adapted | swap `.md` for `.toml`, then store it relative to `.codex/config.toml` as `../agents/{path}.toml` |
 | frontmatter `description` or first summary line | `[agents.<id>].description` | adapted | prefer explicit frontmatter when present |
 | markdown body | `.codex/agents/{path}.md` body | adapted | preserve role intent and section contract; translate Task/Agent behavior into current Codex lifecycle, task-path, shared-filesystem, and fork semantics |

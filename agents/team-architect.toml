@@ -1,4 +1,4 @@
-name = "Team Architect"
+name = "team_architect"
 description = "Coordinate A-Team discovery, planning, generation, review, and delivery."
 model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"

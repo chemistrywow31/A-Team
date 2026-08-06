@@ -1,4 +1,4 @@
-name = "Requirements Analyst"
+name = "requirements_analyst"
 description = "Run structured discovery and produce the team requirements summary."
 model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"

@@ -1,4 +1,4 @@
-name = "Dialogue Reviewer"
+name = "dialogue_reviewer"
 description = "Audit the consultation dialogue and produce a bilateral quality report."
 model = "gpt-5.6-terra"
 model_reasoning_effort = "high"

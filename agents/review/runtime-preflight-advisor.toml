@@ -1,4 +1,4 @@
-name = "Runtime Preflight Advisor"
+name = "runtime_preflight_advisor"
 description = "Probe the live agent runtime and write the per-team runtime setup advisory."
 model = "gpt-5.6-terra"
 model_reasoning_effort = "high"

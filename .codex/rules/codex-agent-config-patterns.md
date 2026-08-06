@@ -16,7 +16,7 @@ description: Define current TOML patterns, model tiers, and sandbox posture for 
 Every generated agent config must include:
 
 ```toml
-name = "Process Reviewer"
+name = "process_reviewer"
 description = "Audit coordination quality and produce a retrospective report."
 model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
@@ -33,8 +33,9 @@ Validate required role sections in the authoritative playbook; validate the TOML
 ### Registry And Discovery
 
 - Runtime TOMLs live under `agents/`.
-- `.codex/config.toml` registers them through `[agents.{id}]` entries whose `config_file` paths resolve relative to `.codex/`.
-- Use stable snake_case registry ids that match the role and task-path vocabulary.
+- `.codex/config.toml` registers them through `[agents.<id>]` entries whose `config_file` paths resolve relative to `.codex/`.
+- Treat each `[agents.<id>]` table id as the agent's stable snake_case runtime identity, matching the role and task-path vocabulary.
+- Require the referenced agent TOML's `name` to equal `<id>` exactly; do not substitute a display name.
 
 ### Current Model Guidance
 
@@ -83,6 +84,7 @@ The authoritative specialist playbook under `.codex/agents/` must include:
 - An agent TOML misses `name`, `description`, `model`, `model_reasoning_effort`, `sandbox_mode`, or `developer_instructions` -> Violation
 - `developer_instructions` is empty, omits the same-relative `.codex/agents/{path}.md` bootstrap target, or names a missing target -> Violation
 - A registry entry points outside the intended TOML path or does not resolve from `.codex/` -> Violation
+- A `[agents.<id>]` table id is not a stable snake_case runtime identity, or its referenced agent TOML's `name` does not equal `<id>` exactly -> Violation
 - A new or regenerated Codex agent TOML pins `gpt-5.4` with no recorded compatibility rationale -> Violation
 - A reviewer or verifier uses `workspace-write` without an owned write artifact, or a writer role uses `read-only` while owning mutable paths -> Violation
 - The authoritative coordinator playbook omits topology, task-path, join, or non-reversion guidance -> Violation

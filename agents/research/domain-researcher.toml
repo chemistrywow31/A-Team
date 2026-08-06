@@ -1,4 +1,4 @@
-name = "Domain Researcher"
+name = "domain_researcher"
 description = "Investigate domain practices and produce evidence-backed recommendations."
 model = "gpt-5.6-terra"
 model_reasoning_effort = "high"

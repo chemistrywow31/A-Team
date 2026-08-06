@@ -1,4 +1,4 @@
-name = "Skill Writer"
+name = "skill_writer"
 description = "Write authored and runtime skill files for generated teams."
 model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
