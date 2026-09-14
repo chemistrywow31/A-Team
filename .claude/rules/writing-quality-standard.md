@@ -42,9 +42,9 @@ Prohibited words: "try to", "appropriately", "reasonably", "if needed", "as appr
 
 Every generated .md that contains examples must meet these standards:
 
-- Each **skill .md** and each **agent .md** must contain exactly one worked example: the **rejection case** — the input the agent must refuse, defer, or escalate on, demonstrating the Uncertainty Protocol. One is the floor and the ceiling unless the dispatch asks for more.
-- Do NOT write normal-case or edge-case examples. Examples constrain the model to the exploration space they demonstrate; for normal operation an expressive interface does the job better and costs less. Express the normal path as an enumerated trigger list in `## Uncertainty Protocol` and as named, typed slots in `## Input and Output`, not as a worked scenario.
-- The rejection case is the exception because it carries information no enumeration conveys: *when not to act*. A parameter type cannot express a refusal boundary; a concrete failing input can.
+- Each authored **skill .md** and **agent .md** contains exactly one worked rejection/defer/escalation case under the `JUDGMENT.md` J5 floor; additional cases require an explicit change to the task's example criteria.
+- Express normal behavior in `## Workflow` and named `## Input and Output` fields. Do not add normal or edge worked examples under the default floor.
+- Keep the rejection example concise: identify the triggering input and correct refusal, deferral, or escalation. Include the mistaken action only when it clarifies the boundary; a full before/after transcript is not required.
 - Each **rule .md** must contain at least one violation scenario description.
 
 ### A Template Outranks Its Own Prose

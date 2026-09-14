@@ -1,6 +1,6 @@
 name = "skill_writer"
 description = "Write authored and runtime skill files for generated teams."
-model = "gpt-5.6-sol"
+model = "gpt-6-astra"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"
 

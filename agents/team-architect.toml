@@ -1,6 +1,6 @@
 name = "team_architect"
 description = "Coordinate A-Team discovery, planning, generation, review, and delivery."
-model = "gpt-5.6-sol"
+model = "gpt-6-astra"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"
 

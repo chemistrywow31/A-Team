@@ -1,6 +1,6 @@
 name = "prompt_optimizer"
 description = "Tighten generated agent configs and docs without changing intent."
-model = "gpt-5.6-sol"
+model = "gpt-6-astra"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"
 

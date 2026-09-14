@@ -1,6 +1,6 @@
 name = "role_designer"
 description = "Turn confirmed requirements into a clean role map with sound boundaries."
-model = "gpt-5.6-sol"
+model = "gpt-6-astra"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 

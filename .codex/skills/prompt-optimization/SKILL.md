@@ -41,12 +41,8 @@ Improve prompt wording while preserving the original role, workflow, runtime int
 - [ ] Retired follow-up wording or generic join instructions were not added back to Codex-facing text.
 - [ ] A fresh-context verifier, not the optimizer, closes the acceptance gate.
 
-## Example
+## Examples
 
-### Input
+### Rejection Case
 
-`Tighten the reviewer prompt, and also move config ownership to another role.`
-
-### Output
-
-Stop the optimization lane after classification and route the request to restructuring, because ownership transfer changes runtime intent rather than wording only. A copy-edit to prompt text on the same already-runnable surface would remain in optimization.
+For `Tighten the reviewer prompt, and also move config ownership to another role`, stop the optimization lane after classification and route the request to restructuring: ownership transfer changes runtime intent, so it exceeds a wording-only edit.

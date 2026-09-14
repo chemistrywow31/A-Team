@@ -1,7 +1,57 @@
 spec_version = 1
-generated_on = "2026-08-05"
+generated_on = "2026-09-14"
 canonical_root = ".claude/"
 human_audit = ".codex/docs/claude-adaptation-audit.md"
+
+[[adaptation_inputs]]
+path = ".codex/rules/codex-runtime-config.md"
+scope = "Codex model/effort defaults, config schema, project runtime/approval/protected-path guidance"
+targets = [
+  "AGENTS.md",
+  ".codex/rules/context-tier.md",
+  ".codex/rules/execution-contract.md",
+  ".codex/rules/output-structure.md",
+  ".codex/agents/generation/agent-writer.md",
+  ".codex/agents/review/runtime-preflight-advisor.md",
+  ".codex/skills/quality-validation/SKILL.md",
+  ".codex/agents/team-architect.md",
+  ".codex/skills/a-team/SKILL.md",
+]
+
+
+[[adaptation_inputs]]
+path = ".codex/rules/codex-agent-config-patterns.md"
+scope = "Codex agent TOML/MCP/registry/runtime metadata validation"
+targets = [
+  ".codex/agents/generation/agent-writer.md",
+  ".codex/agents/team-architect.md",
+  ".codex/rules/context-tier.md",
+  ".codex/rules/output-structure.md",
+  ".codex/skills/prompt-patterns/SKILL.md",
+  ".codex/skills/quality-validation/SKILL.md",
+  ".codex/agents/review/runtime-preflight-advisor.md",
+]
+
+
+[[adaptation_inputs]]
+path = ".codex/rules/context-isolation.md"
+scope = "Codex fork/delegation/isolation lifecycle adaptation"
+targets = [
+  "AGENTS.md",
+  ".codex/rules/context-tier.md",
+  ".codex/rules/execution-contract.md",
+  ".codex/agents/team-architect.md",
+  ".codex/skills/prompt-optimization/SKILL.md",
+  ".codex/skills/prompt-patterns/SKILL.md",
+  ".codex/rules/output-structure.md",
+  ".codex/agents/generation/agent-writer.md",
+  ".codex/agents/generation/rule-writer.md",
+  ".codex/agents/generation/skill-writer.md",
+  ".codex/agents/review/runtime-preflight-advisor.md",
+  ".codex/agents/evolution/team-restructuring-master.md",
+  ".codex/skills/a-team/SKILL.md",
+]
+
 
 [[platform_only]]
 path = ".codex/config.toml"

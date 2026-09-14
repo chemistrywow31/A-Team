@@ -1,78 +1,27 @@
 # Canonical Reasoning and Self-Critique Blocks
 
-These are SKELETONS, not boilerplate. Take the section and slot headers verbatim — they are what the compliance grep matches — and write the bullets under each header specific to the agent you are producing. A generated agent carrying this file's generic wording has a gate that checks nothing. Per `rules/reasoning-and-self-critique.md`: `## Reasoning` goes before `## Workflow`; `## Self-Critique` goes after. Read-trigger: agent-writer reads this file before writing any agent file.
-
-## Canonical `## Reasoning` block
+Use this compact skeleton when writing an agent. Preserve the three headers and their order from `JUDGMENT.md` J5.1; replace the bullets with role-specific instructions. Do not copy generic bullets into the finished agent or add duplicate Preflight/Verification forms.
 
 ```markdown
 ## Reasoning
 
-Before executing the workflow, work through this reasoning gate. Do not start the workflow until all four slots are answered.
+- Confirm {material input and authority needed for this role's decision}.
+- Choose {approach} from {relevant evidence}; state only material assumptions or gaps.
 
-### Knowns
-- {What information is confirmed? What inputs are available?}
+## Workflow
 
-### Unknowns
-- {What is missing? What assumptions are being made? What would need to be verified?}
+1. {Perform the assigned work within exact owned paths and authority.}
+2. {Produce the requested artifact and evidence.}
 
-### Plan
-- {What approach will be taken? Why this approach over alternatives?}
-
-### Risks
-- {What could go wrong? Which assumptions, if false, would invalidate the plan? What is the falsification condition?}
-```
-
-## Canonical `## Self-Critique` block
-
-```markdown
 ## Self-Critique
 
-After producing draft output, run this critique pass before submission. If any check exposes a gap, revise the draft and re-run all five checks. Submit only when every check passes, or escalate per the Uncertainty Protocol when revision cannot close the gap.
-
-### Evidence Check
-- Does every claim trace back to a source, finding, or upstream worklog entry? Flag any claim that does not.
-
-### Position Check
-- Did I take a clear position with stated reasoning, or did I hedge with vague agreement? Restate any hedged conclusion as a position with evidence and a falsification condition.
-
-### Counterexample Check
-- What is the strongest argument against this output? Did I address it, or did I avoid it? If unaddressed, address it now.
-
-### Completeness Check
-- Does the output answer the actual task scope, or only the easy parts? Flag and fix any task scope item that received less attention than its difficulty warrants.
-
-### Failure Mode Check
-- Where would this output break first under realistic downstream use? What input or context would expose the weakest link? State the predicted failure mode in the output or fix the weak link.
+- Check {role-specific acceptance criteria} against the actual artifact and cite evidence.
+- Challenge {likely failure or rejection boundary}; fix gaps before submission.
+- After a correction, rerun every criterion citing a changed file and dependent mapping/parity checks; revisit other criteria when affected by new evidence.
 ```
 
-## Coordinator-only `## Pre-Dispatch Reasoning` block
+The sections are instructions, not a required output form. Return concise decisions, material assumptions, unresolved gaps, and verification evidence through EC-1 or the worklog; do not request private reasoning transcripts or nine labeled slots.
 
-```markdown
-## Pre-Dispatch Reasoning
+For coordinators, add the bounded outcome, owner, ready inputs, exact path ownership, and acceptance criteria to the existing Reasoning/Workflow contract. Preserve useful parallel work and sequential producer-freeze/review gates. A separate pre-dispatch form is unnecessary.
 
-Before dispatching any Task, fill this gate:
-
-### What This Dispatch Must Achieve
-- {Single concrete outcome — not "make progress on X"}
-
-### Why This Agent
-- {Why this agent over alternatives. What capability uniquely qualifies it.}
-
-### Inputs the Agent Needs
-- {Worklog paths, upstream decisions, scope summary — confirm each is ready before dispatch}
-
-### Predicted Failure Modes
-- {What the agent might get wrong. What you will check on return.}
-```
-
-## Tier 1 reduced `## Self-Critique` block
-
-```markdown
-## Self-Critique
-
-### Format Check
-- Does the output match the required format exactly?
-
-### Input Coverage Check
-- Was every required input field consumed?
-```
+For deterministic Tier 1 utilities, keep the same headers with brief input-validity, format, and input-coverage checks; document the zero-judgment justification. Producer Self-Critique never replaces independent EC-3 acceptance.

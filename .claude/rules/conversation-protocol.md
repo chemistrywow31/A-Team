@@ -1,68 +1,61 @@
 ---
 name: Conversation Protocol
-description: Regulate conversation flow to ensure requirements are fully clarified before entering design phase
+description: Confirm material team requirements while continuing work within existing user authorization
 ---
 
 # Conversation Protocol
 
 ## Applicability
 
-- Applies to: `team-architect`, `requirements-analyst`, `prompt-optimizer`
+- Applies to: `team-architect`, `requirements-analyst`, `prompt-optimizer`, `team-restructuring-master`
 
 ## Rule Content
 
-### Communication Language
+### Communicate In The User's Language
 
-**Communicate in the user's language.** Detect and match the language the user is using. If the user writes in English, respond in English. If the user writes in Traditional Chinese, respond in Traditional Chinese. If the user writes in Japanese, respond in Japanese.
+Match the user's language. Explain unfamiliar technical terms when first used.
 
-Technical terms may remain in English, with explanation in the user's language on first occurrence.
+### Confirm New-Team Requirements
 
-### Do Not Skip Requirements Exploration
+Before Planning or Generation of a new team, confirm:
 
-Before user requirements are fully clarified, entering the Planning or Generation phase is prohibited.
+1. Specific objectives and scope.
+2. Workflow stages from input to final output.
+3. Candidate role coverage for each stage.
+4. Requested format: `codex-native`, `claude-compatible`, `dual-format`, or `let A-Team decide`.
+5. One canonical authority, surface activation state, and mapping-retention need.
+6. The requirements summary is accurate.
 
-Clarification criteria (all must be satisfied):
-1. Team objectives can be described in one paragraph without vague words like "etc." or "things like that"
-2. Each stage of the workflow has been identified
-3. Each stage has at least one candidate role responsible
-4. User has confirmed the requirements summary is accurate
+Use prior user statements and explicit delegation of routine choices as confirmation where they supply the decision. State delegated choices in the summary; do not interpret silence as approval or infer ambiguous canonical authority. Ask early for missing format or authority decisions.
 
-### One Focus at a Time
+### Continue Within Existing Scope
 
-Each response focuses on only one question direction. Asking more than 3 unrelated questions in the same response is prohibited.
+For existing-team maintenance, inspect the current runnable surfaces, activation state, canonical declaration, stamps, and mappings before structural/runtime recommendations. Do not restart new-team Discovery when the requested change and authority are already clear.
 
-### One Question Per Decision Point
+Honor requirements and authorization already supplied in the session. Ask only for a material missing decision, unresolved authority, conflicting requirements, or an irreversible/external action beyond that authorization. Keep useful independent work moving while awaiting an answer; wait before work that depends on a required answer. A recommendation audit does not itself grant missing user authority.
 
-When a response requires the user to make a design decision (e.g., role decomposition, technology choice, workflow branching), ask exactly one decision question per response. Do not combine multiple decisions into a single message — each decision deserves the user's full attention and a clear, unambiguous answer.
+### Keep Questions Focused
 
-### Interim Summaries
+Ask one material decision question at a time. Keep a response to one question direction and no more than three related clarification items; avoid repeating answered questions.
 
-Every 3-4 conversation rounds, an interim summary must be provided, containing:
-- Currently confirmed requirement points
-- Open questions not yet confirmed
-- Direction to explore next
+### Summaries Communicate Progress
 
-Continue deeper only after user confirms the interim summary.
+Every 3-4 discovery rounds, summarize confirmed requirements, open questions, and the next area to explore. An interim summary needs no approval; continue authorized independent work and incorporate corrections. The required new-team requirements-summary confirmation still applies.
 
-### Challenging Feedback
+### Challenge Weak Assumptions
 
-When user's ideas have the following issues, point them out directly:
-- Responsibility allocation is unreasonable (too coarse or too fine)
-- Role responsibility overlap exists
-- Key roles are missing
-- Workflow has logical gaps
-- Expectations are unrealistic
-
-When pointing out issues, must simultaneously provide alternative solutions or improvement suggestions.
+Surface role overlap, missing coverage, workflow gaps, unrealistic throughput, or fragmentation whose coordination cost exceeds its parallel value. Cite the consequence and offer a concrete alternative.
 
 ## Violation Determination
 
-- Entering Planning phase before user requirements are fully clarified (4 criteria not all satisfied) → Violation
-- Single response contains 4+ unrelated questions → Violation
-- Single response contains 2+ design decision questions → Violation
-- 5 consecutive conversation rounds without providing interim summary → Violation
-- Identifying issues in user's ideas but not pointing them out → Violation
+- New-team Planning starts without the six confirmed requirements above -> Violation
+- Existing-team structural/runtime recommendations omit surface, authority, stamp, or mapping assessment -> Violation
+- Silence is treated as required approval, or ambiguous authority is inferred from directory presence -> Violation
+- An answered question or interim summary creates a repeat approval stop without a new material decision -> Violation
+- Work exceeds existing authorization or proceeds despite a required missing answer -> Violation
+- A reply combines unrelated question directions, multiple material decision questions, or more than three clarification items -> Violation
+- Five discovery rounds pass without an interim summary, or a clear structural problem is concealed -> Violation
 
 ## Exceptions
 
-- If user explicitly requests "just start, don't ask too many questions", interview depth can be reduced, but team objectives and core roles must still be confirmed before entering generation phase
+- An explicit request for a faster pass may reduce interview depth or delegate routine choices; it does not remove the new-team confirmation requirements or authority checks.

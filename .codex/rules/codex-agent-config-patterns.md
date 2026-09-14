@@ -13,12 +13,12 @@ description: Define current TOML patterns, model tiers, and sandbox posture for 
 
 ### Required TOML Shape
 
-Every generated agent config must include:
+Every generated agent config requires these fields; the model/effort values illustrate the scoped defaults under Current Model Guidance:
 
 ```toml
 name = "process_reviewer"
 description = "Audit coordination quality and produce a retrospective report."
-model = "gpt-5.6-sol"
+model = "gpt-6-astra"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 
@@ -30,6 +30,14 @@ Read `AGENTS.md`, then read `.codex/agents/review/process-reviewer.md` and follo
 Keep TOMLs thin: runtime keys plus a nonempty bootstrap to the same-relative authoritative playbook. Map `agents/{path}.toml` to `.codex/agents/{path}.md`. Do not copy the full playbook into `developer_instructions`.
 Validate required role sections in the authoritative playbook; validate the TOML bootstrap only for nonempty content and a resolvable same-relative target.
 
+### Standalone MCP Shape
+
+- Treat every agent TOML as a standalone config: each `[mcp_servers.<id>]`, even when `enabled = false`, must define exactly one transport using nonempty stdio `command` plus applicable `args`, or nonempty streamable-HTTP `url`.
+- Include explicit `enabled` state and the role's complete approved tool/posture fields: tool allow/deny lists, default or per-tool approval modes, and any required startup, timeout, environment, or authentication settings. A partial `enabled` override is invalid.
+- Treat child MCP configuration as a config layer, not a hard isolation boundary. Parent live runtime tools can be reapplied after the layer, so child-side disable/deny settings and child-only enabled servers do not prove the effective namespace.
+- When a role must never see a parent tool, remove it from the parent surface or launch the role in an independent process/session that disables the server and nested agents at startup. Accept only actual live tool enumeration as isolation evidence.
+- Strict-config acceptance requires process success plus zero diagnostics that any role or agent config was malformed, had an invalid transport, failed to load, or was ignored. Do not treat a notice caused solely by intentional `--ignore-user-config` as an agent-config failure.
+
 ### Registry And Discovery
 
 - Runtime TOMLs live under `agents/`.
@@ -39,59 +47,50 @@ Validate required role sections in the authoritative playbook; validate the TOML
 
 ### Current Model Guidance
 
-- Planning, generation, optimization, restructuring, and artifact-gate roles default to `gpt-5.6-sol` at `xhigh`.
-- Read-heavy research, runtime probing, and dialogue review default to `gpt-5.6-terra` at `high` unless the worklog records a stronger-risk rationale.
-- Do not pin new or regenerated Codex agent configs to `gpt-5.4` unless the worklog records a compatibility exception.
+- For new teams without explicit pins or explicitly authorized profile migration, default root/strong roles to `gpt-6-astra`/`xhigh` and read-heavy roles to `gpt-5.6-terra`/`high`; this remains A-Team's approved repo-self profile.
+- Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring; retaining a pin, including `gpt-5.4`, requires no fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort.
 
 ### Sandbox Posture
 
-- Roles that mutate repo artifacts use `workspace-write`.
-- Reviewer, auditor, and verifier roles that only inspect artifacts use `read-only`.
+- Roles that mutate repo artifacts use `workspace-write`; reviewer, auditor, and verifier roles that only inspect artifacts use `read-only`.
 - A review or probe role may use `workspace-write` only when its owned artifact set explicitly includes a report path or runtime advisory it must write.
 
 ### Coordinator Playbook Requirements
 
-The authoritative coordinator playbook under `.codex/agents/` must include:
-
-- direct specialist topology
-- stable task-path strategy
-- follow-up, interrupt, and join rules
-- shared-filesystem non-reversion rule
-- quality gates and completion contract
+- The authoritative coordinator playbook under `.codex/agents/` must include direct specialist topology, stable task-path strategy, follow-up/interrupt/join rules, the shared-filesystem non-reversion rule, quality gates, and a completion contract.
 
 ### Specialist Playbook Requirements
 
-The authoritative specialist playbook under `.codex/agents/` must include:
-
-- `## Identity`
-- `## Responsibilities`
-- `## Input and Output`
-- `## Workflow`
-- `## Preflight`
-- `## Verification`
-- `## Completion Contract`
-- `## File Ownership`
-- `## Boundaries`
+- The authoritative specialist playbook under `.codex/agents/` includes Identity, Responsibilities, Input and Output, the adjacent H2 Reasoning/Workflow/Self-Critique sequence, Uncertainty Protocol, Examples with one rejection case, Completion Contract, File Ownership, and Boundaries. Keep the J5.1 floors and role-specific checks; omit duplicate Preflight/Verification forms and mandatory four/five slots.
 
 ### Fork Override Constraint
 
-- Full-history forks inherit the parent model and reasoning effort.
-- Any explicit `spawn_agent` model or reasoning override requires `fork_turns = "none"` or a positive bounded fork.
+- Full-history forks inherit the parent model and reasoning effort; any explicit `spawn_agent` model or reasoning override requires `fork_turns = "none"` or a positive bounded fork.
 - Do not rely on omitted or `all` forks when overriding model or effort.
+- Use explicit model/effort and bounded/no-history forks for effective role-specific routing; selecting a pinned role does not prove that its pin overrides full-history inheritance.
+
+### Verification
+
+- Parse every registered agent TOML in isolation, resolve its playbook bootstrap, and run the target through strict-config when available.
+- For every claimed role-specific tool restriction, probe a fresh live role context and compare the actual namespace with the declared allowlist; do not infer visibility from TOML text.
+- Fail verification on a malformed/invalid-transport/failed-load/ignored-role diagnostic even when the command exits zero and prints `CONFIG_OK`; retain only bounded, redacted diagnostic evidence.
 
 ## Violation Determination
 
 - An agent TOML misses `name`, `description`, `model`, `model_reasoning_effort`, `sandbox_mode`, or `developer_instructions` -> Violation
+- An agent TOML contains an MCP entry with no transport, both transports, only an `enabled` override, or incomplete role-approved tool/posture fields -> Violation
+- A role-isolation claim relies on child `enabled = false`, `disabled_tools`, a narrower child `enabled_tools`, or a child-only enabled server while the parent live namespace differs, without independent-process isolation and a live namespace probe -> Violation
 - `developer_instructions` is empty, omits the same-relative `.codex/agents/{path}.md` bootstrap target, or names a missing target -> Violation
 - A registry entry points outside the intended TOML path or does not resolve from `.codex/` -> Violation
 - A `[agents.<id>]` table id is not a stable snake_case runtime identity, or its referenced agent TOML's `name` does not equal `<id>` exactly -> Violation
-- A new or regenerated Codex agent TOML pins `gpt-5.4` with no recorded compatibility rationale -> Violation
+- A default overrides explicit user/target model or effort pins outside authorized migration, or retaining a pin triggers fresh compatibility approval -> Violation
 - A reviewer or verifier uses `workspace-write` without an owned write artifact, or a writer role uses `read-only` while owning mutable paths -> Violation
 - The authoritative coordinator playbook omits topology, task-path, join, or non-reversion guidance -> Violation
 - The authoritative specialist playbook omits completion contract, file ownership, or boundaries -> Violation
 - A dispatch pattern claims model or effort override on a full-history fork -> Violation
+- Strict config exits successfully or prints `CONFIG_OK` while reporting a malformed, invalid-transport, failed-load, or ignored role/agent config -> Violation
 
 ## Exceptions
 
 - If Codex runtime schema changes, update this rule and the mapping docs in the same change.
-- Deterministic utility roles may inherit the project default model when the worklog records why a role-specific pin is unnecessary.
+- Deterministic utility roles may use an approved lower model/effort with a recorded rationale, but retain explicit TOML runtime fields.

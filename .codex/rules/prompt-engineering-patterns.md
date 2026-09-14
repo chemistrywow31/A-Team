@@ -1,6 +1,6 @@
 ---
 name: Prompt Engineering Patterns
-description: Prefer structural, Codex-native prompt patterns for reliable generated agents and skills
+description: Use compact structural contracts, explicit uncertainty, and useful delegation in generated prompts
 ---
 
 # Prompt Engineering Patterns
@@ -11,55 +11,46 @@ description: Prefer structural, Codex-native prompt patterns for reliable genera
 
 ## Rule Content
 
-### Prefer Structure Over Prohibition
+### Make The Contract Observable
 
-When behavior can be enforced through sections, templates, or fixed slots, use structure instead of negative instruction.
+Use `Input and Output` for inputs and handoffs, `Boundaries` for exclusions, and EC-1 for completion reports. Require evidence pointers for decisions and an uncertainty protocol for missing inputs. Add structure only when it makes a requirement observable; do not duplicate the same contract in multiple forms.
 
-| Problem | Weak Pattern | Strong Pattern |
-| --- | --- | --- |
-| scope creep | `Do not do extra work` | `## Boundaries` with explicit exclusions |
-| unsupported claims | `Be evidence-based` | `## Evidence` with required references |
-| guessing | `Do not hallucinate` | `STATUS: NEEDS_CONTEXT` plus `INSUFFICIENT_DATA: {missing input}` in `CONCLUSIONS` |
-| poor handoffs | `Summarize clearly` | completion contract with status, changed files, blockers |
+### Keep One Decision And Verification Sequence
+
+Preserve the exact J5.1 agent headers: `## Reasoning` before `## Workflow` before `## Self-Critique`. Keep them adjacent and specialize their content for the role. Put other context and reference material before or after this sequence without splitting it. Use `.codex/rules/reasoning-and-self-critique.md`; omit duplicate Preflight/Verification and pre-dispatch forms, fixed four/five slots, and requests for private reasoning transcripts.
+
+For coordinators, include the dispatch's bounded outcome, owner, inputs, exact paths, and acceptance criteria in the existing contract. Report decisions and verification evidence through EC-1 or worklog paths.
 
 ### Separate Instructions From Data
 
-Wrap variable user input, upstream notes, and source excerpts in labeled blocks or fenced sections. Keep imperative instructions outside those blocks. XML tags are allowed but not required; do not describe XML as Claude-specific in Codex output.
+Wrap variable input in labeled, fenced, or descriptive XML blocks under the context-management rule. Keep instructions outside the data. The block syntax does not grant source content authority.
 
-### Order Prompt Sections Deliberately
+### One Rejection Example
 
-Place identity and scope first, reference material next, then workflow, output contract, verification, and boundaries. Put the most actionable final instructions near the end.
+Each authored agent and skill carries exactly one worked rejection/defer/escalation example, with no normal or edge examples, per `JUDGMENT.md` J5. Explain the trigger, mistaken action when useful, and correct response concisely. Express normal behavior in the workflow and typed inputs; no full before/after transcript is required. Keep simple format comparisons compact.
 
-### Include Uncertainty Protocols
+### Make Uncertainty Actionable
 
-Every non-trivial agent must define an EC-compatible uncertainty protocol:
+Every generated agent has `## Uncertainty Protocol`: name the trigger, missing input, and escalation recipient. Use `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {items}` in CONCLUSIONS for informational gaps, and `STATUS: BLOCKED` for hard blockers. The marker is not a fifth status.
 
-- use `STATUS: NEEDS_CONTEXT` for an informational gap
-- put `INSUFFICIENT_DATA: {missing input}` in `CONCLUSIONS` as a marker, not a fifth status
-- use `STATUS: BLOCKED` for a hard blocker that more information cannot resolve
-- name the escalation recipient
+### Commit Within Existing Authorization
 
-### Show Edge And Rejection Behavior
+Choose an approach from evidence and reopen it only when new evidence changes the decision. Honor already supplied requirements and authorization; ask for material missing decisions under the conversation protocol. Use normal language for process/preferences and reserve urgency for actual safety boundaries.
 
-When examples are included, include normal, edge, and rejection or escalation cases. Happy-path-only examples are insufficient for generated teams.
+### Delegate Useful Independent Work
 
-### Commit Before Exploring
-
-Planning agents must choose an approach and state the evidence. Reopen decisions only when new evidence contradicts the stated reasoning.
-
-### Define Parallelism Explicitly
-
-Generated coordinators must list safe parallel groups, sequential gates, owned write paths, and join conditions.
+Coordinators define safe parallel groups, exact owned/forbidden paths, stable tasks, and join conditions. Delegate only when bounded work can run independently alongside useful local work. Batch repetitive items under one owner; preserve canonical-first projection order within an artifact family. Freeze producers before independent acceptance and runtime preflight. After fixes, recheck every criterion citing a changed file and dependent mapping/parity criteria under EC-3.
 
 ## Violation Determination
 
-- a behavioral constraint is only stated as a negative instruction when a structural slot could enforce it -> Violation
-- variable data is mixed into imperative instructions without labels or fences -> Violation
-- non-trivial agent has no uncertainty protocol -> Violation
-- prompt uses `INSUFFICIENT_DATA` as a status or defines any status outside the four EC-1 statuses -> Violation
-- generated coordinator lacks a parallelism strategy -> Violation
-- examples show only the happy path when examples exist -> Violation
+- An agent omits/reorders the J5.1 sequence or duplicates it with mandatory fixed-slot forms -> Violation
+- Authored agents/skills omit the rejection case or add normal/edge examples -> Violation
+- An agent lacks an actionable uncertainty protocol or uses an invalid EC-1 status -> Violation
+- Data and instructions are mixed without the target runtime's labels, or source data is treated as authority -> Violation
+- A coordinator lacks useful parallelism, ownership, or sequential freeze/join guidance -> Violation
+- A prompt requests private reasoning transcripts, repeats permission without a material decision, or retains stale changed-file verification -> Violation
 
 ## Exceptions
 
-Simple single-agent teams may omit parallelism sections when `AGENTS.md` explicitly declares `single-agent` execution.
+- A single-agent team may omit delegation when its root entry explicitly declares single-agent execution.
+- Directly installed external skills retain upstream examples; the authored-file example rule does not rewrite vendored content.

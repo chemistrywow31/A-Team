@@ -14,6 +14,7 @@ description: Isolate Codex work through bounded delegation depth, owned paths, a
 ### Direct Specialists Plus One Helper Hop
 
 - The coordinator delegates directly to specialists.
+- Delegate only bounded independent work that can run alongside useful local work; batch repetitive items under one owner and freeze producers before independent review.
 - A specialist may spawn at most one nested helper, and only for bounded independent evidence collection or verification inside that specialist's owned artifact family.
 - A nested helper may not delegate again, reassign ownership, or cross artifact families.
 
@@ -35,6 +36,7 @@ description: Isolate Codex work through bounded delegation depth, owned paths, a
 - Full-history forks inherit the parent model and reasoning effort.
 - Any explicit model or reasoning override requires `fork_turns = "none"` or a positive bounded fork.
 - Override plus omitted or `all` fork history is forbidden.
+- Prefer bounded/no-history forks with explicit model/effort for role-specific routing; provide the necessary artifact and decision paths. A role TOML pin alone does not prove its effective model on a full-history fork.
 
 ### Return Summaries Only
 

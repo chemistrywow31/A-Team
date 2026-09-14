@@ -94,7 +94,8 @@ oneline() {
 # grep -c that never fails the script under set -u / pipefail-less sh
 countmatch() {
 	# $1=pattern $2=file  (extended regex, case-insensitive)
-	grep -icE "$1" "$2" 2>/dev/null || echo 0
+	_count=$(grep -icE "$1" "$2" 2>/dev/null) || _count=0
+	printf '%s\n' "$_count"
 }
 
 firstmatch() {
@@ -113,22 +114,28 @@ firstmatch_section() {
 }
 
 # Surface-specific detector for Claude mirrors that are intentionally non-runnable.
-# Generic "for reference only" prose must not trip this (example: legal disclaimers).
+# Accept only a labelled declaration such as `Claude surface: reference-only`
+# (surface/runtime/mirror are accepted labels).  A general authority paragraph
+# can legitimately mention both Claude and a reference-only projection, so it
+# must not decide whether this runnable surface is skipped.
 claude_reference_only_declared() {
-	# $1=file -> emits the first matching paragraph snippet, else nothing
+	# $1=file -> emits the first matching declaration line, else nothing
 	[ -f "$1" ] || return 1
 	awk '
-	BEGIN { RS=""; IGNORECASE=1 }
 	{
-		p = tolower($0)
-		if (p ~ /claude/ && p ~ /(reference[- ]only|not a runnable|not runnable|compatibility mirror)/) {
-			gsub(/\n/, " ", $0)
-			gsub(/  +/, " ", $0)
-			print substr($0, 1, 160)
-			exit 0
+		raw = $0
+		clean = tolower($0)
+		gsub(/\r/, "", clean)
+		gsub(/[`*]/, "", clean)
+		gsub(/^[[:space:]]*#+[[:space:]]*/, "", clean)
+		if (clean ~ /^claude[[:space:]_-]+(surface|runtime|mirror)[[:space:]]*:[[:space:]]*(reference[- ]only|not[[:space:]]+runnable|non[- ]runnable|compatibility[[:space:]]+mirror)[[:space:]]*([.;].*)?$/) {
+			gsub(/[[:space:]]+/, " ", raw)
+			print substr(raw, 1, 160)
+			found = 1
+			exit
 		}
 	}
-	END { exit 1 }
+	END { exit(found ? 0 : 1) }
 	' "$1"
 }
 
@@ -359,12 +366,41 @@ check_claude_md() {
 check_entry_skill() {
 	_t="$1"
 
-	# The entry-point skill is identified by SHAPE, not by filename. Teams name
-	# it after their coordinator or identity (callimachus/, ventris/, tongzheng/)
-	# and that is preferred over a generic boss/ — see rules/output-structure.md,
-	# Entry-Point Skill. A fixed-name check reported 10 such teams as defective
-	# when each had in fact shipped a better-named front door.
-	_cands=$(grep -rlE '^disable-model-invocation: *true' "$_t/.claude/skills" 2>/dev/null | sort)
+	# J5.2: identify declared purpose or coordinator-adoption intent first.
+	# Manual-only is an invocation setting, not an entry identity test. Missing
+	# fields, broken coordinator paths, and invalid adoption must not hide entries.
+	_cands=$(python3 - "$_t" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+adopt = r"\badopt(?:s|ing)?\b|採納|採用|接管"
+negated_adopt = r"(?:do not|don.t|never|cannot|not|不要|禁止|不可|勿).{0,20}(?:" + adopt + r")"
+directive = r"^\s*(?:[-*]|\d+[.)])?\s*(?:read\b|load\b|adopt\b|in\b|inside\b|within\b|(?:the )?(?:current|main|this)\b|讀取|載入|採用|接管)"
+inspect_entry = r"\b(?:verify|check|inspect|review|validate)\b.{0,80}\b(?:entry|skill)\b"
+for skill in sorted((Path(sys.argv[1]) / ".claude/skills").glob("*/SKILL.md")):
+    text = skill.read_text(encoding="utf-8")
+    description = re.search(r"^description:[ \t]*(.*(?:\n[ \t]+[^\n]+)*)", text, re.MULTILINE)
+    purpose_section = re.search(r"^## (?:Description|Purpose)\s*\n(.*?)(?=^## |\Z)", text, re.MULTILINE | re.DOTALL)
+    purpose = "\n".join(part.group(1) for part in (description, purpose_section) if part)
+    declared = re.search(
+        r"\b(?:entry[- ](?:point|command)|front[- ]door|coordinator[- ]entry)\b"
+        r"|\b(?:enter|start|starts|launch|launches)\b.{0,100}\bcoordinator\b"
+        r"|\b(?:run|runs)\b.{0,100}\b(?:coordinator workflow|coordination workflow)\b"
+        r"|(?:入口|進入|啟動).{0,50}(?:協調|團隊流程)",
+        purpose, re.IGNORECASE | re.MULTILINE,
+    ) and not re.search(inspect_entry, purpose, re.IGNORECASE)
+    coordinator = re.search(r"agents/[a-z0-9._-]+\.md|\bcoordinator\b|協調者|協調員", text, re.IGNORECASE)
+    intent = coordinator and any(
+        re.search(directive, line, re.IGNORECASE) and re.search(adopt, line, re.IGNORECASE)
+        and not re.search(negated_adopt, line, re.IGNORECASE)
+        and not re.search(inspect_entry, line, re.IGNORECASE)
+        for line in text.splitlines()
+    )
+    if declared or intent:
+        print(skill)
+PY
+	)
 	# grep -c always prints exactly one count line (even "0" on no match, exit 1);
 	# an `|| echo 0` fallback here double-printed "0\n0" and broke every numeric
 	# comparison below for trees with no entry-skill candidate.
@@ -372,7 +408,7 @@ check_entry_skill() {
 	[ -n "$_n" ] || _n=0
 
 	if [ "$_n" -eq 0 ]; then
-		fail E1 entry-skill-present "no skill under $_t/.claude/skills declares 'disable-model-invocation: true'"
+		fail E1 entry-skill-present "no coordinator entry declared by purpose or adoption intent under $_t/.claude/skills"
 		for _i in E2 entry-disable-model-invocation E3 entry-allowed-tools-agent E4 entry-argument-hint \
 		          E5 entry-main-session-adoption E6 entry-no-coordinator-spawn; do :; done
 		skip E2 entry-disable-model-invocation "no entry-point skill (see E1)"
@@ -392,31 +428,162 @@ check_entry_skill() {
 	_bs=$(printf '%s\n' "$_cands" | head -1)
 	[ "$_n" -eq 1 ] && pass E1 entry-skill-present "$(printf '%s' "$_bs" | sed "s#.*/skills/##") ($(wc -l <"$_bs" | tr -d ' ') lines)"
 
-	_h=$(firstmatch '^disable-model-invocation: *true' "$_bs")
-	[ -n "$_h" ] && pass E2 entry-disable-model-invocation "$_h" ||
+	# Read required metadata only from closed, line-1 frontmatter; body examples
+	# cannot supply missing fields or conceal malformed entry metadata.
+	_fm=$(awk 'NR==1 && $0!="---" { exit } NR==1 { next } /^---[[:space:]]*$/ { closed=1; exit } { body=body $0 "\n" } END { if (closed) printf "%s", body }' "$_bs")
+	_h=$(printf '%s\n' "$_fm" | grep -nE '^disable-model-invocation:[[:space:]]*true[[:space:]]*(#.*)?$' | head -1 | oneline)
+	_count=$(printf '%s\n' "$_fm" | grep -c '^disable-model-invocation:' || true)
+	[ "$_count" -eq 1 ] && [ -n "$_h" ] && pass E2 entry-disable-model-invocation "$_h" ||
 		fail E2 entry-disable-model-invocation "no 'disable-model-invocation: true' in $_bs frontmatter"
 
-	_h=$(grep -nE '^allowed-tools:' "$_bs" 2>/dev/null | grep -i 'agent' | head -1 | cut -c1-120 | oneline)
+	# Parse the bounded allowed-tools forms, not mentions in YAML comments or
+	# partial names. A sequence item is one tool; scalar grants may use commas
+	# or spaces. Malformed/duplicate metadata cannot grant Agent accidentally.
+	_h=$(python3 - "$_fm" <<'PY'
+import json
+import re
+import sys
+
+quoted = r"\"(?:\\.|[^\"\\])*\"|'(?:''|[^'])*'"
+tool = r"[A-Za-z][A-Za-z0-9_.:-]*(?:\([^()\r\n]*\))?"
+item = rf"(?:{quoted}|{tool})"
+
+def uncomment(line):
+    return re.sub(rf"({quoted})|(?<!\S)#.*", lambda match: match.group(1) or "", line).rstrip()
+
+def decode(value):
+    if value.startswith('"'):
+        return json.loads(value)
+    if value.startswith("'"):
+        if not re.fullmatch(quoted, value):
+            raise ValueError("malformed quoted tool")
+        return value[1:-1].replace("''", "'")
+    return value
+
+def grants_agent(lines):
+    fields = [index for index, line in enumerate(lines) if line.startswith("allowed-tools:")]
+    if len(fields) != 1:
+        return False
+    index = fields[0]
+    value = uncomment(lines[index].partition(":")[2]).strip()
+    children = []
+    for line in lines[index + 1:]:
+        line = uncomment(line)
+        if not line.strip():
+            continue
+        if not line[0].isspace() and not line.startswith("- "):
+            break
+        children.append(line)
+    if not value:
+        # YAML permits indented or indentless block sequences, but all items
+        # here must be scalar tools at one indentation level.
+        matches = [re.fullmatch(r"( *)- +(.+)", line) for line in children]
+        if not matches or any(match is None for match in matches):
+            return False
+        if len({match.group(1) for match in matches}) != 1:
+            return False
+        values = [match.group(2).strip() for match in matches]
+        if any(not re.fullmatch(item, part) for part in values):
+            return False
+        tokens = [decode(part) for part in values]
+    elif children:
+        return False
+    elif value.startswith("["):
+        if not re.fullmatch(rf"\[\s*(?:{item}(?:\s*,\s*{item})*\s*,?)?\s*\]", value):
+            return False
+        tokens = [decode(match.group()) for match in re.finditer(item, value[1:-1])]
+    else:
+        scalar = decode(value)
+        if not re.fullmatch(rf"{tool}(?:(?:\s*,\s*|\s+){tool})*", scalar):
+            return False
+        tokens = re.findall(tool, scalar)
+    return all(re.fullmatch(tool, token) for token in tokens) and "Agent" in tokens
+
+try:
+    if grants_agent(sys.argv[1].splitlines()):
+        print("allowed-tools grants complete Agent tool token")
+except (ValueError, TypeError):
+    pass
+PY
+	)
 	[ -n "$_h" ] && pass E3 entry-allowed-tools-agent "$_h" ||
 		fail E3 entry-allowed-tools-agent "allowed-tools missing or does not grant Agent: $(firstmatch '^allowed-tools:' "$_bs" | sed 's/^$/absent/')"
 
-	_h=$(firstmatch '^argument-hint:' "$_bs")
+	# The UI hint is a nonempty plain/quoted scalar, not a YAML comment, null,
+	# collection, or malformed scalar. Body text cannot supply its value.
+	_h=$(python3 - "$_fm" <<'PY'
+import json
+import re
+import sys
+
+def argument_hint(lines):
+    fields = [index for index, line in enumerate(lines) if line.startswith("argument-hint:")]
+    if len(fields) != 1:
+        return None
+    index = fields[0]
+    raw = lines[index].partition(":")[2].strip()
+    for line in lines[index + 1:]:
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        if line[0].isspace() or line.startswith("- "):
+            return None
+        break
+    if raw.startswith(('"', "'")):
+        quoted = r"\"(?:\\.|[^\"\\])*\"|'(?:''|[^'])*'"
+        match = re.fullmatch(rf"({quoted})(?:[ \t]+#.*)?", raw)
+        if not match:
+            return None
+        value = match.group(1)
+        value = json.loads(value) if value.startswith('"') else value[1:-1].replace("''", "'")
+    else:
+        value = re.split(r"(?<!\S)#", raw, maxsplit=1)[0].strip()
+        if (not value or value.lower() in ("null", "~")
+                or value[0] in "[]{}&*!|>,%@" or value[0] == chr(96)
+                or re.search(r"^[-?:](?:\s|$)|:(?:\s|$)", value)):
+            return None
+    return value if value.strip() else None
+
+try:
+    hint = argument_hint(sys.argv[1].splitlines())
+    if hint is not None:
+        print(json.dumps(hint, ensure_ascii=False))
+except (ValueError, TypeError):
+    pass
+PY
+	)
 	[ -n "$_h" ] && pass E4 entry-argument-hint "$_h" ||
 		fail E4 entry-argument-hint "no 'argument-hint:' in $_bs frontmatter"
 
-	# Main-session adoption: a reference to the coordinator .md AND an adopt
-	# instruction. The path reference is matched language-neutrally — Chinese
-	# teams write "讀取 `.claude/agents/x.md` 並採用為 playbook", which an
-	# English-only /read .*agents/ pattern false-FAILs.
-	_read=$(grep -inE 'agents/[a-z0-9._-]+\.md' "$_bs" 2>/dev/null | head -1 | cut -c1-100 | oneline)
-	_adopt=$(countmatch '(adopt|採納|採用|接管|adopts? (it|its))' "$_bs")
-	if [ -n "$_read" ] && [ "$_adopt" -gt 0 ]; then
-		pass E5 entry-main-session-adoption "$_read (+$_adopt adopt-mentions)"
-	elif [ -n "$_read" ]; then
-		fail E5 entry-main-session-adoption "references coordinator .md ($_read) but 0 adopt/採用 instructions"
-	else
-		fail E5 entry-main-session-adoption "no reference to .claude/agents/{coordinator}.md in $_bs"
-	fi
+	_adoption=$(python3 - "$_t" "$_bs" "$P_MAINSESS" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+root = Path(sys.argv[1]).resolve()
+text = Path(sys.argv[2]).read_text(encoding="utf-8")
+body = re.sub(r"\A---\n.*?\n---(?:\n|$)", "", text, count=1, flags=re.DOTALL)
+refs = set(re.findall(r"(?<![\w./-])(?:\.claude/)?agents/([a-z0-9._-]+)\.md", body, re.IGNORECASE))
+resolved = [name for name in refs if (root / f".claude/agents/{name}.md").is_file()
+            and (root / f".claude/agents/{name}.md").resolve().is_relative_to(root)]
+adopt = r"\badopt(?:s|ing)?\b|採納|採用|接管"
+negated = r"(?:do not|don.t|never|cannot|not|不要|禁止|不可|勿).{0,20}(?:" + adopt + r")"
+directive = r"^\s*(?:[-*]|\d+[.)])?\s*(?:read\b|load\b|adopt\b|in\b|inside\b|within\b|(?:the )?(?:current|main|this)\b|讀取|載入|採用|接管)"
+inspect_entry = r"\b(?:verify|check|inspect|review|validate)\b.{0,80}\b(?:entry|skill)\b"
+adoptions = [line for line in body.splitlines() if re.search(directive, line, re.IGNORECASE)
+             and re.search(adopt, line, re.IGNORECASE) and not re.search(negated, line, re.IGNORECASE)
+             and not re.search(inspect_entry, line, re.IGNORECASE)]
+wrong_session = any(re.search(r"(?:in|inside|from|as) (?:a |the )?(?:subagent|child|worker|dispatched)|(?:子代理|子會話|子工作階段).{0,20}(?:採用|接管)", line, re.IGNORECASE)
+                    for line in adoptions)
+main_session = re.search(sys.argv[3] + r"|current Claude Code session", body, re.IGNORECASE)
+if len(refs) != 1 or len(resolved) != 1:
+    print("FAIL|entry must reference one existing confined coordinator playbook in .claude/agents/")
+elif not adoptions or not main_session or wrong_session:
+    print("FAIL|entry must affirmatively adopt its coordinator in the main session")
+else:
+    print(f"PASS|.claude/agents/{resolved[0]}.md resolves; affirmative main-session adoption")
+PY
+	)
+	emit E5 entry-main-session-adoption "${_adoption%%|*}" "${_adoption#*|}"
 
 	# Affirmative spawn-the-coordinator instruction.
 	# A naive grep for /spawn|subagent_type/ false-FAILs every correct team —
@@ -596,10 +763,12 @@ check_frontmatter() {
 
 	_n=0
 	_missing=""
+	_badstart=""
 	_badmodel=""
 	for _f in $(find "$_ad" -type f -name '*.md' 2>/dev/null | sort); do
 		_n=$((_n + 1))
 		# Frontmatter = lines between the first '---' and the next '---'.
+		[ "$(head -1 "$_f")" = '---' ] || _badstart="$_badstart $(basename "$_f")"
 		_fm=$(awk 'NR==1&&$0!="---"{exit} NR==1{next} /^---[[:space:]]*$/{exit} {print}' "$_f")
 		_lack=""
 		for _k in name description model; do
@@ -622,16 +791,150 @@ check_frontmatter() {
 		return
 	fi
 
-	if [ -n "$_missing" ]; then
-		fail F1 agent-frontmatter-fields "missing fields in$_missing (of $_n agents)"
+	if [ -n "$_missing" ] || [ -n "$_badstart" ]; then
+		fail F1 agent-frontmatter-fields "first-line --- missing in:${_badstart:- none}; fields missing in:${_missing:- none} (of $_n agents)"
 	else
-		pass F1 agent-frontmatter-fields "all $_n agents declare name+description+model"
+		pass F1 agent-frontmatter-fields "all $_n agents start with --- and declare name+description+model"
 	fi
 
 	if [ -n "$_badmodel" ]; then
 		fail F2 agent-model-value "model not in opus|sonnet|haiku:$_badmodel"
 	else
 		pass F2 agent-model-value "all $_n agents use opus|sonnet|haiku"
+	fi
+}
+
+# J5.1 requires a deliberately small, fixed agent playbook shape.  These are
+# exact English generated headings; do not accept a prose mention as a section.
+# Section order uses line numbers, while Examples is bounded at the next H2 so
+# a Normal/Edge heading elsewhere in the document cannot cause a false FAIL.
+check_agent_j5_sections() {
+	_ad="$1/.claude/agents"
+	if [ ! -d "$_ad" ]; then
+		skip F3 agent-j5-section-order "no agents/ directory"
+		skip F4 agent-j5-rejection-examples "no agents/ directory"
+		return
+	fi
+
+	_n=0
+	_structure=""
+	_examples=""
+	for _f in $(find "$_ad" -type f -name '*.md' 2>/dev/null | sort); do
+		_n=$((_n + 1))
+		_r=$(grep -nE '^## Reasoning[[:space:]]*$' "$_f" 2>/dev/null | head -1 | cut -d: -f1)
+		_w=$(grep -nE '^## Workflow[[:space:]]*$' "$_f" 2>/dev/null | head -1 | cut -d: -f1)
+		_s=$(grep -nE '^## Self-Critique[[:space:]]*$' "$_f" 2>/dev/null | head -1 | cut -d: -f1)
+		_b=$(grep -nE '^## Boundaries[[:space:]]*$' "$_f" 2>/dev/null | head -1 | cut -d: -f1)
+		_u=$(grep -nE '^## Uncertainty Protocol[[:space:]]*$' "$_f" 2>/dev/null | head -1 | cut -d: -f1)
+		_x=$(grep -nE '^## Examples[[:space:]]*$' "$_f" 2>/dev/null | head -1 | cut -d: -f1)
+		_lack=""
+		[ -n "$_r" ] || _lack="$_lack Reasoning"
+		[ -n "$_w" ] || _lack="$_lack Workflow"
+		[ -n "$_s" ] || _lack="$_lack Self-Critique"
+		[ -n "$_b" ] || _lack="$_lack Boundaries"
+		[ -n "$_u" ] || _lack="$_lack Uncertainty-Protocol"
+		[ -n "$_x" ] || _lack="$_lack Examples"
+		if [ -n "$_lack" ]; then
+			_structure="$_structure $(basename "$_f"):missing${_lack}"
+		elif [ "$_r" -ge "$_w" ] || [ "$_w" -ge "$_s" ]; then
+			_structure="$_structure $(basename "$_f"):order R=$_r,W=$_w,S=$_s"
+		else
+			_between=$(awk -v start="$_r" -v end="$_s" 'NR > start && NR < end && /^##[[:space:]]+/ { count++ } END { print count + 0 }' "$_f")
+			[ "$_between" -eq 1 ] || _structure="$_structure $(basename "$_f"):Reasoning/Workflow/Self-Critique must be adjacent H2 sections"
+		fi
+		for _section in Reasoning Workflow Self-Critique Boundaries "Uncertainty Protocol" Examples; do
+			_count=$(grep -cE "^##[[:space:]]+$_section[[:space:]]*$" "$_f" 2>/dev/null || true)
+			[ "$_count" -le 1 ] || _structure="$_structure $(basename "$_f"):duplicate H2 $_section"
+		done
+		_gates=$(grep -E '^##[[:space:]]+(Preflight|Verification)( Gate)?[[:space:]]*$' "$_f" 2>/dev/null | oneline)
+		[ -z "$_gates" ] || _structure="$_structure $(basename "$_f"):duplicate contract gates $_gates"
+
+		if [ -z "$_x" ]; then
+			_examples="$_examples $(basename "$_f"):missing Examples"
+		else
+			_example_counts=$(awk '
+				$0 == "## Examples" { in_examples=1; next }
+				in_examples && /^##[[:space:]]+/ { in_examples=0 }
+				in_examples && /^#{3,}[[:space:]]+/ {
+					heading=$0
+					sub(/^#{3,}[[:space:]]+/, "", heading)
+					if (heading == "Rejection Case") rejection++
+					lower=tolower(heading)
+					if (lower ~ /(^|[[:space:]])(normal|edge)([[:space:]]|$)/) normal_edge++
+				}
+				END { printf "%d %d", rejection + 0, normal_edge + 0 }
+			' "$_f")
+			_reject=${_example_counts%% *}
+			_normal_edge=${_example_counts#* }
+			if [ "$_reject" -ne 1 ] || [ "$_normal_edge" -ne 0 ]; then
+				_examples="$_examples $(basename "$_f"):rejection=$_reject,normal-edge=$_normal_edge"
+			fi
+		fi
+	done
+
+	if [ "$_n" -eq 0 ]; then
+		skip F3 agent-j5-section-order "0 agent .md files found"
+		skip F4 agent-j5-rejection-examples "0 agent .md files found"
+		return
+	fi
+	if [ -n "$_structure" ]; then
+		fail F3 agent-j5-section-order "required H2/order failures:$_structure"
+	else
+		pass F3 agent-j5-section-order "all $_n agents have one adjacent Reasoning < Workflow < Self-Critique contract plus Boundaries, Uncertainty Protocol, Examples; no duplicate Preflight/Verification gates"
+	fi
+	if [ -n "$_examples" ]; then
+		fail F4 agent-j5-rejection-examples "Examples failures:$_examples"
+	else
+		pass F4 agent-j5-rejection-examples "all $_n Examples sections have exactly one Rejection Case and 0 Normal/Edge headings"
+	fi
+}
+
+# J5.3 is scoped to runnable Claude rule files.  A section body is the text
+# after its exact H2 through the next H2; headings or blank lines alone do not
+# count as content.  Exceptions may explicitly say there are none.
+check_rule_j5_contract() {
+	_rd="$1/.claude/rules"
+	if [ ! -d "$_rd" ]; then
+		skip R5 rule-j5-frontmatter-and-sections "no rules/ directory"
+		return
+	fi
+
+	_n=0
+	_bad=""
+	for _f in $(find "$_rd" -type f -name '*.md' 2>/dev/null | sort); do
+		_n=$((_n + 1))
+		_fm=$(awk 'NR==1&&$0!="---"{exit} NR==1{next} /^---[[:space:]]*$/{exit} {print}' "$_f")
+		_issue=""
+		[ "$(head -1 "$_f")" = '---' ] || _issue="$_issue first-line"
+		printf '%s\n' "$_fm" | grep -qE '^name:' || _issue="$_issue name"
+		printf '%s\n' "$_fm" | grep -qE '^description:' || _issue="$_issue description"
+		_v=$(awk '
+			$0 == "## Violation Determination" { active=1; next }
+			active && /^##[[:space:]]+/ { active=0 }
+			active && $0 !~ /^[[:space:]]*$/ && $0 !~ /^#/ {
+				found=1
+				lower=tolower($0)
+				if ($0 ~ /->/ || lower ~ /(^|[[:space:]])(if|when|without|missing|omit|must|fail|forbid|prohibit|violation)([[:space:]]|$)/) observable=1
+			}
+			END { print found && observable ? "yes" : "no" }
+		' "$_f")
+		_e=$(awk '
+			$0 == "## Exceptions" { active=1; next }
+			active && /^##[[:space:]]+/ { active=0 }
+			active && $0 !~ /^[[:space:]]*$/ && $0 !~ /^#/ { found=1 }
+			END { print found ? "yes" : "no" }
+		' "$_f")
+		[ "$_v" = yes ] || _issue="$_issue Violation-Determination-observable"
+		[ "$_e" = yes ] || _issue="$_issue Exceptions"
+		[ -z "$_issue" ] || _bad="$_bad $(basename "$_f"):$_issue"
+	done
+
+	if [ "$_n" -eq 0 ]; then
+		skip R5 rule-j5-frontmatter-and-sections "0 rule .md files found"
+	elif [ -n "$_bad" ]; then
+		fail R5 rule-j5-frontmatter-and-sections "J5.3 failures:$_bad"
+	else
+		pass R5 rule-j5-frontmatter-and-sections "all $_n rules start with name+description frontmatter and have non-empty Violation Determination + Exceptions"
 	fi
 }
 
@@ -716,6 +1019,8 @@ validate_one() {
 	check_output_mode "$_team"
 	check_caps "$_team"
 	check_frontmatter "$_team"
+	check_agent_j5_sections "$_team"
+	check_rule_j5_contract "$_team"
 	check_counts "$_team"
 	check_execution_contract "$_team"
 

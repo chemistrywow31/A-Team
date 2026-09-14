@@ -1,88 +1,61 @@
 ---
 name: Conversation Protocol
-description: Regulate discovery so requested format, canonical authority, and scope are explicit before planning or generation
+description: Confirm material team requirements while continuing work within existing user authorization
 ---
 
 # Conversation Protocol
 
 ## Applicability
 
-- Applies to: `team-architect`, `requirements-analyst`, `prompt-optimizer`
+- Applies to: `team-architect`, `requirements-analyst`, `prompt-optimizer`, `team-restructuring-master`
 
 ## Rule Content
 
 ### Communicate In The User's Language
 
-Match the user's language. Technical terms may remain in English, but explain them the first time they appear if the user may not know them.
+Match the user's language. Explain unfamiliar technical terms when first used.
 
-### Do Not Skip Discovery
+### Confirm New-Team Requirements
 
-Do not enter Planning or Generation until all of the following are true:
+Before Planning or Generation of a new team, confirm:
 
-1. Team objectives are specific and can be summarized without vague filler words.
-2. The workflow stages are identified from input to final output.
-3. Each workflow stage has at least one candidate role.
-4. The requested delivery format is confirmed or explicitly delegated.
-5. The generated team's canonical authority and mapping-retention need are confirmed.
-6. The user has confirmed the requirements summary.
+1. Specific objectives and scope.
+2. Workflow stages from input to final output.
+3. Candidate role coverage for each stage.
+4. Requested format: `codex-native`, `claude-compatible`, `dual-format`, or `let A-Team decide`.
+5. One canonical authority, surface activation state, and mapping-retention need.
+6. The requirements summary is accurate.
 
-### Delivery Format Is Part Of Discovery
+Use prior user statements and explicit delegation of routine choices as confirmation where they supply the decision. State delegated choices in the summary; do not interpret silence as approval or infer ambiguous canonical authority. Ask early for missing format or authority decisions.
 
-Before Planning, confirm which team format the user wants: `codex-native`, `claude-compatible`, `dual-format`, or `let A-Team decide`.
+### Continue Within Existing Scope
 
-Also confirm:
+For existing-team maintenance, inspect the current runnable surfaces, activation state, canonical declaration, stamps, and mappings before structural/runtime recommendations. Do not restart new-team Discovery when the requested change and authority are already clear.
 
-- whether the generated team's canonical authority will be Codex, Claude, or a dual-surface package with one canonical source
-- whether conversion-ready mapping must be retained for later Claude <-> Codex transformation
+Honor requirements and authorization already supplied in the session. Ask only for a material missing decision, unresolved authority, conflicting requirements, or an irreversible/external action beyond that authorization. Keep useful independent work moving while awaiting an answer; wait before work that depends on a required answer. A recommendation audit does not itself grant missing user authority.
 
-Ask this early in discovery. Do not bury it as a minor preference under generic output requirements.
+### Keep Questions Focused
 
-### Existing-Team Discovery Must Classify The Current Surface
+Ask one material decision question at a time. Keep a response to one question direction and no more than three related clarification items; avoid repeating answered questions.
 
-Before proposing structural or runtime changes to an existing team, classify:
+### Summaries Communicate Progress
 
-- runnable surfaces and activation state
-- current canonical authority or ambiguity
-- stamp state
-- mapping completeness
-
-Do not assume Codex is canonical just because a Codex surface exists.
-
-### One Direction Per Turn
-
-Each response must focus on one question direction. Do not ask more than three unrelated questions in the same reply.
-
-### Interim Summaries Are Mandatory
-
-Every 3-4 rounds, provide a short interim summary containing:
-
-- confirmed requirements
-- open questions
-- the next area to explore
-
-Do not keep digging after the summary until the user has had a chance to correct it.
+Every 3-4 discovery rounds, summarize confirmed requirements, open questions, and the next area to explore. An interim summary needs no approval; continue authorized independent work and incorporate corrections. The required new-team requirements-summary confirmation still applies.
 
 ### Challenge Weak Assumptions
 
-When the user's proposal has obvious problems, point them out directly. Typical problems:
-
-- responsibilities are too coarse or too fragmented
-- two roles overlap without a deliberate review relationship
-- the workflow has a gap or dead end
-- the requested throughput is unrealistic
-- the proposed multi-agent split adds coordination cost without parallel value
-
-Whenever you challenge an assumption, provide a concrete alternative.
+Surface role overlap, missing coverage, workflow gaps, unrealistic throughput, or fragmentation whose coordination cost exceeds its parallel value. Cite the consequence and offer a concrete alternative.
 
 ## Violation Determination
 
-- Planning starts before the six discovery criteria are satisfied -> Violation
-- Discovery omits requested format, canonical authority, or mapping-retention need -> Violation
-- Existing-team planning starts without surface classification when runtime or structural changes are in scope -> Violation
-- One response contains four or more unrelated questions -> Violation
-- Five consecutive rounds pass without an interim summary -> Violation
-- A clear structural issue is noticed but not surfaced -> Violation
+- New-team Planning starts without the six confirmed requirements above -> Violation
+- Existing-team structural/runtime recommendations omit surface, authority, stamp, or mapping assessment -> Violation
+- Silence is treated as required approval, or ambiguous authority is inferred from directory presence -> Violation
+- An answered question or interim summary creates a repeat approval stop without a new material decision -> Violation
+- Work exceeds existing authorization or proceeds despite a required missing answer -> Violation
+- A reply combines unrelated question directions, multiple material decision questions, or more than three clarification items -> Violation
+- Five discovery rounds pass without an interim summary, or a clear structural problem is concealed -> Violation
 
 ## Exceptions
 
-- If the user explicitly asks for a faster pass, reduce interview depth, but still confirm the core objective, workflow, role coverage, and summary before Generation.
+- An explicit request for a faster pass may reduce interview depth or delegate routine choices; it does not remove the new-team confirmation requirements or authority checks.

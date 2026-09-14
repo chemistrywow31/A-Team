@@ -1,6 +1,6 @@
 ---
 name: Output Structure
-description: Define required generated-team surfaces, Codex v2 runtime layout, and per-format mapping artifacts
+description: Define requested runtime surfaces, native deliverables, and per-format mapping artifacts
 paths:
   - "teams/**"
 ---
@@ -52,16 +52,20 @@ The Codex surface entry document must declare the team's canonical authority and
 
 Dual-format teams must ship both runnable surfaces or explicitly mark one as reference-only. They must also ship the mapping artifacts in `.codex/docs/`.
 
-### Current Codex V2 Runtime Requirements
+### Apply Specifications For The Selected Runtime
 
-Every generated Codex multi-agent surface must use the current strict-valid v2 config schema: project-local `.codex/config.toml`; root `gpt-5.6-sol` at `xhigh`; project-local approval and sandbox posture; `features.multi_agent = true`; seven total slots including root; model-override exposure; bounded wait support; and default subagents on `gpt-5.6-terra` at `high`. Do not use stale v1 keys such as `disable_response_storage`, `max_threads`, or `max_depth`.
+For Claude output, apply `.claude/rules/settings-json.md`, `.claude/rules/hooks-integration.md`, and `.claude/rules/frontmatter-optional-patterns.md` to the native artifacts above. Verify Claude metadata and behavior; a Claude-only target does not require Codex runtime checks.
 
-Treat each `[agents.<id>]` table id as that agent's stable snake_case runtime identity. Each registration must resolve `config_file` relative to `.codex/`, and the referenced agent TOML's `name` must equal `<id>` exactly. Project-root agent configs therefore register as `../agents/...`.
+Only when the requested output includes a runnable Codex surface, load `.codex/rules/codex-runtime-config.md` for runtime defaults/schema and setup constraints, `.codex/rules/codex-agent-config-patterns.md` for agent metadata/registration validation, and `.codex/rules/context-isolation.md` for lifecycle adaptation. Generate and validate that surface against those specifications without copying their payload into active Claude guidance.
+
+Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring without fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort.
+
+Keep one adjacent Reasoning/Workflow/Self-Critique contract in each authoritative role; do not add duplicate forms. Include worklog, context-management, execution-contract, and reasoning/self-critique rules or documented equivalents for multi-agent or multi-phase teams.
 
 ### Naming And Placement
 
 - Team, folder, and rule names use kebab-case.
-- Agent registry ids use snake_case.
+- For a Codex surface, agent registry ids use snake_case.
 - `CLAUDE.md`, `AGENTS.md`, and `SKILL.md` are the only uppercase filenames.
 - The Codex coordinator TOML lives at `agents/coordinator.toml`.
 - Non-coordinator Codex agent TOMLs live under `agents/{group}/`.
@@ -80,8 +84,8 @@ Every runnable team must ship `docs/RUNTIME-SETUP.md` after runtime artifacts fr
 - A requested runnable surface is missing its required entry document or artifact tree -> Violation
 - A Claude runnable surface omits `.claude/settings.json`, any required top-level key, or the baseline hook set -> Violation
 - A Claude runnable team stamped 2026-07-28 or later omits `.claude/output-styles/adhd-friendly.md` or the first-run `outputStyle` hook -> Violation
-- A Codex runnable surface omits the v2 config block above, uses deprecated v1 keys, or resolves `config_file` from the wrong base path -> Violation
-- A `[agents.<id>]` table id is not a stable snake_case runtime identity, or its referenced agent TOML's `name` does not equal `<id>` exactly -> Violation
+- A selected Codex runnable surface fails its referenced runtime, agent metadata, or lifecycle specification -> Violation
+- A Claude-only delivery is gated on Codex runtime checks, or a target's explicit model/effort pins change outside authorization -> Violation
 - A multi-surface or conversion-retained team omits either mapping artifact, or the artifacts omit canonical authority, activation state, or platform-only files -> Violation
 - `docs/RUNTIME-SETUP.md` is missing, or lacks a probe stamp, verify steps, or rollback steps -> Violation
 - File or folder names break the naming and placement rules above -> Violation
@@ -89,4 +93,4 @@ Every runnable team must ship `docs/RUNTIME-SETUP.md` after runtime artifacts fr
 ## Exceptions
 
 - Single-surface teams do not need mapping artifacts unless the user explicitly requests future conversion retention.
-- Single-agent Codex teams may omit `agents/` and the multi-agent v2 block.
+- Single-agent Codex teams may use the omissions explicitly allowed by their selected runtime specifications.

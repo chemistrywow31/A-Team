@@ -49,10 +49,10 @@ Beyond the mechanical retry counters in `rules/execution-contract.md` EC-2, esca
 - NEGATIVE: A rule conflicts with a dispatch instruction. Do not ask — EC-4 already resolves it (rules outrank dispatches).
 
 ### J3.2 Irreversible or outward action without authorization
-- SIGNAL: The next step deletes or overwrites a file this task did not create, pushes to a remote, or writes to an external API — and the dispatch does not name BOTH that exact operation AND that exact target. A general scope like "restructure the team" authorizes nothing by itself; files inside a named restructuring target count as authorized only when the user-approved restructuring plan lists them (EC-3.5 scope exception).
-- ACTION: Stop before the action. Ask, presenting the exact command and its target.
+- SIGNAL: The next step performs an irreversible mutation, deletes user data, pushes to a remote, or writes to an external API without existing user authorization for that operation and target. A broad request does not authorize unrelated destructive/external actions. Routine reversible edits inside the requested scope are authorized; declared-authority, exact-path, confinement, and independent-review requirements still apply.
+- ACTION: Stop before the unauthorized action. Prepare a concrete reviewable result, then ask with the exact operation and target; continue authorized independent work.
 - POSITIVE: Restructuring suggests deleting `teams/old-team/`. The dispatch never mentioned deletion. Ask.
-- NEGATIVE: Overwriting a draft file your own task wrote 10 minutes ago. Proceed — you created it this task.
+- NEGATIVE: The user requested optimization of the named repository, and the reviewed plan identifies reversible edits within that scope. Proceed under existing authorization; do not ask again at each phase or file.
 
 ### J3.3 Contradictory requirements
 - SIGNAL: The user asked for X and Y, and X and Y cannot both be true of the same artifact at the same time (not merely "Y gets harder when X holds").
@@ -78,7 +78,7 @@ Wrong direction means the approach is wrong, not the effort. Retrying into a wro
 
 ### J4.2 The fix keeps growing
 - SIGNAL: Each attempt touches more files or more lines than the previous attempt (lines touched = max(lines added, lines deleted) per attempt).
-- ACTION: Stop expanding. Revert to the smallest failing state, write the trace, escalate per EC-2.
+- ACTION: Stop expanding. Return only this task's delta to the smallest failing state after checking for intervening edits; preserve all user/other-writer work. Write the trace and escalate per EC-2.
 - POSITIVE: Attempt 1 edits one rule; attempt 2 edits the rule plus three agents; the planned attempt 3 would edit CLAUDE.md too. Stop and escalate.
 - NEGATIVE: Attempt 2 is smaller and passes more checks than attempt 1. Shrinking with progress is convergence — continue.
 
@@ -98,17 +98,19 @@ Wrong direction means the approach is wrong, not the effort. Retrying into a wro
 
 Each floor lists the exact check that proves it. A verifier runs these checks; a producer runs them before reporting. J5 is the CANONICAL floor definition — `skills/quality-validation/SKILL.md` compiles these floors into its team-sweep checklist; when the two disagree, J5 wins and quality-validation must be updated in the same change.
 
+Use one compact role-specific Reasoning/Workflow/Self-Critique contract; the headings below do not require fixed four/five slots, duplicate Preflight/Verification forms, or private reasoning transcripts. One independent review may cover a coherent frozen artifact batch. After corrections, invalidate and rerun every criterion citing a changed file plus dependent mapping/parity criteria; preserve only unaffected current evidence.
+
 ### J5.1 Agent .md
 - SIGNAL: Artifact is an agent file.
-- ACTION: Enforce: frontmatter line 1 with name/description/model; sections `## Reasoning` before `## Workflow` before `## Self-Critique`; `## Boundaries`; `## Uncertainty Protocol`; `## Examples` containing one rejection case and no normal/edge cases; total ≤ 300 lines. Check: `head -1` = `---`; `grep -cE '^(name|description|model):'` returns 3; `grep -n '^## '` for order and presence; `wc -l` for length.
-- POSITIVE: All greps hit in order, 240 lines. Floor met.
+- ACTION: Enforce: line-1 frontmatter with `name` and `description`; sections `## Reasoning` before `## Workflow` before `## Self-Critique`; `## Boundaries`; `## Uncertainty Protocol`; `## Examples` containing exactly one rejection case and no normal/edge cases; total ≤ 300 lines. For a Claude-runnable agent, frontmatter additionally has `model`. For a Codex playbook paired with `agents/**/*.toml`, frontmatter has `agent_type` and its directly paired TOML has `model`; do not require or duplicate `model` in that playbook. A platform-neutral shared role source has no runtime-model requirement; verify its runnable projection or runtime config carries the required platform fields. Check: `head -1` = `---`; `grep -cE '^(name|description):'` returns 2; `grep -n '^## '` for order and presence; inspect `## Examples` for exactly one rejection case; `wc -l`; then directly inspect the paired runnable artifact: Claude frontmatter `model`, Codex playbook `agent_type` plus paired TOML `model`, or shared projection/runtime config platform fields.
+- POSITIVE: A 240-line Codex playbook has line-1 `name`, `description`, and `agent_type`, all required sections in order, and exactly one rejection case; its directly paired `agents/reviewer.toml` declares `model`. Floor met.
 - NEGATIVE: All sections present but Self-Critique appears before Workflow. Floor failed — order is part of the floor, not a style preference.
 
 ### J5.2 Skill SKILL.md
 - SIGNAL: Artifact is a skill file.
-- ACTION: Enforce: lives at `skills/{name}/SKILL.md`; frontmatter name/description; one rejection-case example; ≤ 200 lines. Check (all skills): path test, `grep -cE '^(name|description):'` returns 2, an Examples section naming a refusal/defer/escalate case, `wc -l`. Entry-point skills ONLY: additionally grep all three of `disable-model-invocation: true`, `allowed-tools`, `argument-hint` — each must hit; non-entry-point skills are exempt from these three. Identify the entry point by SHAPE, never by folder name: it is the one skill declaring `disable-model-invocation: true`. A check keyed to `skills/boss/` silently skips these three greps for every team that named its entry point after itself (`tongzheng/`, `callimachus/`) — a false PASS, which is worse than no check.
-- POSITIVE: 140 lines, one rejection example, correct folder. Floor met.
-- NEGATIVE: Three happy-path examples and no rejection case. Floor failed — the rejection case is the requirement, and the other two are surplus that narrows the model's exploration space.
+- ACTION: Enforce: lives at `skills/{name}/SKILL.md`; frontmatter name/description; one rejection-case example; ≤ 200 lines. Check all skills for path, frontmatter, an Examples section naming a refusal/defer/escalate case, and line count. Identify a Claude coordinator entry from its declared workflow purpose or coordinator-adoption contract, independent of folder/name, invocation flag, or whether required fields and adoption are valid. A Claude runnable team must have exactly one such entry; missing or ambiguous entries fail. Then separately verify the actual entry has `disable-model-invocation: true`, `allowed-tools` granting Agent, `argument-hint`, and a resolvable coordinator playbook that it adopts in the main session without spawning the coordinator. These are A-Team entry requirements, not universal platform metadata requirements. The manual-only flag controls invocation and does not identify an entry; ordinary manual-only review/deploy skills are exempt from entry-only checks. Never hide a malformed genuine entry by requiring its fields or adoption to pass before it becomes a candidate. Source: [Claude Code skill frontmatter](https://code.claude.com/docs/en/skills#frontmatter-reference).
+- POSITIVE: A renamed coordinator-entry skill plus an ordinary manual-only review skill produces exactly one entry candidate; the coordinator entry passes its metadata and main-session adoption checks.
+- NEGATIVE: A skill declares that it launches the team's coordinator workflow but lacks `allowed-tools` or tells the session to spawn the coordinator. It remains an entry candidate and fails the corresponding check; the invocation flag cannot make it valid or exempt.
 
 ### J5.3 Rule .md
 - SIGNAL: Artifact is a rule file.

@@ -1,57 +1,53 @@
 ---
 name: Quality Validation
-description: Validate that a generated Codex team is structurally complete and internally consistent
+description: Validate generated Codex teams and A-Team repo-self through independent artifact review and current runtime evidence
 ---
 
 # Quality Validation
 
 ## Description
 
-Validate generated teams and A-Team repo-self from fresh context. Capture mechanical evidence first, then add only the semantic judgment the validators cannot automate.
+Review one coherent frozen artifact batch from fresh context. The producer never accepts its own work; the verifier stores raw command evidence in owned files and returns criterion verdicts citing those paths.
 
 ## Users
 
-- `.codex/agents/team-architect.md`
-- Fresh-context reviewers validating generated or existing teams
+- Fresh-context verifier dispatched by `team-architect`
 
 ## Core Knowledge
 
-- Validation starts with deterministic classification, not assumptions. Record layout separately from runnable surfaces.
-- Every Codex validation report must include `STAMP`, `CANONICAL_AUTHORITY`, and `MAPPING_STATE` evidence.
-- Ambiguous canonical authority blocks mutation. Reference-only mirrors and activation-gated packages are assessed, not promoted.
-- Codex v2 readiness requires both static validation and live host-tool readiness; do not collapse those into one verdict.
-- `.codex/skills/` and `.agents/skills/` mirrors must remain byte-identical.
+- Classify layout separately from runnable surfaces. Record `STAMP`, `CANONICAL_AUTHORITY`, and `MAPPING_STATE` for Codex validation.
+- Ambiguous authority permits assessment only. Never promote reference-only or activation-gated surfaces implicitly.
+- Read repo-root `JUDGMENT.md` J5 for the canonical quality floors. A green validator cannot override them; a false PASS blocks acceptance until the validator defect and the underlying failure are resolved.
+- Keep static validation and live host-tool readiness as separate verdicts. Static config cannot prove that the active host exposes collaboration tools.
+- Keep Codex `.codex/skills/` and `.agents/skills/` mirrors byte-identical.
 
 ## Application Guide
 
-1. Choose the validation mode: generated target team or A-Team repo-self.
-2. Classify the target before judging content. Capture direct root, class, runnable surfaces, reference-only or activation-gated state, stamp, canonical authority, and mapping state.
-3. Run the full Codex validator first and write its raw output to a verifier-owned worklog or evidence file. Do not use assessment-only classification output as acceptance evidence.
-   - Target team: `python3 scripts/validate_codex_team.py {team}`
-   - Repo-self: `python3 scripts/validate_codex_team.py --repo-self`
-4. If the target has a Claude-runnable surface, run `bash scripts/validate-team.sh {team}` for that surface too.
-5. Return EC-3.6 lines as `{criterion} | PASS|FAIL|SKIP | {evidence-path}`, followed by the overall verdict. Do not paste raw validator output into the report. Add model judgment only for semantic checks the scripts mark `SKIP` or do not cover.
-6. When a runnable or changed Codex surface exists, run read-only runtime preflight and write its raw output to verifier-owned evidence.
+1. Confirm the batch is frozen and choose generated-team or A-Team repo-self validation. Repo-self means the repository root. Capture target class, runnable surfaces, activation/reference state, stamp, authority, and mappings before judging content; classification-only output is not acceptance evidence.
+2. Read J5 and compile its relevant floors once into the acceptance checklist:
+   - Agents: line-1 name/description frontmatter, ≤300 lines, exactly one adjacent `Reasoning < Workflow < Self-Critique` sequence, `Boundaries`, `Uncertainty Protocol`, and `Examples` with exactly one rejection case and no normal/edge cases. Require `model` in Claude-runnable markdown; require `agent_type` in a Codex playbook and `model` in its directly paired TOML. A shared canonical role has no runtime-model field; inspect its mapped runnable projection/config for platform metadata.
+   - Skills: `skills/{name}/SKILL.md`, name/description frontmatter, ≤200 lines, and exactly one rejection example. Identify Claude coordinator-entry candidates by declared coordinator-workflow purpose or coordinator-adoption contract, independently of folder/name, invocation flag, and required-field validity. A Claude runnable team requires exactly one candidate. Then verify `disable-model-invocation: true`, `allowed-tools` granting Agent, `argument-hint`, and adoption of a resolvable coordinator playbook in the main session without spawning it. Ordinary manual-only review/deploy skills are not entries; missing, ambiguous, or malformed genuine entries fail.
+   - Rules: name/description frontmatter, ≤100 lines, observable `Violation Determination`, and `Exceptions`, including when there are none.
+   - Claude settings: valid JSON with `hooks`, `permissions`, and `env`; reject destructive allows such as `rm -rf` and `git push --force`.
+   - Reports/worklogs: six EC-1 fields in order, `CONCLUSIONS` ≤10 lines, nonempty evidence for `DONE`; substantive `references.md`, `findings.md`, and `decisions.md` with each decision citing a finding or reference.
+   - Generated `CLAUDE.md`: actual objectives/scope, main-session coordinator deployment, context/worklog guidance, precedence, a non-stub body, and the `Generated by A-Team on` stamp.
+3. When the batch proposes or retains a non-obvious safeguard, apply `.codex/rules/proportional-design.md` and return verdicts for its five decision fields and ordinary-path preservation. Use this existing review stage.
+4. Select the evidence-producing command after runtime artifacts freeze. For a Codex-runnable or repo-self Codex surface, run preflight for new delivery, changed active runtime artifacts, or missing current readiness evidence:
    - Repo-self: `bash scripts/preflight-codex-runtime.sh --repo-self`
    - Target team: `bash scripts/preflight-codex-runtime.sh --team-dir {team}`
-7. Fail validation if any of these hold: strict config does not load, registry paths do not resolve from `.codex/`, v2 keys are missing or misplaced, stale runtime vocabulary remains, skill mirrors differ, mapping or stamp evidence is missing, runtime setup lacks setup/verify/rollback guidance, or target classification contradicts the inventory.
-8. Keep static validation separate from live host-tool readiness. A static pass does not prove the active host exposes the required collaboration tools.
+   Store its raw output in verifier-owned evidence. Reuse its current full validator records and strict-model result; do not rerun the same validator or model check separately. Missing, malformed, or failing evidence remains a failed criterion.
+5. Where current preflight evidence does not already cover a required surface/check, run the applicable validator and retain its raw output:
+   - Codex target: `python3 scripts/validate_codex_team.py {team}`
+   - Repo-self Codex: `python3 scripts/validate_codex_team.py --repo-self`
+   - Generated Claude-runnable team: `bash scripts/validate-team.sh {team}`
+   - A-Team repo-self native review: check affected authored files against J5 and run focused native regressions; report that scope without claiming whole generated-package validation or ignoring failures within the selected scope.
+   For a dual team, cover both runnable surfaces. Add focused tests only for changed behavior or unresolved failures.
+6. Inspect artifacts against the compiled checklist, adding independent semantic judgment and checking mechanical floors omitted or mis-evaluated by the scripts. Check current authority/mappings/stamps, platform metadata, strict config, registry resolution from `.codex/`, v2 keys, native vocabulary, skill mirrors, and runtime setup/verify/rollback guidance for applicable surfaces.
+7. After a correction, invalidate and rerun every criterion citing a changed file plus dependent mapping/parity checks. Retain only unaffected current evidence; repeat preflight when its runtime/readiness evidence was invalidated. Keep one batch review rather than separate reviewer invocations per file.
+8. Return one EC-3.6 verdict line per acceptance criterion with its evidence path and an overall verdict. Keep raw command output in the evidence files. Any relevant J5 failure, validator false PASS, contradictory classification, or failed runtime criterion prevents overall PASS.
 
-## Quality Checkpoints
+## Examples
 
-- [ ] The report includes classification plus `STAMP`, `CANONICAL_AUTHORITY`, and `MAPPING_STATE`.
-- [ ] Mutation was blocked when canonical authority was ambiguous.
-- [ ] Codex validation checked strict config, v2 runtime keys, registry resolution, mirror parity, and stale-vocabulary absence.
-- [ ] Raw validator and preflight output stayed in verifier-owned evidence files; criterion lines cited those paths.
-- [ ] Runtime preflight documented setup, verify, and rollback separately from static validation.
-- [ ] Surface-specific reference-only or activation-gated declarations were respected.
+### Rejection Case
 
-## Example
-
-### Input
-
-`Validate teams/u-team for Codex restructuring readiness.`
-
-### Output
-
-Classify `teams/u-team` as dual layout with Codex-only runnable status, run the full Codex validator and runtime preflight, store raw output in verifier-owned evidence files, and return criterion verdicts citing those paths.
+Reject an overall PASS when validators are green but an agent places `Self-Critique` before `Workflow`. Cite the J5.1 ordering failure and the false-PASS evidence, then recheck the corrected agent, validator behavior, and dependent projections.

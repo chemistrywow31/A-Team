@@ -1,6 +1,6 @@
 name = "skill_planner"
 description = "Plan shared skills, specialist skills, and enforceable rules."
-model = "gpt-5.6-sol"
+model = "gpt-6-astra"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"
 

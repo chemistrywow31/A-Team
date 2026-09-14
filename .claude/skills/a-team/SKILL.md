@@ -28,27 +28,17 @@ Adopt the Team Architect workflow in the current session and run the full A-Team
 
 1. If `/A-Team` is invoked inside a dispatched task instead of the main user session, stop and return `BLOCKED: wrong-context invocation - /A-Team must run in the main session.`
 2. Read `CLAUDE.md` and `.claude/agents/team-architect.md`, then adopt that workflow for the rest of the task.
-3. Initialize the worklog and keep the dialogue log current.
-4. For a new team, stay in Discovery until objective, scope, workflow, role coverage, requested format, execution mode, and requirements summary are explicitly confirmed.
-5. For an existing team, classify the target before proposing changes. If canonical authority is ambiguous, limit work to assessment until it is confirmed.
-6. Route text-only Codex prompt improvements that leave roles, rules, runtime, ownership, mapping, canonical authority, and parity unchanged to `prompt-optimizer`.
-7. Route every structural, runtime, ownership, mapping, canonical-authority, or parity change to `team-restructuring-master`, then require recommendation audit and user approval before implementation.
-8. When a generator defect is discovered while working on an existing team, backport the fix to A-Team's canonical `.claude/` design and regenerate the affected Codex projections in the same maintenance task.
+3. Initialize the worklog and keep the dialogue log current. Reuse requirements and authorization already supplied in the session; interim summaries communicate progress without another approval gate.
+4. For a new team, confirm objective, scope, workflow, role coverage, requested format, execution mode, canonical authority, surface activation, mapping retention, and requirements summary before leaving Discovery. An explicit user delegation of routine decisions can supply confirmation within that scope.
+5. For existing-team maintenance, classify the target and use the scoped maintenance lane. If canonical authority is ambiguous, limit work to assessment until it is confirmed; do not restart new-team Discovery.
+6. Route text-only prompt improvements for the selected runtime that leave roles, rules, runtime, ownership, mapping, canonical authority, and parity unchanged to `prompt-optimizer`. Route other changes to `team-restructuring-master` and require recommendation audit before implementation. Proceed within existing authorization; request user approval only for a proposal that exceeds it.
+7. Ask only for material missing decisions, unresolved authority, or required authorization. Use asynchronous clarification when the host supports it and continue independent work while awaiting the answer; dependent work waits for required input.
+8. Give every dispatch a stable task path, exact owned and forbidden paths, acceptance criteria, and the shared-filesystem non-reversion rule. Apply `.claude/rules/dual-platform-parity.md` authority and path-confinement gates before mutation.
+9. Backport generator defects to A-Team's canonical `.claude/` design, then regenerate the affected Codex projections sequentially under the same family owner.
+10. Freeze one coherent artifact batch for independent review. After corrections, rerun every criterion citing a changed file and dependent mapping/parity checks. Run runtime preflight after runtime freeze for new delivery, changed active runtime artifacts, or missing current readiness evidence; reuse its current validation evidence for each selected runtime. Keep dialogue review retrospective.
 
-## Quality Checkpoints
+## Examples
 
-- [ ] New-team work did not bypass Discovery.
-- [ ] Existing-team work recorded classification, stamp, canonical authority, and mapping state before mutation.
-- [ ] Reference-only or activation-gated surfaces were not promoted implicitly.
-- [ ] Optimization stayed text-only; restructuring handled every runtime or parity change.
-- [ ] A-Team repo-self canonical policy was not confused with the generated team's canonical policy.
+### Rejection Case
 
-## Example
-
-### Input
-
-`/A-Team optimize teams/content-studio handoff wording without changing roles or runtime`
-
-### Output
-
-Classify `teams/content-studio`, confirm its canonical authority and mapping state, then route the request through the text-only optimization lane instead of restructuring.
+Reject a proposed runtime change that promotes an existing team's reference-only surface without explicit authorization and consistent authority/mapping declarations. Continue the authorized assessment and obtain the missing decision before mutation.

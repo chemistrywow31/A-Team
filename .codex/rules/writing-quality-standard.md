@@ -1,6 +1,6 @@
 ---
 name: Writing Quality Standard
-description: Set style and length rules for generated Codex markdown assets
+description: Keep authored Codex markdown concise, testable, and consistent with J5 artifact floors
 ---
 
 # Writing Quality Standard
@@ -11,54 +11,43 @@ description: Set style and length rules for generated Codex markdown assets
 
 ## Rule Content
 
-### Use Imperative Language
+### Write Direct Instructions
 
-Write instructions as direct actions.
-
-- Correct: `Confirm input completeness before starting work`
-- Incorrect: `This role should confirm input completeness`
-
-### Ban Vague Fillers
-
-Do not use vague phrases unless followed by explicit criteria:
-
-- `try to`
-- `appropriately`
-- `reasonably`
-- `if needed`
-- `as appropriate`
-- `roughly`
-- `probably`
-- `things like that`
+Use imperative sentences. Replace vague phrases such as `try to`, `appropriately`, `reasonably`, `if needed`, `as appropriate`, `roughly`, `probably`, and `things like that` with observable criteria.
 
 ### Keep Files Tight
 
-- one agent config or `developer_instructions` block: 260 lines maximum
-- one skill doc: 200 lines maximum
-- one rule doc: 100 lines maximum
-- if a file exceeds the limit, split it or move detail into references
+- Authoritative agent playbook: at most 300 lines under J5.1.
+- Runtime agent config or `developer_instructions` block: at most 260 lines; keep the bootstrap thin.
+- Skill: at most 200 lines. Rule: at most 100 lines.
+- Move details into references when the limit would be exceeded.
 
-### Examples Are Required
+### Use One Rejection Example
 
-- every skill must include at least one example
-- when examples are used to teach behavior, include normal, edge, and rejection or escalation cases
-- every rule must include violation determination
+Each authored agent and skill contains exactly one worked rejection/defer/escalation case under `JUDGMENT.md` J5; additional cases require an explicit change to the task's example criteria. Express normal behavior in Workflow and named Input and Output fields. Do not add normal or edge worked examples under the default floor.
 
-### Use EC Status Vocabulary
+Keep the case concise: identify the triggering input and correct refusal, deferral, or escalation. Include a mistaken action only when it clarifies the boundary; a full before/after transcript is not required. Each rule includes observable violation determination.
 
-- Use `STATUS: NEEDS_CONTEXT` for informational gaps.
-- Put `INSUFFICIENT_DATA: {missing}` in `CONCLUSIONS`; treat it as a marker, not a fifth status.
-- Use `STATUS: BLOCKED` for hard blockers.
+### Align Copied Templates With Policy
+
+After a policy change, check the templates, frontmatter examples, section skeletons, and checklists that instantiate it, including writer references. Correct contradictory copied blocks; structural validators alone cannot establish prose consistency.
+
+### Make Behavior Observable
+
+Use Boundaries for exclusions, Uncertainty Protocol for missing inputs, and typed outputs for handoffs. Keep one role-specific Reasoning/Workflow/Self-Critique contract rather than duplicate forms. Use `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {missing}` in CONCLUSIONS for information gaps and `STATUS: BLOCKED` for hard blockers; preserve the four EC-1 statuses.
+
+### Disclose Non-Obvious Rule Cost
+
+When a rule adds measurable simple-task overhead, significant context cost, or a predictable speed/simplicity conflict, include one or two sentences beginning `Tradeoff:` after Violation Determination or within Exceptions. Self-evident file I/O cost needs no extra disclosure.
 
 ## Violation Determination
 
-- descriptive prose replaces imperative instructions -> Violation
-- a banned vague phrase appears without criteria -> Violation
-- a file exceeds its size budget -> Violation
-- a skill has no example -> Violation
-- behavioral examples omit edge or rejection behavior when those cases are necessary to clarify the boundary -> Violation
-- a template or example uses `INSUFFICIENT_DATA` as a status or defines a status outside the four EC-1 statuses -> Violation
-- a rule has no violation determination -> Violation
+- Descriptive prose replaces instructions, or vague wording lacks observable criteria -> Violation
+- A file exceeds its size limit -> Violation
+- An authored agent/skill has no rejection example or adds unrequested normal/edge cases -> Violation
+- A copied template, example, or checklist contradicts the policy it implements -> Violation
+- A rule lacks observable violation determination or required non-obvious-cost disclosure -> Violation
+- An informational gap uses an invalid EC-1 status, or a prompt duplicates the decision/verification contract -> Violation
 
 ## Exceptions
 

@@ -1,6 +1,6 @@
 ---
 name: Context Tier
-description: Assign GPT-5.6 model and effort tiers by decision scope for Codex agents
+description: Assign GPT-6 strong roles and GPT-5.6 read-heavy roles with explicit runtime pins and bounded context
 ---
 
 # Context Tier
@@ -11,45 +11,44 @@ description: Assign GPT-5.6 model and effort tiers by decision scope for Codex a
 
 ## Rule Content
 
-### Tier System
+### Assign Context By Decision Scope
 
-Every generated role must document its context tier in the same-relative authoritative `.codex/agents/{path}.md` playbook. The thin `agents/{path}.toml` may carry only runtime keys and a nonempty `developer_instructions` bootstrap to that playbook; do not duplicate the tier section in TOML.
+Every role documents its tier and exact startup inputs in the same-relative authoritative `.codex/agents/{path}.md`. Keep `agents/{path}.toml` thin: runtime fields and a nonempty bootstrap to that playbook. Do not duplicate the tier section or runtime model/effort pins in prose.
 
-| Tier | Scope | Model Guidance | Effort | Startup Context |
+Model/effort values below are defaults for new teams without explicit pins or explicitly authorized profile migration. Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring; retaining a pin requires no fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort.
+
+| Tier | Scope | Model default | Effort default | Startup context |
 | --- | --- | --- | --- | --- |
-| 1 | deterministic utility | inherited project default or lower approved utility tier | `low` or `medium` | role plus immediate task |
-| 2 | read-heavy bounded execution | `gpt-5.6-terra` | `high` | Tier 1 plus upstream worklog paths |
-| 3 | planning, generation, optimization, restructuring | `gpt-5.6-sol` | `xhigh` | Tier 2 plus workflow and decision context |
-| 4 | coordinator or cross-cutting artifact gate | `gpt-5.6-sol` or stronger approved project pin | `xhigh` | full project constraints, worklog chain, role map, and live routing state |
+| 1 | Deterministic utility, no judgment | Explicit approved utility pin | `low` or `medium` | Role and immediate input |
+| 2 | Read-heavy bounded execution | `gpt-5.6-terra` | `high` | Tier 1 plus upstream worklog paths and constraints |
+| 3 | Planning, generation, optimization, restructuring | `gpt-6-astra` | `xhigh` | Tier 2 plus workflow and decision context |
+| 4 | Coordination and cross-cutting artifact gates | `gpt-6-astra` | `xhigh` | Relevant project constraints, worklog chain, role map, live routing |
 
-### Default Bias
+Default to Tier 2 when uncertain. Tier 1 requires an explicit zero-judgment justification. Use Tier 3/4 when decisions affect other agents or phases. Record the scope and evidence for any authorized effort change.
 
-Default to Tier 2 when uncertain. Use Tier 1 only when the task has no judgment calls. Use Tier 3 or 4 when decisions affect other agents or downstream phases.
+### Pin Runtime Fields Explicitly
 
-### TOML Alignment
+Set `model` and `model_reasoning_effort` in every `agents/**/*.toml` from the preserved target pins or applicable defaults above. Full-history forks inherit parent model/effort; use explicit role overrides with `fork_turns = "none"` or a positive bounded fork. Supply relevant paths and criteria so bounded context does not starve judgment tasks.
 
-Set `model` and `model_reasoning_effort` in each `agents/**/*.toml` file to match the tier. If the project intentionally pins a model family, keep the pin and document the tier rationale in the authoritative playbook.
+### Approved A-Team Repo-Self Profile And Roles
 
-### Startup Context Discipline
+- Root and strong roles use `gpt-6-astra`/`xhigh`; project subagent default stays `gpt-5.6-terra`/`high`.
+- Tier 2: `domain-researcher`, `runtime-preflight-advisor`, `dialogue-reviewer`.
+- Tier 3: `requirements-analyst`, `role-designer`, `skill-planner`, `rule-writer`, `skill-writer`, `agent-writer`, `prompt-optimizer`, `team-restructuring-master`.
+- Tier 4: `team-architect`, `decision-auditor`.
 
-Do not send Tier 4 context to Tier 1 utilities. Do not starve Tier 3 or Tier 4 agents by passing only immediate task text.
+### Bound Startup Context
 
-### A-Team Role Guidance
-
-- Tier 2 by default: `domain-researcher`, `runtime-preflight-advisor`, `dialogue-reviewer`
-- Tier 3 by default: `requirements-analyst`, `role-designer`, `skill-planner`, `rule-writer`, `skill-writer`, `agent-writer`, `prompt-optimizer`, `team-restructuring-master`
-- Tier 4 by default: `team-architect`, `decision-auditor`
+Give Tier 1 only the role and immediate task. Give Tier 3/4 relevant upstream decisions and constraints through paths, rather than automatically copying all history. Independent acceptance retains EC-3 fresh-context restrictions.
 
 ## Violation Determination
 
-- authoritative `.codex/agents/{path}.md` playbook lacks a context tier note -> Violation
-- TOML bootstrap is empty, does not point to the same-relative playbook, or points to a missing file -> Violation
-- Tier 1 role performs judgment or planning -> Violation
-- `model_reasoning_effort` conflicts with the documented tier without rationale -> Violation
-- a new or regenerated Codex role still uses `gpt-5.4` examples or defaults -> Violation
-- coordinator sends broad project context to a deterministic utility -> Violation
-- analysis or review agent receives no upstream worklog or decision context -> Violation
+- An authoritative playbook omits tier/startup context or gives Tier 1 judgment work without justification -> Violation
+- A TOML lacks explicit model/effort or a resolvable same-relative playbook bootstrap -> Violation
+- Defaults override explicit user/target pins outside authorized migration, a model-only migration changes supported effort without authorization, or retaining a target pin triggers fresh compatibility approval -> Violation
+- A playbook duplicates runtime model/effort fields, or a dispatch claims a role override on full history -> Violation
+- Tier 1 receives broad history, or a judgment role lacks required upstream context -> Violation
 
 ## Exceptions
 
-During debugging, the coordinator may temporarily raise a specialist's model or effort. Log the reason in the worklog.
+- Debugging or incident response may temporarily raise model, effort, or context when supported by the runtime and documented in the worklog.

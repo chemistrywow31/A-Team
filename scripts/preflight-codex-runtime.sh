@@ -18,8 +18,8 @@ Usage:
   scripts/preflight-codex-runtime.sh --team-dir teams/{name} [--live-tools a,b,c] [--out path]
 
 Read-only: this script never edits runtime config or user-scope files.
-It probes the current Codex host, runs the static Codex validator, and emits a
-Markdown advisory to stdout or --out.
+It probes the current Codex host, runs the Codex validator (including one strict
+config execution), and emits a Markdown advisory to stdout or --out.
 EOF
 }
 
@@ -67,18 +67,17 @@ fi
 TARGET_LABEL="A-Team repo-self"
 TARGET_PATH="$REPO_ROOT"
 VALIDATOR_CMD=(python3 -B "$SCRIPT_DIR/validate_codex_team.py" --repo-self)
-STRICT_CMD=(codex exec --strict-config --sandbox read-only --skip-git-repo-check --ephemeral "Reply with CONFIG_OK only.")
+STRICT_CRITERION="R2"
+STRICT_NAME="strict-config"
 if [ "$MODE" = "team" ]; then
   TARGET_LABEL=$(basename "$TARGET_DIR")
   TARGET_PATH=$(cd "$TARGET_DIR" && pwd)
-  VALIDATOR_CMD=(python3 -B "$SCRIPT_DIR/validate_codex_team.py" "$TARGET_DIR")
-  STRICT_CMD=(codex -C "$TARGET_DIR" exec --strict-config --sandbox read-only --skip-git-repo-check --ephemeral "Reply with CONFIG_OK only.")
+  VALIDATOR_CMD=(python3 -B "$SCRIPT_DIR/validate_codex_team.py" "$TARGET_PATH")
+  STRICT_CRITERION="G2"
+  STRICT_NAME="target-strict-config"
 fi
 
-STRICT_DISPLAY_CMD="codex exec --strict-config --sandbox read-only --skip-git-repo-check --ephemeral 'Reply with CONFIG_OK only.'"
-if [ "$MODE" = "team" ]; then
-  STRICT_DISPLAY_CMD="codex -C \"$TARGET_DIR\" exec --strict-config --sandbox read-only --skip-git-repo-check --ephemeral 'Reply with CONFIG_OK only.'"
-fi
+printf -v STRICT_DISPLAY_CMD "codex -C %q exec --strict-config --sandbox read-only --skip-git-repo-check --ephemeral 'Reply with CONFIG_OK only.'" "$TARGET_PATH"
 
 TMP_DIR=$(mktemp -d "${TMPDIR:-/tmp}/codex-preflight.XXXXXX")
 cleanup() {
@@ -93,48 +92,51 @@ VALIDATOR_FILE="$TMP_DIR/validator.txt"
 STRICT_FILE="$TMP_DIR/strict.txt"
 CRITERIA_FILE="$TMP_DIR/criteria.txt"
 VALIDATOR_EXIT=0
-STRICT_EXIT=0
 
 if command -v codex >/dev/null 2>&1; then
-  codex --version >"$VERSION_FILE" 2>&1 || true
-  if [ "$MODE" = "team" ]; then
-    codex -C "$TARGET_PATH" doctor >"$DOCTOR_FILE" 2>&1 || true
-    codex -C "$TARGET_PATH" features list >"$FEATURES_FILE" 2>&1 || true
-  else
-    codex doctor >"$DOCTOR_FILE" 2>&1 || true
-    codex features list >"$FEATURES_FILE" 2>&1 || true
-  fi
-  if [ -n "$LIVE_TOOLS" ]; then
-    CODEX_PREFLIGHT_LIVE_TOOLS="$LIVE_TOOLS" "${VALIDATOR_CMD[@]}" >"$VALIDATOR_FILE" 2>&1 || VALIDATOR_EXIT=$?
-  else
-    "${VALIDATOR_CMD[@]}" >"$VALIDATOR_FILE" 2>&1 || VALIDATOR_EXIT=$?
-  fi
-  "${STRICT_CMD[@]}" >"$STRICT_FILE" 2>&1 || STRICT_EXIT=$?
+  codex -C "$TARGET_PATH" --version >"$VERSION_FILE" 2>&1 || true
+  codex -C "$TARGET_PATH" doctor >"$DOCTOR_FILE" 2>&1 || true
+  codex -C "$TARGET_PATH" features list >"$FEATURES_FILE" 2>&1 || true
 else
   printf 'codex binary not found in PATH\n' >"$VERSION_FILE"
   printf 'codex binary not found in PATH\n' >"$DOCTOR_FILE"
   printf 'codex binary not found in PATH\n' >"$FEATURES_FILE"
-  if [ -n "$LIVE_TOOLS" ]; then
-    CODEX_PREFLIGHT_LIVE_TOOLS="$LIVE_TOOLS" "${VALIDATOR_CMD[@]}" >"$VALIDATOR_FILE" 2>&1 || VALIDATOR_EXIT=$?
-  else
-    "${VALIDATOR_CMD[@]}" >"$VALIDATOR_FILE" 2>&1 || VALIDATOR_EXIT=$?
-  fi
-  printf 'codex binary not found in PATH\n' >"$STRICT_FILE"
-  STRICT_EXIT=127
+fi
+if [ -n "$LIVE_TOOLS" ]; then
+  CODEX_PREFLIGHT_LIVE_TOOLS="$LIVE_TOOLS" "${VALIDATOR_CMD[@]}" >"$VALIDATOR_FILE" 2>&1 || VALIDATOR_EXIT=$?
+else
+  "${VALIDATOR_CMD[@]}" >"$VALIDATOR_FILE" 2>&1 || VALIDATOR_EXIT=$?
 fi
 
 # Preserve only EC-3.6 criterion records in the advisory, never raw validator logs.
-awk '/^[A-Za-z0-9_]+ [^|]+ \| (PASS|FAIL|SKIP) \| /' "$VALIDATOR_FILE" >"$CRITERIA_FILE"
+# Strict evidence is already redacted by the validator. Require exactly one
+# record for this target and never turn SKIP, absent, or malformed evidence into PASS.
+awk '$1 != "R2" && $1 != "G2" && /^[A-Za-z0-9_]+ [^|]+ \| (PASS|FAIL|SKIP) \| /' "$VALIDATOR_FILE" >"$CRITERIA_FILE"
+awk -v id="$STRICT_CRITERION" -v name="$STRICT_NAME" '
+  $1 == id {
+    count++
+    if ($0 ~ ("^" id " " name " [|] (PASS|FAIL) [|] [^[:space:]]")) {
+      record=$0
+    }
+  }
+  END {
+    if (count == 1 && record != "") {
+      sub("^" id " " name, "P1 strict-config", record)
+      sub(/ [|] (PASS|FAIL) [|] /, "&reused validator " id ": ", record)
+      print record
+    } else {
+      print "P1 strict-config | FAIL | validator " id " evidence missing, malformed, skipped, or duplicated"
+    }
+  }
+' "$VALIDATOR_FILE" >"$STRICT_FILE"
 
 VERSION=$(head -1 "$VERSION_FILE" | tr '\n' ' ' | sed 's/  */ /g; s/^ //; s/ $//')
 HOST_LINE=$(awk '/^  ✓ sandbox /{sub(/^  /,""); print; exit}' "$DOCTOR_FILE")
 CONFIG_LINE=$(awk '/^      config\.toml/{sub(/^      /,""); print; exit}' "$DOCTOR_FILE")
 FEATURE_LINES=$(grep '^multi_agent' "$FEATURES_FILE" 2>/dev/null || true)
-STRICT_SUMMARY=$(head -5 "$STRICT_FILE" | tr '\n' ' ' | sed 's/  */ /g; s/^ //; s/ $//')
 STATIC_RESULT="PASS"
 [ "$VALIDATOR_EXIT" -eq 0 ] || STATIC_RESULT="FAIL"
-STRICT_RESULT="PASS"
-[ "$STRICT_EXIT" -eq 0 ] || STRICT_RESULT="FAIL"
+STRICT_RESULT=$(awk -F ' [|] ' '{print $2}' "$STRICT_FILE")
 
 LIVE_CLASS="not-probed"
 LIVE_EVIDENCE="No live tool list supplied. Pass --live-tools or set CODEX_PREFLIGHT_LIVE_TOOLS to record the active session tool surface."
@@ -176,12 +178,19 @@ elif [ "$LIVE_CLASS" = "legacy-compatible only" ]; then
   PREFLIGHT_EXIT=1
 fi
 
+printf -v PREFLIGHT_DISPLAY_CMD '%q' "$SCRIPT_DIR/preflight-codex-runtime.sh"
+if [ "$MODE" = "team" ]; then
+  printf -v PREFLIGHT_DISPLAY_CMD '%s --team-dir %q' "$PREFLIGHT_DISPLAY_CMD" "$TARGET_PATH"
+else
+  PREFLIGHT_DISPLAY_CMD="$PREFLIGHT_DISPLAY_CMD --repo-self"
+fi
+
 OUTPUT="$TMP_DIR/output.md"
 {
   echo "# Codex Runtime Setup — $TARGET_LABEL"
   echo
   echo "> Probed: \`$VERSION\` on $(uname -s) at $(date +%Y-%m-%d)."
-  echo "> Re-run \`scripts/preflight-codex-runtime.sh $([ "$MODE" = "repo-self" ] && printf -- '--repo-self' || printf -- '--team-dir %s' "$TARGET_DIR")\` after any Codex upgrade or runtime-config change."
+  echo "> Re-run \`$PREFLIGHT_DISPLAY_CMD\` after any Codex upgrade or runtime-config change."
   echo
   echo "## What Was Probed"
   echo
@@ -208,8 +217,9 @@ OUTPUT="$TMP_DIR/output.md"
   echo "## Strict Config"
   echo
   echo '```text'
-  printf 'P1 strict-config | %s | command exit %s\n' "$STRICT_RESULT" "$STRICT_EXIT"
+  cat "$STRICT_FILE"
   echo '```'
+  echo "- Source: this invocation's validator criterion \`$STRICT_CRITERION\`; no second strict-config execution."
   echo "- Note: \`codex doctor\` reports the user-scoped base config it loaded; the strict-config command above is the project-surface check."
   echo
   echo "## Live Host Tool Readiness"
@@ -231,22 +241,22 @@ OUTPUT="$TMP_DIR/output.md"
   echo "## Setup"
   echo
   echo '```sh'
-  echo "codex --version"
-  echo "codex features list | rg '^multi_agent'"
-  printf '%s\n' "$STRICT_DISPLAY_CMD"
+  printf 'codex -C %q --version\n' "$TARGET_PATH"
+  printf 'codex -C %q features list\n' "$TARGET_PATH"
   echo '```'
   echo
   echo "## Verify"
   echo
   echo '```sh'
-  printf '%s\n' "${VALIDATOR_CMD[*]}"
-  printf '%s\n' "$STRICT_DISPLAY_CMD"
+  printf '%s\n' "$PREFLIGHT_DISPLAY_CMD"
   echo '```'
+  echo "- This preflight includes the validator and one strict-config execution."
   echo
   echo "## Rollback"
   echo
   echo "- This probe is read-only, so it has no config rollback step."
-  echo "- If you changed repo or team runtime files before re-running validation, restore those files from version control or an untouched generated copy."
+  echo "- Preserve the current worktree and concurrent edits. To reverse runtime changes, compare the assigned files with their captured scoped preimages and undo only that task's delta."
+  echo "- Do not restore whole files from HEAD or reset the worktree."
   echo "- Never use this lane to edit \`~/.codex/config.toml\`."
 } >"$OUTPUT"
 

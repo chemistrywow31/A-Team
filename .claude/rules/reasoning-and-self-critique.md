@@ -1,99 +1,59 @@
 ---
 name: Reasoning and Self-Critique
-description: Every agent must think before acting and challenge its own output before submitting
+description: Require compact role-specific decision and verification instructions around every agent workflow
 ---
 
 # Reasoning and Self-Critique
 
 ## Applicability
 
-- Applies to: All agents (every agent .md must contain a `## Reasoning` section and a `## Self-Critique` section)
-- Generated teams: Every generated team must include this rule (or an equivalent) in `rules/` and apply it to all generated agents
+- Applies to: A-Team specialists, coordinators, and generated agents that produce artifacts or decisions
+- Include this rule or an equivalent in every generated team's canonical rule family and requested runtime projections.
 
 ## Rule Content
 
-### Two Structural Gates Around Every Workflow
+### One Agent Contract
 
-Every agent must enforce two structural gates around its workflow:
+Keep these adjacent sections in every agent, in this order:
 
-1. **`## Reasoning` gate** — runs before the workflow. Forces the agent to think before acting.
-2. **`## Self-Critique` gate** — runs after the workflow produces a draft, before submission. Forces the agent to challenge its own output.
-
-Both gates are structural sections in the agent .md file, not instructional sentences. Claude reliably follows structural boundaries; the gates work because the template forces the agent to fill them in.
-
-### Section Ordering in Agent Template
-
-Every agent .md file must place these two sections relative to `## Workflow` as follows:
-
-```
-## Identity
-## Responsibilities
-## Input and Output
-## Reasoning            ← Gate 1: think before acting
-## Workflow             ← Execute
-## Self-Critique        ← Gate 2: challenge before submitting
-## Available Skills
-## Applicable Rules
-... rest
+```markdown
+## Reasoning
+- Establish the task's material inputs, assumptions, authority, and chosen approach.
+## Workflow
+- Execute the role's assigned work.
+## Self-Critique
+- Check the actual output against its acceptance criteria and likely failure points.
 ```
 
-This ordering creates a tight think → act → verify triad. Do not separate the three sections; do not place skills/rules between them.
+Specialize the bullets for the role. Use `.claude/templates/reasoning-self-critique-blocks.md` as the skeleton and preserve the exact headers required by `JUDGMENT.md` J5.1. Keep the contract once; do not add duplicate `## Preflight` or `## Verification` blocks or require four reasoning slots and five critique slots.
 
-### Canonical `## Reasoning` Block
+These sections instruct the agent; they are not forms to reproduce in each return. Report only concise decisions, material assumptions, unresolved gaps, and verification evidence in the existing EC-1 fields or worklog. Do not request or expose private reasoning transcripts.
 
-Every agent's `## Reasoning` section must contain four labeled subsections — `### Knowns`, `### Unknowns`, `### Plan`, `### Risks` — worked through before the workflow starts. The skeleton lives in `.claude/templates/reasoning-self-critique-blocks.md`; writers take the four slot headers from it and fill the bullets with checks specific to THIS agent's task. Specialization is the point: "does every rule trace to an entry in the Phase 2 rules plan?" is executable, "does every claim trace to a source?" is a checkbox. Compliance check: grep the agent file for all four slot headers under `## Reasoning`.
+### Before Delegation
 
-### Canonical `## Self-Critique` Block
+In the coordinator's existing Reasoning/Workflow contract, define the dispatch outcome, correct owner, ready inputs, exact owned and forbidden paths, and acceptance criteria. Do not add a second pre-dispatch form. Delegate only bounded work that can proceed independently alongside useful coordinator work; preserve runtime and shared-filesystem controls.
 
-Every agent's `## Self-Critique` section must contain five labeled checks — `### Evidence Check`, `### Position Check`, `### Counterexample Check`, `### Completeness Check`, `### Failure Mode Check` — run against the draft before submission. If any check fails, revise and re-run all five; do not submit unrevised output. Skeleton: `.claude/templates/reasoning-self-critique-blocks.md` — writers take the five headers and write agent-specific checks under each, as with `## Reasoning` above. Compliance check: grep the agent file for all five check headers under `## Self-Critique`.
+### Verify Before Submission
 
-### When the Gates Apply
+The producer checks its own output before every artifact or decision handoff. Check task coverage, evidence, authority and ownership, and realistic failure modes relevant to that role. Independent acceptance under `rules/execution-contract.md` EC-3 remains required and does not replace this check.
 
-Both gates apply to every output that crosses an agent boundary:
+After a correction, invalidate and rerun every criterion citing a changed file, plus dependent mapping and parity checks. Recheck other criteria when new evidence affects them. Never carry forward a stale same-file PASS or rerun an unrelated generic checklist by default.
 
-- Decisions written to `decisions.md`
-- Files generated (agent .md, skill SKILL.md, rule .md, CLAUDE.md, settings.json)
-- Reports returned to the coordinator
-- Recommendations delivered to the user
+### Resolve Known Gaps
 
-The gates do not apply to internal scratch work that never leaves the agent (e.g., intermediate exploration that gets discarded).
-
-### Coordinators Run a Pre-Dispatch Variant
-
-Coordinators must additionally run a **Pre-Dispatch Reasoning** gate before each Task dispatch, with four slots: `### What This Dispatch Must Achieve`, `### Why This Agent`, `### Inputs the Agent Needs`, `### Predicted Failure Modes`. Canonical block text: `.claude/templates/reasoning-self-critique-blocks.md`. It forces the coordinator to commit before dispatching and prevents reflexive forwarding of vague tasks.
-
-### Self-Critique Cannot Be Outsourced
-
-The agent that produces the output must run its own Self-Critique. Downstream review agents (decision-auditor, dialogue-reviewer, code-reviewer, process-reviewer) are additional layers, not replacements. An agent that submits without self-critique, expecting downstream review to catch errors, is in violation regardless of whether the review later catches the issue.
-
-This is a separation of concerns: Self-Critique catches the agent's own blind spots; downstream review catches blind spots the agent could not see by definition.
-
-### Tier 1 Agents
-
-Tier 1 agents (deterministic formatters, single-lookup utilities — see `rules/context-tier.md`) may use the reduced 2-slot Self-Critique (`### Format Check`, `### Input Coverage Check`) — canonical text in `.claude/templates/reasoning-self-critique-blocks.md`. Tier 1 agents may omit `## Reasoning` entirely if the task has zero judgment calls and the agent .md states this in the Tier 1 justification.
-
-### Failure Recovery
-
-If Self-Critique exposes a gap that revision cannot close within the `rules/execution-contract.md` EC-2.4 bound, the agent must escalate rather than submit known-flawed output. (Two distinct counters: EC-2.4 counts dispatch attempts; this one counts revision loops inside a single attempt. Neither resets the other.) Use `STATUS: NEEDS_CONTEXT` when the gap is informational. Put `INSUFFICIENT_DATA: {items}` in `CONCLUSIONS` to name the missing information; this is a marker, not a status. Use `STATUS: BLOCKED` otherwise. The four EC-1.1 statuses are the only valid report statuses. State the specific gap and what would unblock it.
+Fix gaps within the EC-2 attempt bound; do not submit known-flawed output as DONE. For missing information, use `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {items}` in `CONCLUSIONS`. For a hard blocker, use `STATUS: BLOCKED`. Preserve all four EC-1 statuses; the insufficient-data marker is not a status.
 
 ## Violation Determination
 
-- Agent .md missing `## Reasoning` section → Violation
-- Agent .md missing `## Self-Critique` section → Violation
-- `## Reasoning` placed after `## Workflow` instead of before → Violation
-- `## Self-Critique` placed before `## Workflow` instead of after → Violation
-- `## Reasoning` block missing any of the four canonical slots (Knowns / Unknowns / Plan / Risks) → Violation
-- `## Self-Critique` block missing any of the five canonical checks (Evidence / Position / Counterexample / Completeness / Failure Mode) → Violation
-- Coordinator agent missing `## Pre-Dispatch Reasoning` section in addition to `## Reasoning` → Violation
-- `## Reasoning` or `## Self-Critique` slots filled with the template's generic wording instead of agent-specific checks → Violation
-- Agent declares Tier 1 reduction without Tier 1 justification matching `rules/context-tier.md` → Violation
-- Generated team's `rules/` does not contain a Reasoning and Self-Critique rule (this rule or an equivalent) → Violation
-- Generated team's agents do not include `## Reasoning` and `## Self-Critique` sections → Violation
-- Agent uses `INSUFFICIENT_DATA` as a status or returns any status outside the four EC-1 statuses → Violation
+- An agent omits or reorders Reasoning, Workflow, or Self-Critique, or separates them with unrelated sections -> Violation
+- An agent duplicates the contract with mandatory Preflight/Verification forms or fixed four/five slots -> Violation
+- Generic skeleton bullets replace role-specific decision and verification checks -> Violation
+- A prompt requests private reasoning transcripts, or the producer submits without checking its output -> Violation
+- A correction retains PASS for a criterion citing a changed file or omits dependent mapping/parity rechecks -> Violation
+- A generated team omits this rule or an equivalent from a requested runtime -> Violation
+- A return uses an invalid EC-1 status or conceals an unresolved blocker -> Violation
 
 ## Exceptions
 
-- Tier 1 agents may use the reduced Self-Critique format and may omit `## Reasoning` per the Tier 1 carve-out above.
-- During interactive conversation phases (Phase 1 Discovery), agents that ask the user a single clarification question may complete the question without running the full Self-Critique — but must run both gates before producing any artifact (summary document, requirements doc, role design).
-
-Tradeoff: both gates add 30-60 seconds of structured reasoning per dispatch; skipping them produces faster output whose downstream failure costs (re-dispatch, rework, audit findings) exceed the gate cost.
+- Deterministic Tier 1 utilities may reduce the section content to input validity, format, and input coverage; retain all three J5.1 headers and document why the task has no judgment calls.
+- A clarification-only conversation turn does not require an artifact verification pass. Requirements summaries and other artifacts still require it.

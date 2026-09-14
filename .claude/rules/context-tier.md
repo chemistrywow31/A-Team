@@ -1,6 +1,6 @@
 ---
 name: Context Tier
-description: Define four tiers of context budget, model, and effort for generated agents based on decision scope
+description: Assign Claude-native startup context and model effort by decision scope
 paths:
   - "teams/**"
 ---
@@ -13,84 +13,39 @@ paths:
 
 ## Rule Content
 
-### Tier System for Generated Agents
+### Assign Context By Decision Scope
 
-Every generated agent must include a Context Tier section that defines its startup context budget, model, and effort. This prevents over-feeding simple agents and under-feeding complex ones.
+Every generated agent documents its tier and exact startup inputs in its authoritative role file. Tier measures decision scope; provide the relevant workflow, constraints, and worklog chain rather than automatically copying all history.
 
-| Tier | Scope | Examples | Model | Effort | Startup Context |
-|------|-------|----------|-------|--------|-----------------|
-| 1 | Minimal (exception only) | Pure formatters, deterministic validators with fixed rules, single-lookup utilities | `sonnet` or `haiku` | `medium` or `low` | Role definition + immediate task input only |
-| 2 | Standard | Execution agents (writers, builders, implementers) | `opus` | `high` | Tier 1 + upstream worklog paths + project constraints |
-| 3 | Expanded | Planning and analysis agents (planners, researchers, reviewers, auditors) | `opus` | `xhigh` | Tier 2 + full workflow context + design principles |
-| 4 | Full | Coordinators and cross-cutting agents (team lead, process reviewer, evolution master) | `opus` | `max` | All available context including team norms and project history |
+The Claude model/effort values below are defaults for new teams without explicit pins or explicitly authorized profile migration. Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring; retaining a pin requires no fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort.
 
-### Default Bias
+| Tier | Scope | Claude model / effort defaults | Startup context |
+| --- | --- | --- | --- |
+| 1 | Deterministic utility, no judgment | `sonnet` or `haiku` / `medium` or `low` | Role and immediate input |
+| 2 | Local execution decisions: writers, builders, implementers | `opus` / `high` | Tier 1 plus upstream paths and constraints |
+| 3 | Planning, analysis, and review affecting downstream work | `opus` / `xhigh` | Tier 2 plus workflow and decision context |
+| 4 | Coordination, restructuring, and cross-cutting decisions | `opus` / `max` | Relevant project constraints, worklog chain, role map, and project history |
 
-**Default to Tier 2 (`opus` + `high`) when uncertain.** Tier 1 is an exception requiring explicit justification — the task must have zero judgment calls and produce deterministic output from fully specified input. If an agent makes any judgment, it is Tier 2 or higher.
+Default to Tier 2 when uncertain. Tier 1 requires an explicit zero-judgment justification. Assign Tier 3 or 4 from decision scope, not another platform's role label; record the scope and evidence for any authorized effort change.
 
-### Assignment Criteria
+### Declare Once In Claude Frontmatter
 
-- **Tier 1**: Receives fully specified input. Produces deterministic output. **No** judgment calls. Requires justification in agent .md (state why the task has zero judgment).
-- **Tier 2**: Makes local decisions within defined scope. Needs upstream context, not project-wide.
-- **Tier 3**: Makes decisions affecting other agents or downstream phases. Needs broad context. Includes all research, planning, and review agents.
-- **Tier 4**: Orchestrates agents or audits cross-cutting concerns. Needs maximum context.
+- Write `model` and `effort` directly in agent YAML frontmatter; dispatch overrides are for stated debugging/escalation cases.
+- Put the Context Tier and Startup context notes in the authoritative role file. Do not duplicate model/effort in those notes; frontmatter is their single source.
+- When the selected output includes Codex, use `.codex/rules/codex-runtime-config.md`, `.codex/rules/codex-agent-config-patterns.md`, and `.codex/rules/context-isolation.md` for that target's runtime adaptation. Their platform defaults and controls do not change Claude model/effort or context assignments.
 
-### Documentation in Agent .md
+### Bound Startup Context
 
-Include the following section in every generated agent file:
-
-```markdown
-## Context Tier: {1|2|3|4}
-
-Tier 1 justification (only if Tier 1 is declared): {state why the task has zero judgment calls}
-
-Startup context:
-- {Exactly what context this agent receives at dispatch}
-```
-
-Do NOT restate `model` and `effort` in this section. The frontmatter is their single source; a second
-copy drifts from it — that is not hypothetical, it is how `agent-writer.md`'s optional-field table
-came to omit `xhigh` while the same file's own template emitted it. The tier number here plus the
-frontmatter values is the whole declaration, and the tier↔model mapping in the table above is what
-ties them together.
-
-Of the four elements, two do real work and cannot be dropped: the **Tier 1 justification** is what
-licenses the reduced Self-Critique in `rules/reasoning-and-self-critique.md`, and **Startup context**
-tells the coordinator what to put in the dispatch.
-
-### Frontmatter Requirement
-
-The tier-assigned `model` and `effort` must be written directly into the agent's YAML frontmatter:
-
-```yaml
----
-name: Process Reviewer
-description: ...
-model: opus
-effort: xhigh
----
-```
-
-Do not rely on coordinator dispatch to set effort. Frontmatter is authoritative. Coordinator dispatch `effort` parameter overrides frontmatter only for debugging / escalation scenarios.
-
-### Coordinator Dispatch Rule
-
-The coordinator must match dispatch context to the agent's tier:
-- Do not send Tier 4 context to a Tier 1 agent (wastes context window)
-- Do not restrict a Tier 3+ agent to Tier 1 context (starves decision-making)
+Give Tier 1 only the role and task input. Give Tier 3/4 relevant upstream decisions, project constraints, and worklog paths. Independent acceptance retains the fresh-context restriction in the execution contract.
 
 ## Violation Determination
 
-- Generated agent .md has no Context Tier section → Violation
-- Agent declares Tier 1 without justification in the Tier 1 justification field → Violation
-- Agent declares Tier 1 but its workflow section shows judgment calls (tool choice, content selection, structure decisions) → Violation
-- Agent frontmatter `model` or `effort` does not match the declared Context Tier → Violation
-- Context Tier section restates `model` or `effort` instead of relying on frontmatter → Violation
-- Coordinator dispatches full project context to a Tier 1 agent → Violation
-- Tier 3+ agent receives only immediate task input with no upstream context → Violation
+- An authoritative role file omits tier/startup context or assigns judgment work to Tier 1 without justification -> Violation
+- Required Claude frontmatter model/effort is absent, or a default overrides an explicit user/target pin outside authorized migration -> Violation
+- Context prose duplicates frontmatter model/effort, or another platform's role label determines a Claude tier without decision-scope evidence -> Violation
+- A model-only migration changes supported effort without authorization, or retaining a target pin triggers fresh compatibility approval -> Violation
+- Tier 1 receives broad history, or a judgment role lacks required upstream context -> Violation
 
 ## Exceptions
 
-- During debugging or incident response, any agent may temporarily receive Tier 4 context and `max` effort regardless of declared tier.
-
-Tradeoff: Higher tier = higher cost per invocation. Tier 4 with `max` effort on `opus` is expensive. Use Tier 1 only when the task truly has no judgment — misassigning a judgment task to Tier 1 produces low-quality output that costs more to fix than the model savings.
+- Debugging or incident response may temporarily raise model, effort, or context when the worklog records the reason and the runtime supports it.

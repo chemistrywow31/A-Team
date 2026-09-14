@@ -19,10 +19,10 @@ description: Require current project-local Codex v2 config, protected-path aware
 
 ### Use The Current V2 Multi-Agent Schema
 
-For current A-Team and generated Codex multi-agent surfaces, use:
+Require this schema for Codex multi-agent surfaces. Model/effort values shown are defaults for new teams without explicit pins or explicitly authorized profile migration; they remain A-Team's approved repo-self profile. Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring without fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort.
 
 ```toml
-model = "gpt-5.6-sol"
+model = "gpt-6-astra"
 model_reasoning_effort = "xhigh"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
@@ -64,9 +64,8 @@ Do not generate or keep stale v1 fields such as `disable_response_storage`, `max
 
 ### Model Defaults Belong In Config
 
-- Root or project default guidance is `gpt-5.6-sol` at `xhigh`.
-- Default subagent guidance is `gpt-5.6-terra` at `high`.
-- Role-specific overrides belong in `agents/**/*.toml` or explicit `spawn_agent` parameters, not only in prose.
+- Within the default/migration scope above, root and strong roles default to `gpt-6-astra`/`xhigh` and subagents to `gpt-5.6-terra`/`high`; explicit target model/effort pins take precedence.
+- Every `agents/**/*.toml` declares explicit model/effort. For role-specific dispatch routing, pass explicit `spawn_agent` model/effort with `fork_turns = "none"` or a positive bounded fork; full-history forks inherit the parent.
 
 ## Violation Determination
 

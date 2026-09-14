@@ -47,18 +47,20 @@ Declare canonical authority and the generator stamp in `CLAUDE.md`. Apply the ou
 
 ### Codex Runtime Config
 
-Every runnable Codex surface must include `.codex/config.toml`. Multi-agent configs must set:
+Every runnable Codex surface must include `.codex/config.toml`. Multi-agent configs require the fields below. Model/effort values shown are defaults for new teams without explicit pins or explicitly authorized profile migration, and remain A-Team's approved repo-self profile.
 
-- root `model = "gpt-5.6-sol"`, `model_reasoning_effort = "xhigh"`, `approval_policy = "on-request"`, `sandbox_mode = "workspace-write"`, and `project_doc_fallback_filenames = ["CLAUDE.md"]`
+- root `model = "gpt-6-astra"`, `model_reasoning_effort = "xhigh"`, `approval_policy = "on-request"`, `sandbox_mode = "workspace-write"`, and `project_doc_fallback_filenames = ["CLAUDE.md"]`
 - `[features] multi_agent = true`
 - `[features.multi_agent_v2] enabled = true`, `max_concurrent_threads_per_session = 7`, `expose_spawn_agent_model_overrides = true`, and `wait_agent_enabled = true`
 - `[agents] enabled = true`, `default_subagent_model = "gpt-5.6-terra"`, `default_subagent_reasoning_effort = "high"`, and `interrupt_message = true`
 
 Treat each `[agents.<id>]` table id as the agent's stable snake_case runtime identity. Require each entry to include `description` and `config_file`. Resolve `config_file` relative to `.codex/`; use `../agents/...` for project-root configs. Require the referenced agent TOML's `name` to equal `<id>` exactly and to also include `description`, `model`, `model_reasoning_effort`, `sandbox_mode`, and nonempty `developer_instructions`.
 
+Default strong roles to `gpt-6-astra`/`xhigh` and read-heavy roles to `gpt-5.6-terra`/`high` only within that scope. Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring without fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort. Full-history forks inherit parent model/effort; use bounded/no-history forks and explicit parameters for role-specific routing.
+
 ### Shared Deliverables
 
-Mirror every Codex skill between `.codex/skills/{skill}/SKILL.md` and `.agents/skills/{skill}/SKILL.md`. Include worklog, context-management, and reasoning/self-critique rules or documented equivalents for multi-agent or multi-phase teams.
+Mirror every Codex skill between `.codex/skills/{skill}/SKILL.md` and `.agents/skills/{skill}/SKILL.md`. Include worklog, context-management, execution-contract, and reasoning/self-critique rules or documented equivalents for multi-agent or multi-phase teams. Keep one adjacent Reasoning/Workflow/Self-Critique contract in each authoritative role; do not add duplicate forms.
 
 Every runnable team must ship `docs/RUNTIME-SETUP.md` after runtime artifacts freeze, with a probe stamp and setup, verify, and rollback steps. Retain both mapping artifacts for multi-surface or conversion-retained teams; record requested format, canonical authority, surface state, platform-only files, lossy conversions, and round-trip notes.
 

@@ -2,17 +2,25 @@
 name: Anti Over-Engineering
 category: templates
 applies_when:
+  - generating-rules
+  - generating-architecture-agent
   - generating-execution-agent
   - generating-coding-team
-tags: [simplicity, minimal-changes, scope-control, coding]
+  - generating-packaging-agent
+  - generating-deployment-agent
+  - generating-migration-agent
+  - generating-recovery-agent
+  - generating-review-agent
+tags: [simplicity, minimal-changes, scope-control, coding, proportionality, safeguards, architecture, implementation, packaging, deployment, migration, recovery, review]
 source: raw/claude-4-best-practices.md
+extension_source: .worklog/202609/prevent-overengineering-three-teams/phase-2-a-team-generator-assessment/decisions.md#D6-D9
 ---
 
 # Anti Over-Engineering
 
 ## When to Use
 
-Inject into coding agents, implementers, or any execution agent that tends to add unrequested features, abstractions, or defensive code. Especially valuable for bug-fix agents and focused-task workers.
+Inject into rule generation and into relevant architecture, implementation, packaging, deployment, migration, recovery, and review prompts. The baseline below is from the named Anthropic source; the proportional-safeguard extension is the user-approved A-Team addition identified by `extension_source`.
 
 ## Template
 
@@ -26,8 +34,20 @@ Avoid over-engineering. Only make changes that are directly requested or clearly
 - Defensive coding: Don't add error handling, fallbacks, or validation for scenarios that can't happen. Trust internal code and framework guarantees. Only validate at system boundaries (user input, external APIs).
 
 - Abstractions: Don't create helpers, utilities, or abstractions for one-time operations. Don't design for hypothetical future requirements. The right amount of complexity is the minimum needed for the current task.
+
+Apply proportional design when proposing or retaining a non-obvious safeguard such as a check, gate, integrity lock, compatibility layer, recovery protocol, or deployment blocker. Only in that case, add a short `Safeguard Decision` with exactly these fields:
+
+- Evidence / likelihood: Cite the observed failure, explicit requirement, or credible likelihood. A rare unsupported hypothetical is an assumption or monitoring trigger, not implementation or a release blocker.
+- Protected impact: State the concrete harm the safeguard prevents.
+- Cheapest adequate alternative: Compare against the simplest control that covers the evidenced risk.
+- Ordinary-path cost / new failures: State effects on routine configuration, copy/start, intentional stop/restart, update, and recovery, plus failure modes introduced by the safeguard.
+- Removal / override / monitoring: Define when to remove or bypass the safeguard, or which signal would justify adding it later.
+
+Absent proportionate contrary evidence, keep mutable configuration, package copy/start, intentional stop/restart, update, and recovery usable. Do not let whole-package checksums lock routine configuration changes or let residual-task checks block restart after an intentional stop merely for speculative safety.
+
+Keep narrowly scoped controls when credible corruption, security, privacy, compatibility, data-loss, compliance, or irreversible-mutation risk justifies them. Apply the same five fields and minimize the protected boundary. Use the existing independent reviewer to return a criterion-level verdict; do not add a role, state machine, or approval ladder solely for this contract.
 ```
 
 ## Adaptation Notes
 
-Use as-is for execution agents. Omit or soften for architecture agents or agents explicitly tasked with refactoring. Pair with `anti-hard-coding` to cover both over-engineering and under-engineering failure modes.
+Use the full block for rule generation. For producer prompts, include the `Safeguard Decision` slot only when the role can propose or retain a non-obvious safeguard. For the existing independent reviewer, require a verdict for each of the five fields and for preservation of ordinary paths. Pair with `anti-hard-coding` when both over-engineering and under-engineering are credible failure modes.

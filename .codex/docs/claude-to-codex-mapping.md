@@ -2,15 +2,19 @@
 
 ## Goal
 
-For the A-Team repository itself, `.claude/` is the canonical source design and `AGENTS.md`, `.codex/`, `agents/`, and `.agents/skills/` are its Codex projection. Mapping is retained so regeneration and future conversion remain deterministic. Generated teams do not inherit A-Team's self-hosting authority automatically; their confirmed format and per-team manifest declare their own canonical runtime.
+For the A-Team repository itself, `.claude/` plus `CLAUDE.md` is the canonical source design for shared role intent, workflow, ownership, authority, and quality. `AGENTS.md`, `.codex/`, `agents/`, and `.agents/skills/` are its Codex projection with bounded runtime details from inventoried Codex adaptation inputs. Source authority does not require Claude runtime instructions to carry Codex execution details. Mapping is retained for regeneration and future conversion. Generated teams do not inherit A-Team's self-hosting authority automatically; their confirmed format, declaration, runnable entries, and per-team manifest declare their own authority.
 
 ## Mapping Principles
 
 - A-Team repository canonical source: `.claude/` plus root `CLAUDE.md`
 - A-Team repository Codex projection: root `AGENTS.md`, `.codex/`, `agents/`, and `.agents/skills/`
 - Discovery must confirm the user's requested delivery format before planning or generation
-- Each generated team's mapping manifest declares its canonical runtime; never infer authority from directory presence
+- Each generated team declares exactly one authority: `CLAUDE.md` is the declaration for Claude canonical, `AGENTS.md` for Codex canonical, and `shared/team.yaml` for platform-neutral canonical; never infer authority from directory presence
+- Every other runnable entry must agree. Multi-surface or conversion-retained teams require a manifest with matching authority, roots, surface state, and canonical-source-to-projection mappings; an unmapped single-surface team does not require one
+- Generated-team writes normally stay under `teams/{team-name}/`; an external root additionally requires explicit authorization of that exact real root, exact dispatched owned paths, consistent declaration evidence, resolved-path confinement, scoped verification, and rollback
 - Change the declared canonical source first, then regenerate only affected projections
+- Inject Codex-only model/schema/lifecycle details only from the three `adaptation_inputs` in A-Team's manifest, within each row's exact scope and targets. The matching human audit records the same rows. These inputs do not own shared roles, workflow, or authority and do not make whole mapped trees platform-only.
+- A host generating another platform's team reads the selected target specification on demand. Claude-only generation does not load Codex runtime rules; Codex output retains native model, registry, isolation, and validation requirements.
 - Generated Codex agents use project-level registration in `.codex/config.toml` plus per-agent TOML files under `agents/`
 - Inside `.codex/config.toml`, every `config_file` is resolved relative to `.codex/`. For team-local runtime agent configs stored under project-root `agents/`, generated entries therefore use `../agents/...`.
 - Each `[agents.<id>]` table id is the stable snake_case runtime identity. The referenced TOML must repeat that identity exactly in `name`; display labels belong in descriptions or playbook prose, not in the runtime identity field.
@@ -31,6 +35,27 @@ For the A-Team repository itself, `.claude/` is the canonical source design and 
 | `scripts/` (repo root) | `scripts/` (repo root) | Shared placement, runtime-specific tools | `preflight-permissions.sh` is Claude-only; `preflight-codex-runtime.sh` and `validate_codex_team.py` are Codex-only |
 | `teams/{name}/docs/RUNTIME-SETUP.md` | same path | Bidirectional | Same filename both trees; body differs by probed runtime — Codex reports sandbox/approval posture, Claude Code reports auto-mode carve-outs |
 | N/A | Claude auto-mode carve-out (`autoMode` in user settings) | Claude-only | No Codex counterpart. Codex gates normal work with `approval_policy` / `sandbox_mode`, while protected `.codex/` and `.agents/` rewrites still require the documented bootstrap/approval posture. |
+
+## Platform-Neutral Shared Canonical
+
+Use this mapping only when all authority declarations agree:
+
+- the target team declaration identifies `shared/` as the platform-neutral canonical root
+- every runnable `CLAUDE.md` and/or `AGENTS.md` entry document says it is a projection of that same root
+- `.codex/docs/format-mapping.manifest.yaml` sets `canonical_authority` to `shared/` and maps canonical shared sources to the runnable projections
+- the retained human mapping describes the same direction when that document is present
+
+Map the shared families as follows:
+
+| Shared canonical source | Sequential projections | Writer owner |
+| --- | --- | --- |
+| `shared/team.yaml`, `shared/roles/**` | `.claude/agents/**` and `CLAUDE.md`; then `.codex/agents/**`, `AGENTS.md`, mapping artifacts, and `agents/**/*.toml` | Agent Writer |
+| `shared/rules/**` | `.claude/rules/**`; then `.codex/rules/**` | Rule Writer |
+| `shared/skills/**` | `.claude/skills/**`; then `.codex/skills/**` and `.agents/skills/**` | Skill Writer |
+
+Treat these family paths as maximum eligible surfaces, not blanket ownership. Require every dispatch to enumerate exact mutable paths. Preserve semantic parity across adapted projections and byte identity between `.codex/skills/**` and `.agents/skills/**` runtime mirrors.
+
+For any external target, record the user's authorization for the exact normalized root before dispatch. Resolve each owned path against that root, including existing symlinks and the nearest existing parent of a new path. Missing or conflicting authority evidence, dual-canonical claims, reference-only promotion, or incomplete required mappings returns `NEEDS_CONTEXT` without mutation. Reject `..`, absolute paths outside the root, symlink escapes, and any resolved path outside the authorized root. Start at the declared Claude, Codex, or shared canonical family and regenerate only its mapped projections under the same owner.
 
 ## Agent Transform Rules
 
@@ -94,11 +119,17 @@ Deterministic field mapping:
 Default injection policy:
 
 - if Claude provides no explicit runtime model metadata, inject Codex defaults during conversion
+- for new Codex teams, use the current validated tier profile from `.codex/rules/context-tier.md`: GPT-6 Astra/xhigh for strong roles and Terra/high for bounded read-heavy roles; preserve explicit user choices and record injected values
+- restructuring preserves a target's existing model pins unless model migration is part of the authorized change; do not silently replace compatibility pins or reduce reasoning effort
 - record injected defaults in the manifest so reverse conversion does not pretend they came from Claude
 - convert Claude `settings.json` and hook intent to `.codex/config.toml`, optional Codex hooks, worklog rules, or mapping notes; do not require `.claude/settings.json` in Codex-native output
 - convert Claude skill `context: fork` intent to registered Codex subagents plus structured summary handoffs; do not add Claude-only skill frontmatter to Codex-native skills
 
 ## Runtime Split
+
+Claude's context-tier rule owns native Claude tiers and shared context principles, not the Codex model profile. Codex projections combine those shared principles with `codex-runtime-config.md`, `codex-agent-config-patterns.md`, and `context-isolation.md` as listed in the scoped adaptation-input inventory. Keep target model/effort pins during unrelated maintenance; never infer a model conversion from a context tier alone.
+
+The 2026-09-14 adaptation keeps one compact `Reasoning` -> `Workflow` -> `Self-Critique` triad per agent. Adapt task-specific decisions and verification checks without duplicate Preflight/Verification forms or mandatory nine-slot essays. Preserve role ownership, uncertainty, required metadata, one rejection example, and runtime-specific lifecycle semantics. Interim summaries are nonblocking; an existing scoped authorization satisfies that scope's approval requirement, while new-team confirmation and uncovered material-change approvals remain explicit. Review frozen batches independently and invalidate changed-file criteria plus dependent mapping/parity checks after corrections.
 
 - `AGENTS.md`: the active project contract for Codex.
 - `agents/`: project-level Codex agent configs referenced by `.codex/config.toml`.
@@ -109,6 +140,10 @@ Default injection policy:
 ## Per-Team Mapping Artifact
 
 Each Codex or dual-format generated team should retain `teams/{team-name}/.codex/docs/format-mapping.md` and `format-mapping.manifest.yaml`. A Claude-only team needs these when conversion retention is requested. These artifacts are authoritative for later restructuring.
+
+For a Claude-canonical team, `CLAUDE.md` is both its canonical runnable entry and team declaration. For a Codex-canonical team, `AGENTS.md` serves both roles. The declaration names the authority and canonical roots; every other runnable root entry must agree.
+
+For a platform-neutral `shared/` team, also retain a target-local team declaration such as `shared/team.yaml`. It must name `shared/` as platform-neutral canonical authority, enumerate or map the canonical role/rule/skill families, and agree with every runnable root entry and the machine-readable manifest. A mismatch blocks mutation.
 
 Required sections:
 
@@ -122,8 +157,11 @@ Required sections:
 Required manifest fields:
 
 - `spec_version`
+- `requested_format`
+- `canonical_authority`
 - `supported_directions`
 - `canonical_roots`
+- `surface_state`
 - `default_policies`
 - `artifacts`
 
@@ -231,6 +269,8 @@ artifacts:
 
 Use sidecars only for lossy or bundle-style transforms such as registry metadata, frontmatter remapping, or bridge skills.
 
+For a `shared/` canonical manifest, use `canonical_authority: "shared/"`, include `shared_to_claude` and/or `shared_to_codex` in `supported_directions`, and set each semantic artifact's canonical source to `runtime: shared` under `shared/`. Keep runtime-only Claude and Codex artifacts non-canonical. Do not relabel a shared target from directory presence alone.
+
 ## Conversion Readiness Checklist
 
 The mapping artifact is conversion-ready only if all of the following are true:
@@ -249,6 +289,11 @@ The mapping artifact is conversion-ready only if all of the following are true:
 
 ```text
 teams/{team-name}/
+├── shared/                            # when platform-neutral canonical authority is declared
+│   ├── team.yaml
+│   ├── roles/
+│   ├── rules/
+│   └── skills/
 ├── CLAUDE.md                         # when Claude-runnable or reference mirror is requested
 ├── .claude/                          # when declared by requested format/mapping
 ├── AGENTS.md                          # when Codex-runnable
@@ -277,4 +322,6 @@ teams/{team-name}/
 
 - Claude-canonical -> Codex: adapt the declared Claude source into `AGENTS.md`, `.codex/`, and `agents/*.toml`, then regenerate `.agents/skills/` as the runtime mirror.
 - Codex-canonical -> Claude: export from the declared Codex source using the retained mapping artifact instead of inferring structure from prompts.
-- Dual-format delivery: use the manifest's `canonical_runtime`; never choose a source package merely because both trees exist.
+- Shared-canonical -> Claude/Codex: update the exact assigned `shared/` family first, then regenerate its declared Claude, Codex, runtime, root, and mapping projections sequentially under one family owner.
+- Dual-format delivery: use the manifest's declared `canonical_runtime` or `canonical_authority` field according to its retained schema; never choose a source package merely because both trees exist.
+- External-root delivery/evolution: require exact user authorization, one consistent Claude/Codex/shared declaration quorum, every required mapping, exact owned paths, resolved-path confinement, canonical-first projection order, scoped verification, and rollback.
