@@ -46,6 +46,7 @@ Those artifacts must record:
 - platform-only files
 - lossy or manual steps
 - reverse strategy or canonical source
+- selected Codex runtime profile, installed-client evidence, and live readiness limits under `.codex/rules/codex-runtime-config.md`; distinguish documented CLI and observed-host lifecycle/capacity
 
 ### Protect Projection Boundaries
 
@@ -58,7 +59,7 @@ Those artifacts must record:
 - Discovery omits requested format, canonical authority, or mapping-retention need -> Violation
 - A generated team surface is written first even though another surface was declared canonical -> Violation
 - A multi-surface or conversion-retained team omits `.codex/docs/format-mapping.md` or `.codex/docs/format-mapping.manifest.yaml` -> Violation
-- Mapping artifacts omit canonical authority, surface state, or platform-only files -> Violation
+- Mapping artifacts omit canonical authority, surface state, platform-only files, or the selected Codex runtime profile/evidence -> Violation
 - A non-canonical surface is hand-edited as if it were canonical -> Violation
 
 ## Exceptions

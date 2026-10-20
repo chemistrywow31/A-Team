@@ -49,14 +49,18 @@ paths:
 ---
 ```
 
-`paths` is optional and valid only for rules.
+`paths` is optional in this Codex rule-library format. Do not copy Claude skill activation, tool, preload, or fork fields into Codex skills as runtime controls. Native Claude supports skill `paths`; this Codex format distinction is not a Claude prohibition.
 
 ### Field Constraints
 
-- `name`: English, title case
-- `description`: one sentence, under 120 characters
+- `name`: preserve existing identifiers; English Title Case is A-Team's display convention, not a native naming restriction
+- `description`: one sentence, under 120 characters under the A-Team authoring convention
 - `agent_type`: one of `default`, `worker`, `explorer`
 - `paths`: an array of valid glob patterns
+
+### Separate Prompt Metadata From Runtime Configuration
+
+The playbook fields above are A-Team conventions; role model, effort, sandbox, and permissions live in the paired `agents/**/*.toml`. Apply the target-supported schema under `.codex/rules/codex-agent-config-patterns.md` and preserve explicit pins. Do not infer loading or inheritance from prose-only dependency labels such as `benefits-from`; keep any such label as tooling metadata. Read the required skill file explicitly when invoked.
 
 ### Validation Timing
 

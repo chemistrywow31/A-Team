@@ -21,7 +21,9 @@ from pathlib import Path
 
 SKILL_DIR = Path(__file__).parent
 ASSETS_DIR = SKILL_DIR / "assets"
-CATEGORIES = ["templates", "context-strategies", "advanced-techniques", "claude-4-patterns"]
+# Only maintained categories participate in scenario/tag selection.
+# claude-4-patterns/ and raw/ remain historical provenance, never active payload.
+CATEGORIES = ["templates", "context-strategies", "advanced-techniques"]
 
 
 def parse_frontmatter(filepath: Path) -> dict:
@@ -75,7 +77,7 @@ def parse_frontmatter(filepath: Path) -> dict:
 
 
 def scan_knowledge_files() -> list[dict]:
-    """Scan all knowledge files and return their metadata."""
+    """Scan maintained knowledge files only and return their metadata."""
     entries = []
     for category in CATEGORIES:
         cat_dir = ASSETS_DIR / category

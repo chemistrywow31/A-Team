@@ -1,11 +1,11 @@
 spec_version = 1
-generated_on = "2026-09-14"
+generated_on = "2026-10-06"
 canonical_root = ".claude/"
 human_audit = ".codex/docs/claude-adaptation-audit.md"
 
 [[adaptation_inputs]]
 path = ".codex/rules/codex-runtime-config.md"
-scope = "Codex model/effort defaults, config schema, project runtime/approval/protected-path guidance"
+scope = "Codex target-supported model/effort inheritance, config schema, installed-client/live-host profiles, approval/protected-path guidance"
 targets = [
   "AGENTS.md",
   ".codex/rules/context-tier.md",
@@ -16,6 +16,10 @@ targets = [
   ".codex/skills/quality-validation/SKILL.md",
   ".codex/agents/team-architect.md",
   ".codex/skills/a-team/SKILL.md",
+  ".codex/rules/codex-native-output.md",
+  ".codex/agents/evolution/team-restructuring-master.md",
+  ".codex/skills/prompt-optimization/SKILL.md",
+  ".codex/skills/md-generation-standard/SKILL.md",
 ]
 
 
@@ -30,12 +34,15 @@ targets = [
   ".codex/skills/prompt-patterns/SKILL.md",
   ".codex/skills/quality-validation/SKILL.md",
   ".codex/agents/review/runtime-preflight-advisor.md",
+  ".codex/rules/yaml-frontmatter.md",
+  ".codex/skills/md-generation-standard/SKILL.md",
+  ".codex/agents/evolution/team-restructuring-master.md",
 ]
 
 
 [[adaptation_inputs]]
 path = ".codex/rules/context-isolation.md"
-scope = "Codex fork/delegation/isolation lifecycle adaptation"
+scope = "Codex target-supported fork/delegation/isolation lifecycle adaptation"
 targets = [
   "AGENTS.md",
   ".codex/rules/context-tier.md",
@@ -50,6 +57,9 @@ targets = [
   ".codex/agents/review/runtime-preflight-advisor.md",
   ".codex/agents/evolution/team-restructuring-master.md",
   ".codex/skills/a-team/SKILL.md",
+  ".codex/rules/context-management.md",
+  ".codex/rules/coordinator-mandate.md",
+  ".codex/skills/team-topology-analysis/SKILL.md",
 ]
 
 

@@ -16,17 +16,18 @@ description: Bind dispatches and specialist returns to owned paths, bounded esca
 - **EC-1.2** Start CONCLUSIONS with the stable task path and whether acceptance criteria are met, partially met, or not met.
 - **EC-1.3** DONE requires nonempty EVIDENCE with file:line or command-evidence paths. Verifiers cite evidence for every criterion.
 - **EC-1.4** ARTIFACTS lists every produced or updated file, including worklogs and touched owned paths; mark new files `(new)`.
-- **EC-1.5** Put products longer than 30 lines in files; return their paths and a summary of at most 3 lines.
-- **EC-1.6** Do not paste file contents, diffs, transcripts, or raw tool output into dispatches or returns. Link their files.
+- **EC-1.5** Put products longer than 30 lines in files; return their paths and a summary of at most 3 lines. EC-1.12 is the bounded exception when the host blocks persistence.
+- **EC-1.6** Do not paste file contents, diffs, transcripts, or raw tool output into dispatches or returns. Link their files; only EC-1.12 permits bounded inline report evidence.
 - **EC-1.7** Coordinator handling: verify DONE under EC-3; resolve or explicitly accept logged concerns; resolve BLOCKED before redispatch; supply all named context for NEEDS_CONTEXT. Do not redispatch an unchanged blocker.
 - **EC-1.8** Bounce a malformed report once with the schema. A second schema violation on the task counts as a failed attempt under EC-2.4.
 - **EC-1.9** Name all known missing context at once. More than 3 NEEDS_CONTEXT rounds becomes BLOCKED, except user-question relays under the conversation protocol.
-- **EC-1.10** Dispatch the stable task path, goal, BRIEF/worklog paths, exact owned and forbidden paths, acceptance criteria, shared-filesystem non-reversion rule, and any runtime override or fork choice.
+- **EC-1.10** Dispatch the stable task path, goal, BRIEF/worklog paths, exact owned and forbidden paths, acceptance criteria, shared-filesystem non-reversion rule, startup inputs, report-persistence owner/destination, and any runtime override or fork choice.
 - **EC-1.11** Follow-ups on an existing task path carry only changed assumptions, invalidated evidence, updated criteria, or new paths.
+- **EC-1.12** When the live sandbox or host prevents an assigned report write, use `INLINE-FALLBACK` only if the dispatch names the coordinator as persistence owner, the exact report destination, and a finite raised return cap. Keep EC-1 fields and statuses; put the blocker, intended path, and concise evidence in the bounded return. ARTIFACTS must say the report is pending coordinator persistence, not claim a file exists. The coordinator persists it, verifies the path, and records provenance before acceptance. If this handoff is unspecified, return `NEEDS_CONTEXT` for the cap/owner; never bypass the restriction through another tool or broaden permissions.
 
 ## EC-2 Escalation Ladder
 
-Use the model actually running the task: MID = `gpt-5.6-terra`/`high`, STRONG = `gpt-6-astra`/`xhigh`, SMALL = an approved lower utility tier. Prompt labels do not prove runtime routing. Full-history forks inherit the parent model/effort; use explicit overrides with `fork_turns = "none"` or a positive bounded fork for role-specific routing.
+Use the model actually running the task: MID = `gpt-5.6-terra`/`high`, STRONG = `gpt-6-astra`/`xhigh`, SMALL = an approved lower utility tier. Preserve role pins; root/unpinned defaults are host-selected. Prompt labels do not prove effective routing. On A-Team's observed v2 host, full-history forks inherit the parent model/effort and overrides require `fork_turns = "none"` or a positive bounded fork. For other targets, use their supported lifecycle/profile under `.codex/rules/codex-runtime-config.md` and `.codex/rules/context-isolation.md`.
 
 - **EC-2.1** SMALL failure gets no retry at that tier. Escalate to MID with failed checks and paths; skip to STRONG only for a stated expertise gap under J1.3.
 - **EC-2.2** MID failure gets one changed-approach retry. A second consecutive failure escalates to STRONG.
@@ -70,7 +71,8 @@ At the same level, narrower applicability wins. If still tied, stop the affected
 ## Violation Determination
 
 - A return omits/reorders EC-1 fields, uses an invalid status, exceeds its cap, or claims DONE without evidence -> Violation
-- A dispatch omits exact scope, criteria, non-reversion, or an existing BRIEF path, or repeats unchanged context -> Violation
+- A dispatch omits exact scope, criteria, non-reversion, report-persistence ownership, or an existing BRIEF path, or repeats unchanged context -> Violation
+- Inline fallback has no dispatch-stated cap/destination/owner, falsely claims persistence, bypasses the host, or is accepted before coordinator persistence -> Violation
 - A retry exceeds EC-2 bounds, repeats the failed MID approach, lacks its trace, or weakens criteria without permitted evidence -> Violation
 - A producer or dispatching coordinator is sole acceptor, a criterion lacks current evidence, or a changed-file/dependent parity criterion retains stale PASS -> Violation
 - Required independent opinion, runtime execution evidence, or runtime freeze is missing -> Violation
@@ -78,6 +80,7 @@ At the same level, narrower applicability wins. If still tied, stop the affected
 
 ## Exceptions
 
+- EC-1.12 allows a bounded report handoff when persistence is host-blocked; EC statuses, evidence requirements, and independent acceptance remain binding.
 - Interactive user conversation is not a specialist return.
 - Micro-dispatches under 200 words may carry inline context; report requirements still apply.
 - A single-dispatch task with no phases may carry goal and paths directly without a BRIEF.

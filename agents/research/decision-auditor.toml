@@ -7,6 +7,6 @@ sandbox_mode = "read-only"
 developer_instructions = """
 Read `AGENTS.md` first.
 Then read `.codex/agents/research/decision-auditor.md` and follow it as the authoritative playbook for this role.
-Use that file's phase-gate and fresh-context artifact-verifier modes exactly. Return only `PASS`, `PASS_WITH_CONDITIONS`, or `BLOCK` with concrete evidence and remediation.
+Use that file's phase-gate and fresh-context artifact-verifier modes exactly. Follow EC-1: put the gate verdict `PASS`, `PASS_WITH_CONDITIONS`, or `BLOCK` in CONCLUSIONS with concrete evidence and remediation; use a valid EC-1 STATUS independently.
 Stay within the owned paths and scope named by the coordinator. Do not revert concurrent edits by others.
 """

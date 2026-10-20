@@ -1,6 +1,6 @@
 ---
 name: Context Management
-description: Keep Codex multi-agent work path-driven, v2-lifecycle correct, and resumable without replaying whole context
+description: Keep Codex multi-agent work path-driven, target-lifecycle correct, and resumable without replaying whole context
 ---
 
 # Context Management
@@ -16,7 +16,9 @@ description: Keep Codex multi-agent work path-driven, v2-lifecycle correct, and 
 - Every delegation branch uses a stable phase-purpose task path such as `discovery_requirements`, `planning_skill_plan`, `generation_rules`, `generation_agents`, `restructure_assessment`, or `review_runtime_preflight`.
 - Every dispatch must include the stable task path, worklog or BRIEF paths, owned write paths, forbidden paths, acceptance criteria, and the shared-filesystem non-reversion rule.
 
-### Use The V2 Lifecycle Tools Exactly
+### Use The Selected Runtime Lifecycle
+
+Apply `.codex/rules/context-isolation.md` and the target's recorded runtime profile. The following is A-Team's observed v2 host contract; do not require these names on a host exposing the documented portable CLI lifecycle.
 
 - `spawn_agent` starts new bounded independent work.
 - `send_message` carries a non-triggering update to an existing branch.
@@ -37,7 +39,7 @@ Do not paste full upstream documents into a dispatch when the files are availabl
 ### Return Structured Summaries
 
 - Every specialist return follows `rules/execution-contract.md`.
-- Long findings, research notes, and logs go to the worklog or owned artifact files, not the return message.
+- Long findings, research notes, and logs go to the worklog or owned artifact files. Each dispatch names the report destination and persistence owner. If the live host blocks the specialist's report write, EC-1.12 permits only a dispatch-bounded `INLINE-FALLBACK` for coordinator persistence; do not claim an unwritten file exists or bypass the restriction with another tool.
 
 ### Resume From Worklog
 
@@ -50,7 +52,8 @@ After interruption or compaction, restore state from the task BRIEF, the current
 - A coordinator routes or joins without checking live agent state first -> Violation
 - `wait_agent` is used while independent coordinator work still remains -> Violation
 - A dispatch includes full upstream documents when file paths would suffice -> Violation
-- A specialist returns an unstructured long narrative instead of the execution-contract summary -> Violation
+- A specialist returns an unstructured long narrative, or fallback lacks its finite cap/destination/persistence owner -> Violation
+- An unverified target is required to expose A-Team's observed v2 lifecycle -> Violation
 
 ## Exceptions
 

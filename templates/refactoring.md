@@ -1,11 +1,13 @@
 # Delegation Template: Refactoring
 
-Use for: restructuring existing files while preserving behavior (prompt slimming, rule consolidation, team restructuring execution). Fill every {{slot}}; keep all other lines verbatim. EC-* clauses live in `.claude/rules/execution-contract.md` (EC-1 = directive §7.1, EC-2 = §7.2, EC-3 = §7.3). J-* rubrics live in `JUDGMENT.md`.
+Use for: restructuring existing files while preserving behavior (prompt optimization, rule consolidation, team restructuring execution). Fill every {{slot}}; keep all other lines verbatim. EC-* clauses live in the selected runtime's execution contract (`.claude/rules/execution-contract.md` or `.codex/rules/execution-contract.md`) (EC-1 = directive §7.1, EC-2 = §7.2, EC-3 = §7.3). J-* rubrics live in `JUDGMENT.md`.
+
+Select a runtime-native tier and effective model/effort from the target profile. Claude aliases in filled examples are illustrative; preserve explicit target pins and use the current host's delegation tool.
 
 ## Template
 
 ```
-TASK ID: {{id}}   TIER: {{haiku|sonnet|opus}}   RETRY BUDGET: per EC-2 (§7.2)
+TASK ID: {{id}}   TIER: {{selected runtime tier; explicit model/effort or supported inheritance}}   RETRY BUDGET: per EC-2 (§7.2)
 OBJECTIVE: {{one sentence — what gets restructured, what must not change}}
 CONTEXT (absolute paths only): {{BRIEF absolute path}}; {{upstream decisions.md absolute paths}}
 SCOPE — IN: {{exact files to refactor}}
@@ -26,7 +28,7 @@ BUDGET: max {{lines}} output lines / {{count}} tool calls
 ## Filled example
 
 ```
-TASK ID: harden-07   TIER: opus   RETRY BUDGET: per EC-2 (§7.2)
+TASK ID: harden-07   TIER: strong; Claude opus example, preserve the selected runtime profile   RETRY BUDGET: per EC-2 (§7.2)
 OBJECTIVE: Slim rules/reasoning-and-self-critique.md by extracting canonical blocks; every requirement must survive.
 CONTEXT (paths only): .worklog/202607/a-team-hardening/brief.md; .worklog/202607/a-team-hardening/phase-2-audit/defects-token-waste.md
 SCOPE — IN: .claude/rules/reasoning-and-self-critique.md; .claude/templates/reasoning-self-critique-blocks.md (new)

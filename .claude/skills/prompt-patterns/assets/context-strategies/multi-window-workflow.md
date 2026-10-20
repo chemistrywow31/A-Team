@@ -6,41 +6,45 @@ applies_when:
   - generating-coding-team
   - context-constrained
 tags: [multi-window, state-management, fresh-context, git, setup-scripts]
-source: raw/context-engineering-blog.md
+historical-source: raw/context-engineering-blog.md
+source: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+reviewed: 2026-10-06
 ---
 
 # Multi-Window Workflow
 
 ## Core Principle
 
-Tasks spanning multiple context windows require deliberate state management. The first window sets up the framework and verification infrastructure; subsequent windows iterate against that framework. Claude's latest models are effective at discovering state from the local filesystem, making fresh context windows viable alternatives to compaction.
+For work that spans context windows, preserve enough state to resume and verify what changed. Reuse the project's existing workflow before adding setup scripts or tracking files.
 
-## Pattern
+## Initial Work
 
-**First window — setup:**
-- Write tests in structured format (e.g., `tests.json`) before starting implementation
-- Create setup scripts (`init.sh`) to start servers, run test suites, run linters
-- Establish the todo list and progress tracking file
-- Make initial git commit as a checkpoint
+1. Identify the existing entrypoints, test commands, worklog, and current state.
+2. Record the objective, boundaries, completed work, unresolved decisions, and next step.
+3. Add a setup script, structured test record, or checkpoint only when the task needs repeatable recovery and owns that artifact.
 
-**Subsequent windows — iteration:**
-- Start by reading `progress.txt`, `tests.json`, and git logs
-- Run the setup script to restore working state
-- Pick up from the last completed item on the todo list
-- Commit incrementally for restorable checkpoints
+`init.sh`, `tests.json`, and `progress.txt` are possible names, not required output files. Git commits are optional checkpoints only when authorized; do not introduce a commit requirement through a prompt pattern.
 
-**Fresh context vs compaction tradeoff:**
-- Fresh context: No accumulated noise; model rediscovers state from filesystem and git. Better when task state is well-externalized to files.
-- Compaction: Preserves conversational nuance and decision rationale. Better when implicit context matters.
+## Resume
 
-**State files to maintain:**
-- `tests.json` — structured test status (passing/failing/not_started)
-- `progress.txt` — freeform session notes ("Fixed X, next: investigate Y")
-- Git log — history of changes and restorable checkpoints
-- `init.sh` — repeatable environment setup
+Read the recorded state and inspect the current files or git diff before changing anything. Reuse a safe existing setup command if the environment needs restoration. Continue from the next unresolved item rather than restarting completed work or assuming the summary is current.
 
-**Key rule:** "It is unacceptable to remove or edit tests because this could lead to missing or buggy functionality."
+Fresh context is useful when durable artifacts capture the state. Compaction can preserve conversational nuance. Select the host-supported method; neither guarantees complete retention or extends an explicit resource limit.
 
-## A-Team Application
+## Verification Continuity
 
-When generating coding teams with long-horizon tasks: include a rule requiring agents to externalize state to structured files before context exhaustion. When generating coordinators: add guidance to prefer fresh context windows when worklog and git contain full state, and compaction when decision nuance matters. Include `init.sh` creation as a first-phase task in generated coding team workflows. The worklog system already provides the structured notes infrastructure — ensure generated teams connect their progress tracking to both worklog and git.
+Keep current evidence for unchanged criteria. After a correction, recheck the affected files and dependent mapping/parity. Never weaken a test merely to produce green output. A test proven obsolete or incorrect may be corrected within authorized scope, with its requirement evidence and the changed behavior reviewed under the existing contract.
+
+## Examples
+
+### Authorized Test Repair
+
+A test expects a deprecated config field, while the selected client's documented schema and actual parser reject that field. Record the evidence, correct the test and implementation within their owners' scope, and retain coverage of the intended behavior.
+
+### Rejection Case
+
+Reject deleting a failing assertion solely because the new implementation violates it. Fix the behavior or demonstrate a real requirement conflict through the existing escalation path.
+
+## Sources And Attribution
+
+A-Team-authored continuation and test-repair workflow, informed by [Anthropic context engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), checked 2026-10-06. Example state files and checkpoints are conditional techniques, not mandatory scaffolding.

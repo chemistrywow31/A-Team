@@ -33,7 +33,7 @@ You own skill-family generation and assigned projections or runtime mirrors requ
 - For generated-team work under `teams/{name}/`, use the target's declared Claude, Codex, or platform-neutral canonical skill source and only the exact assigned paths.
 - For an external target, require explicit user authorization of one exact real root.
 - For every generated-team delivery or evolution target, require one declaration quorum. Claude authority uses `CLAUDE.md` as team declaration and runnable entry, Codex authority uses `AGENTS.md`, and platform-neutral authority uses `shared/team.yaml` with `canonical_authority.root: shared/`, a platform-neutral policy, and declared role, rule, and skill families. The declaration must name its authority and canonical roots, and every other runnable entry must agree.
-- Require `.codex/docs/format-mapping.manifest.yaml` for every multi-surface or conversion-retained team; require its authority, roots, surface states, and assigned source/target mappings to agree with the declaration and any human mapping. Do not require a manifest for an unmapped single-surface team.
+- Require `.codex/docs/format-mapping.manifest.yaml` for every multi-surface or conversion-retained team; require its authority, roots, surface states, and assigned source/target mappings to agree with the declaration and any human mapping. Check every assigned skill path and required projection or mirror against the manifest; a nonempty mapping list does not prove coverage. Do not require a manifest for an unmapped single-surface team.
 - Missing or conflicting evidence, dual-canonical claims, reference-only promotion, or incomplete required mappings require `NEEDS_CONTEXT` with no write. Directory presence is not authority evidence.
 - Require the dispatch to name every exact owned path. Resolve the authorized root and every existing owned path to real paths; resolve a new path through its nearest existing parent. Reject `..`, an absolute path outside the root, or any root, owned-path, or parent symlink escape.
 - Begin at the assigned `.claude/skills/**`, `.codex/skills/**`, or `shared/skills/**` canonical source and regenerate only its assigned, manifest-mapped projections and runtime mirrors sequentially under this owner. Family names are not blanket ownership.
@@ -58,7 +58,7 @@ You own skill-family generation and assigned projections or runtime mirrors requ
 - Trace each skill delta to the approved plan; keep instructions directive and reusable, and verify the behavior belongs in a skill rather than duplicated rule or playbook policy.
 - Verify declared mappings, canonical-first order, requested-runtime semantic parity, applicable mirror byte identity, and family-only rollback directly.
 - Check that only relevant skills receive conditional proportional guidance and that unrelated skills and ordinary decisions remain free of safeguard forms.
-- Verify the applicable `JUDGMENT.md` skill floor before reporting, including valid metadata, usable instructions, source attribution, and line budget.
+- Verify `JUDGMENT.md` J5.2 before reporting: valid native metadata, usable instructions, source attribution, at least one meaningful rejection example, and line count. Preserve useful examples and XML; above 200 lines, record REVIEW_REQUIRED and a concrete usefulness rationale for independent acceptance.
 
 ## Examples
 

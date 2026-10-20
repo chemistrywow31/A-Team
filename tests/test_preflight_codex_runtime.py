@@ -81,6 +81,7 @@ class PreflightCodexRuntimeTests(unittest.TestCase):
                 if sys.argv[1:3] != ["-B", {str(VALIDATOR)!r}]:
                     os.execv({sys.executable!r}, [{sys.executable!r}, *sys.argv[1:]])
                 print("P0 fake-validator | PASS | isolated regression validator")
+                print("G9 target-runtime-profile | PASS | profile=" + os.environ.get("FAKE_RUNTIME_PROFILE", "v2") + "; fixture schema")
                 if "FAKE_VALIDATOR_RECORDS" in os.environ:
                     print(os.environ["FAKE_VALIDATOR_RECORDS"])
                     raise SystemExit(int(os.environ.get("FAKE_VALIDATOR_EXIT", "0")))
@@ -208,6 +209,27 @@ class PreflightCodexRuntimeTests(unittest.TestCase):
                 )
                 self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
                 self.assertIn("host-tools=v2-ready", result.stdout)
+
+    def test_portable_profile_is_not_promoted_by_v2_live_tools(self) -> None:
+        result = self.run_preflight(
+            FAKE_RUNTIME_PROFILE="portable-cli", CODEX_PREFLIGHT_LIVE_TOOLS=LIVE_TOOLS,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Profile=portable-cli", result.stdout)
+        self.assertIn("host tools not probed", result.stdout)
+        self.assertNotIn("V2-READY", result.stdout)
+
+    def test_pending_usefulness_review_survives_filter_and_live_success(self) -> None:
+        for validator_exit in ("0", "1"):
+            with self.subTest(validator_exit=validator_exit):
+                result = self.run_preflight(
+                    FAKE_VALIDATOR_RECORDS="G2 target-strict-config | PASS | CONFIG_OK\nG10 generated-j5-markdown-quality | REVIEW_REQUIRED | planner.md: 301 lines; independent usefulness verdict required",
+                    FAKE_VALIDATOR_EXIT=validator_exit, CODEX_PREFLIGHT_LIVE_TOOLS=LIVE_TOOLS,
+                )
+                self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+                self.assertIn("G10 generated-j5-markdown-quality | REVIEW_REQUIRED |", result.stdout)
+                self.assertIn("REVIEW_REQUIRED (independent usefulness verdict pending", result.stdout)
+                self.assertNotIn("V2-READY", result.stdout)
 
     def test_missing_codex_binary_preserves_failure_evidence(self) -> None:
         (self.fake_bin / "codex").unlink()

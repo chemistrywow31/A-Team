@@ -227,86 +227,107 @@ def parse_json_document(path: Path) -> tuple[dict, str | None]:
 
 
 def yaml_scalar(value: str) -> object:
+    """Parse emitted scalars/empty collections; reject other YAML syntax explicitly."""
     value = value.strip()
+    if value in {"[]", "{}"}:
+        return [] if value == "[]" else {}
+    if value.startswith('"'):
+        return json.loads(value)
+    if value.startswith("'"):
+        if not re.fullmatch(r"'(?:[^']|'')*'", value):
+            raise ValueError("unsupported or unclosed single-quoted YAML scalar")
+        return value[1:-1].replace("''", "'")
     if value in {"true", "false"}:
         return value == "true"
-    if re.fullmatch(r"\d+", value):
+    if value in {"null", "~"}:
+        return None
+    if re.fullmatch(r"-?\d+", value):
         return int(value)
-    return value.strip("`\"'")
+    if value[:1] in {"[", "{", "&", "*", "!", "|", ">", "`"} or re.search(r":(?:\s|$)", value):
+        raise ValueError("unsupported YAML scalar/flow/anchor syntax; use emitted block mappings/lists or JSON")
+    return value
 
 
 def parse_a_team_manifest_yaml(text: str) -> tuple[dict, str | None]:
-    """Extract only A-Team's scalar/list and root-relations manifest fields.
+    """Parse the emitted nested block-map/list manifest, without pretending to parse all YAML."""
+    tokens: list[tuple[int, str, int]] = []
+    pair_re = re.compile(r"^([A-Za-z_][\w.-]*):(?:\s+(.*)|$)")
+    try:
+        for lineno, raw in enumerate(text.splitlines(), start=1):
+            if not raw.strip() or raw.lstrip().startswith("#"):
+                continue
+            if "\t" in raw[: len(raw) - len(raw.lstrip())]:
+                raise ValueError(f"line {lineno}: tabs are unsupported indentation")
+            # Strip comments outside quoted strings; quoted source paths and
+            # validation descriptions retain their literal # characters.
+            quote = None
+            escaped = False
+            for index, character in enumerate(raw):
+                if escaped:
+                    escaped = False
+                elif quote == '"' and character == "\\":
+                    escaped = True
+                elif quote == "'" and character == "'" and index + 1 < len(raw) and raw[index + 1] == "'":
+                    escaped = True
+                elif quote and character == quote:
+                    quote = None
+                elif not quote and character in {"'", '"'} and (index == 0 or raw[index - 1].isspace()):
+                    quote = character
+                elif not quote and character == "#" and (index == 0 or raw[index - 1].isspace()):
+                    raw = raw[:index]
+                    break
+            indent = len(raw) - len(raw.lstrip(" "))
+            line = raw.strip()
+            if not line:
+                continue
+            # Normalize the documented '- key: value' list-of-map form into a
+            # list item plus its nested mapping, preserving indentation checks.
+            if line.startswith("- ") and pair_re.fullmatch(line[2:]):
+                tokens.extend(((indent, "-", lineno), (indent + 2, line[2:], lineno)))
+            else:
+                tokens.append((indent, line, lineno))
 
-    This deliberately does not implement YAML. It accepts the stable emitted
-    manifest shape needed for canonical-authority and mapping validation.
-    """
-    data: dict[str, object] = {}
-    current_section: str | None = None
-    current_relation: dict[str, object] | None = None
-    current_case: dict[str, object] | None = None
-    for raw_line in text.splitlines():
-        if not raw_line.strip() or raw_line.lstrip().startswith("#"):
-            continue
-        indent = len(raw_line) - len(raw_line.lstrip())
-        line = raw_line.strip()
-        top = re.fullmatch(r"([A-Za-z_][\w-]*):\s*(.*)", line) if indent == 0 else None
-        if top:
-            current_section, value = top.groups()
-            current_relation = None
-            current_case = None
-            if value:
-                data[current_section] = yaml_scalar(value)
-            elif current_section in {"canonical_roots", "registered_roles", "generation_contracts", "default_policies", "contracts", "requested_runtimes", "roles", "rules", "skills", "proportional_design_cases"}:
-                data[current_section] = []
-            elif current_section == "root_relations":
-                data[current_section] = []
-            elif current_section == "canonical_authority":
-                data[current_section] = {}
-            continue
-        if current_section is None:
-            continue
-        list_item = re.fullmatch(r"-\s*(.*)", line)
-        if list_item:
-            value = list_item.group(1)
-            if current_section == "root_relations":
-                current_relation = {}
-                cast_relations = data.setdefault("root_relations", [])
-                if not isinstance(cast_relations, list):
-                    return {}, "root_relations must be a list"
-                cast_relations.append(current_relation)
-                if value:
-                    match = re.fullmatch(r"([A-Za-z_][\w-]*):\s*(.*)", value)
+        def block(index: int, indent: int) -> tuple[object, int]:
+            sequence = tokens[index][1] == "-" or tokens[index][1].startswith("- ")
+            result: list | dict = [] if sequence else {}
+            while index < len(tokens) and tokens[index][0] == indent:
+                _, line, lineno = tokens[index]
+                if sequence:
+                    if line != "-" and not line.startswith("- "):
+                        raise ValueError(f"line {lineno}: mixed YAML list/mapping shape")
+                    value = line[1:].strip()
+                    key = None
+                else:
+                    match = pair_re.fullmatch(line)
                     if not match:
-                        return {}, "unsupported root_relations list item"
-                    current_relation[match.group(1)] = yaml_scalar(match.group(2))
-            elif current_section == "proportional_design_cases":
-                current_case = {}
-                cases = data.setdefault("proportional_design_cases", [])
-                if not isinstance(cases, list):
-                    return {}, "proportional_design_cases must be a list"
-                cases.append(current_case)
+                        raise ValueError(f"line {lineno}: unsupported YAML mapping entry")
+                    key, value = match.groups()
+                    value = value or ""
+                    if key in result:
+                        raise ValueError(f"line {lineno}: duplicate YAML key {key}")
+                index += 1
                 if value:
-                    match = re.fullmatch(r"([A-Za-z_][\w-]*):\s*(.*)", value)
-                    if not match:
-                        return {}, "unsupported proportional_design_cases list item"
-                    current_case[match.group(1)] = yaml_scalar(match.group(2))
-            elif isinstance(data.get(current_section), list):
-                data[current_section].append(yaml_scalar(value))
-            continue
-        nested = re.fullmatch(r"([A-Za-z_][\w-]*):\s*(.*)", line)
-        if current_section == "root_relations" and current_relation is not None and nested:
-            current_relation[nested.group(1)] = yaml_scalar(nested.group(2))
-        elif current_section == "proportional_design_cases" and current_case is not None and nested:
-            current_case[nested.group(1)] = yaml_scalar(nested.group(2))
-        elif current_section == "canonical_authority" and nested:
-            authority = data.get("canonical_authority")
-            if not isinstance(authority, dict):
-                return {}, "canonical_authority must be an object"
-            authority[nested.group(1)] = yaml_scalar(nested.group(2))
-    if not data:
-        return {}, "unsupported YAML declaration shape"
-    return data, None
+                    item = yaml_scalar(value)
+                elif index < len(tokens) and tokens[index][0] > indent:
+                    item, index = block(index, tokens[index][0])
+                else:
+                    item = None
+                if sequence:
+                    result.append(item)
+                else:
+                    result[key] = item
+                if index < len(tokens) and tokens[index][0] > indent:
+                    raise ValueError(f"line {tokens[index][2]}: unsupported YAML indentation")
+            return result, index
+
+        if not tokens or tokens[0][0] != 0:
+            raise ValueError("unsupported YAML declaration shape; expected a root mapping")
+        data, consumed = block(0, 0)
+        if consumed != len(tokens) or not isinstance(data, dict):
+            raise ValueError("unsupported YAML declaration shape; expected one root mapping")
+        return data, None
+    except ValueError as exc:
+        return {}, str(exc)
 
 
 def path_is_within(root: Path, path: Path) -> bool:
@@ -368,6 +389,30 @@ def document_names_canonical_root(path: Path, authority: str) -> bool:
     return authority == "shared" and SHARED_ROOT_DECLARATION_RE.search(read_text(path)) is not None
 
 
+def mapped_path_runtime(value: str) -> str | None:
+    path = Path(value)
+    normalized = path.as_posix()
+    if normalized == "CLAUDE.md" or normalized.startswith(".claude/"):
+        return "claude"
+    if (
+        normalized == "AGENTS.md"
+        or normalized.startswith((".codex/", ".agents/skills/"))
+        or (path.parts and path.parts[0] == "agents" and path.suffix == ".toml")
+    ):
+        return "codex"
+    if normalized.startswith("shared/"):
+        return "shared"
+    return None
+
+
+def mapped_runtime_matches(root: Path, runtime: str | None, value: str) -> bool:
+    """Check lexical and resolved surfaces so cross-runtime symlinks cannot pose as projections."""
+    if runtime is None or not safe_relative_path(root, value):
+        return False
+    resolved = (root / value).resolve().relative_to(root.resolve()).as_posix()
+    return mapped_path_runtime(value) == runtime and mapped_path_runtime(resolved) == runtime
+
+
 def manifest_declares_mapping(root: Path, manifest: dict, authority: str, entry_paths: set[str]) -> bool:
     """Check the declared canonical source maps to each requested runnable entry."""
     artifacts = manifest.get("artifacts")
@@ -384,16 +429,17 @@ def manifest_declares_mapping(root: Path, manifest: dict, authority: str, entry_
         if (
             source_runtime != authority
             or not isinstance(source_path, str)
-            or not source_path.startswith(expected_root)
-            or not safe_relative_path(root, source_path)
+            or not (source_path.startswith(expected_root) or source_path == {"claude": "CLAUDE.md", "codex": "AGENTS.md", "shared": "shared/team.yaml"}[authority])
+            or not mapped_runtime_matches(root, authority, source_path)
         ):
             continue
         target_paths = {
             target.get("path")
             for target in targets
             if isinstance(target, dict) and isinstance(target.get("path"), str)
+            and mapped_runtime_matches(root, normalized_authority(target.get("runtime")), target["path"])
         }
-        if entry_paths.issubset(target_paths):
+        if entry_paths.issubset(target_paths | {source_path}):
             return True
     root_relations = manifest.get("root_relations")
     if isinstance(root_relations, list):
@@ -412,6 +458,61 @@ def manifest_declares_mapping(root: Path, manifest: dict, authority: str, entry_
         if entry_paths.issubset(relation_targets | {expected_source}):
             return True
     return False
+
+
+def assigned_mapping_problems(root: Path, manifest: dict, authority: str, assigned_paths: Iterable[str]) -> list[str]:
+    """Check only exact assigned canonical files; never inventory historical trees."""
+    required_runtimes = {
+        runtime for runtime, entry, patterns in (
+            ("claude", "CLAUDE.md", CLAUDE_REFERENCE_PATTERNS),
+            ("codex", "AGENTS.md", CODEX_REFERENCE_PATTERNS),
+        )
+        if (root / entry).is_file() and not detect_surface_reference_only(root / entry, patterns)
+    }
+    problems: list[str] = []
+    canonical_entry = {"claude": "CLAUDE.md", "codex": "AGENTS.md", "shared": "shared/team.yaml"}[authority]
+    artifacts, relations = manifest.get("artifacts", []), manifest.get("root_relations", [])
+    if not isinstance(artifacts, list) or not isinstance(relations, list):
+        return ["assigned mapping artifacts/root_relations must be lists"]
+    for source in assigned_paths:
+        if (
+            not mapped_runtime_matches(root, authority, source)
+            or not (source.startswith(AUTHORITY_ROOTS[authority]) or source == canonical_entry)
+            or not (root / source).is_file()
+        ):
+            problems.append(f"assigned source is not a confined canonical file: {source}")
+            continue
+        targets: list[tuple[str | None, str]] = []
+        for artifact in artifacts:
+            if not isinstance(artifact, dict) or artifact.get("canonical") is not True:
+                continue
+            spec = artifact.get("source", {})
+            if not isinstance(spec, dict) or spec.get("path") != source or normalized_authority(spec.get("runtime")) != authority:
+                continue
+            artifact_targets = artifact.get("targets", [])
+            if not isinstance(artifact_targets, list):
+                problems.append(f"{source}: targets must be a list")
+                continue
+            for target in artifact_targets:
+                if isinstance(target, dict) and isinstance(target.get("path"), str):
+                    targets.append((normalized_authority(target.get("runtime")), target["path"]))
+        for relation in relations:
+            if isinstance(relation, dict) and relation.get("source") == source and isinstance(relation.get("target"), str):
+                target = relation["target"]
+                runtime = mapped_path_runtime(target)
+                targets.append((runtime, target))
+        covered = {authority} if authority in {"claude", "codex"} else set()
+        for runtime, target in targets:
+            if not safe_relative_path(root, target) or not (root / target).is_file():
+                problems.append(f"{source}: missing or unconfined projection {target}")
+            elif not mapped_runtime_matches(root, runtime, target):
+                problems.append(f"{source}: runtime/path mismatch for {runtime or '<missing>'} projection {target}")
+            elif runtime in required_runtimes:
+                covered.add(runtime)
+        missing = required_runtimes - covered
+        if missing or not targets:
+            problems.append(f"{source}: missing assigned mapping for {', '.join(sorted(missing)) or 'declared projections'}")
+    return problems
 
 
 def detect_declared_canonical_authority(root: Path) -> tuple[str | None, str]:
@@ -804,6 +905,54 @@ def v2_config_problems(cfg: dict) -> list[str]:
     return problems
 
 
+def target_runtime_profile(cfg: dict) -> str:
+    """Identify configured schema only; this is not evidence of host support."""
+    features = cfg.get("features", {})
+    if isinstance(features, dict) and "multi_agent_v2" in features:
+        return "v2"
+    return "portable-cli"
+
+
+def target_config_problems(cfg: dict) -> list[str]:
+    """Bounded checks for distinct native profiles, without repo-self defaults."""
+    features, agents = cfg.get("features", {}), cfg.get("agents", {})
+    problems: list[str] = []
+    if not isinstance(features, dict) or features.get("multi_agent") is not True:
+        problems.append("features.multi_agent != true")
+    if not isinstance(agents, dict):
+        return problems + ["[agents] must be a table"]
+    for key in ("enabled", "interrupt_message"):
+        if key in agents and not isinstance(agents[key], bool):
+            problems.append(f"agents.{key} must be boolean")
+    if agents.get("enabled") is False:
+        problems.append("agents.enabled=false disables the requested multi-agent runtime")
+    if target_runtime_profile(cfg) == "v2":
+        v2 = features["multi_agent_v2"]
+        if not isinstance(v2, dict):
+            return problems + ["features.multi_agent_v2 must be a table"]
+        if v2.get("enabled") is not True:
+            problems.append("features.multi_agent_v2.enabled != true")
+        cap = v2.get("max_concurrent_threads_per_session")
+        if type(cap) is not int or cap < 1:
+            problems.append("v2 max_concurrent_threads_per_session must be a positive integer")
+        for key in ("expose_spawn_agent_model_overrides", "wait_agent_enabled"):
+            if key in v2 and not isinstance(v2[key], bool):
+                problems.append(f"features.multi_agent_v2.{key} must be boolean")
+        for key in ("max_threads", "max_concurrent_threads_per_session", "max_depth"):
+            if key in agents:
+                problems.append(f"mixed runtime profiles: agents.{key} alongside v2")
+    else:
+        for key in ("max_concurrent_threads_per_session", "max_threads"):
+            if key in agents and (type(agents[key]) is not int or agents[key] < 1):
+                problems.append(f"agents.{key} must be a positive integer")
+        if "max_concurrent_threads_per_session" in agents and "max_threads" in agents:
+            problems.append("duplicate portable capacity setting and max_threads alias")
+        for key in ("expose_spawn_agent_model_overrides", "wait_agent_enabled"):
+            if key in agents or (isinstance(features, dict) and key in features):
+                problems.append(f"v2-only {key} in portable profile")
+    return problems
+
+
 def j5_frontmatter_problems(text: str, required_fields: tuple[str, ...]) -> list[str]:
     """Return first-line/frontmatter omissions for a generated Markdown artifact."""
     lines = text.splitlines()
@@ -858,6 +1007,7 @@ def validate_generated_j5_markdown(root: Path) -> tuple[str, str]:
     shared_agent_paths = sorted(root.glob("shared/agents/**/*.md"))
     rule_paths = sorted(root.glob(".codex/rules/*.md"))
     issues: list[str] = []
+    reviews: list[str] = []
 
     if not claude_agent_paths and not codex_agent_paths and not shared_agent_paths:
         issues.append("missing .codex/agents/**/*.md")
@@ -894,6 +1044,12 @@ def validate_generated_j5_markdown(root: Path) -> tuple[str, str]:
             start = section_names.index("Reasoning")
             if section_names[start : start + 3] != list(required[:3]):
                 problems.append("Reasoning, Workflow, Self-Critique must be adjacent H2 sections")
+        for heading in required:
+            if heading in headings and not any(
+                line.strip() and not line.startswith("#")
+                for line in j5_section_body(lines, headings[heading])
+            ):
+                problems.append(f"empty {heading}")
         duplicate_gates = [
             heading for heading in headings
             if re.fullmatch(r"(?:Preflight|Verification)(?: Gate)?", heading)
@@ -902,21 +1058,18 @@ def validate_generated_j5_markdown(root: Path) -> tuple[str, str]:
             problems.append(f"duplicate contract gates: {', '.join(duplicate_gates)}")
         if "Examples" in headings:
             body = j5_section_body(lines, headings["Examples"])
-            rejection_headings = sum(
-                1 for line in body if re.match(r"^#{3,}\s+Rejection Case\s*$", line)
-            )
-            normal_edge_headings = sum(
-                1
-                for line in body
-                if (match := re.match(r"^#{3,}\s+(.+?)\s*$", line))
-                and re.search(r"(^|\s)(normal|edge)(\s|$)", match.group(1), re.IGNORECASE)
-            )
-            if rejection_headings != 1 or normal_edge_headings:
-                problems.append(
-                    f"Examples rejection={rejection_headings}, normal-edge={normal_edge_headings}"
-                )
-        if text.count("\n") > 300:
-            problems.append(f"{text.count(chr(10))} lines exceeds 300")
+            boundary_content = False
+            in_boundary = False
+            for line in body:
+                match = re.match(r"^#{3,}\s+(.+?)\s*$", line)
+                if match:
+                    in_boundary = bool(re.search(r"rejection|boundary|defer|escalat", match.group(1), re.IGNORECASE))
+                elif in_boundary and line.strip() and not line.startswith("#"):
+                    boundary_content = True
+            if not boundary_content:
+                problems.append("Examples missing nonempty rejection/defer/escalation boundary case")
+        if len(lines) > 300:
+            reviews.append(f"{relpath(path)}: {len(lines)} lines exceeds 300")
         if problems:
             issues.append(f"{relpath(path)}: {', '.join(problems)}")
 
@@ -936,13 +1089,20 @@ def validate_generated_j5_markdown(root: Path) -> tuple[str, str]:
                 problems.append(f"empty {heading}")
             elif heading == "Violation Determination" and not j5_has_observable_violation(body):
                 problems.append("non-observable Violation Determination")
-        if text.count("\n") > 100:
-            problems.append(f"{text.count(chr(10))} lines exceeds 100")
+        if len(lines) > 100:
+            reviews.append(f"{relpath(path)}: {len(lines)} lines exceeds 100")
         if problems:
             issues.append(f"{relpath(path)}: {', '.join(problems)}")
 
+    for path in sorted(root.glob(".codex/skills/**/SKILL.md")):
+        count = len(read_text(path).splitlines())
+        if count > 200:
+            reviews.append(f"{relpath(path)}: {count} lines exceeds 200")
+    review_evidence = "; REVIEW_REQUIRED: " + "; ".join(reviews) + "; independent usefulness verdict required" if reviews else ""
     if issues:
-        return "FAIL", "; ".join(issues[:6])
+        return "FAIL", "; ".join(issues[:6]) + review_evidence
+    if reviews:
+        return "REVIEW_REQUIRED", review_evidence.removeprefix("; REVIEW_REQUIRED: ")
     return "PASS", (
         f"J5.1: Claude={len(claude_agent_paths)}, Codex={len(codex_agent_paths)}, "
         f"shared={len(shared_agent_paths)} agents; J5.3: {len(rule_paths)} rules"
@@ -1025,7 +1185,7 @@ class Reporter:
 
     def emit(self, check_id: str, name: str, verdict: str, evidence: str) -> None:
         print(f"{check_id} {name} | {verdict} | {evidence}")
-        if verdict == "FAIL":
+        if verdict in {"FAIL", "REVIEW_REQUIRED"}:
             self.failed = True
 
 
@@ -1206,6 +1366,9 @@ def codex_surface_runnable(root: Path, cfg: dict, cfg_err: str | None, agent_tom
         return False, f".codex/config.toml parse error: {cfg_err}"
     if not codex_multi_agent_enabled(cfg):
         return False, "features.multi_agent is not true"
+    profile_problems = target_config_problems(cfg)
+    if profile_problems:
+        return False, "; ".join(profile_problems)
     registry_entries, registry_issues = extract_registry_paths(root, cfg)
     if registry_issues:
         return False, "; ".join(registry_issues[:3])
@@ -1254,7 +1417,7 @@ def detect_canonical_authority(root: Path, repo_self: bool = False) -> tuple[str
     return "ambiguous", f"conflicting declarations: {sources}"
 
 
-def detect_mapping_state(root: Path, canonical_authority: str, repo_self: bool = False) -> tuple[str, str]:
+def detect_mapping_state(root: Path, canonical_authority: str, repo_self: bool = False, assigned_paths: Iterable[str] = ()) -> tuple[str, str]:
     if repo_self:
         mapping = root / ".codex/docs/claude-to-codex-mapping.md"
         audit = root / ".codex/docs/claude-adaptation-audit.md"
@@ -1262,7 +1425,7 @@ def detect_mapping_state(root: Path, canonical_authority: str, repo_self: bool =
         if mapping.is_file() and audit.is_file():
             if canonical_authority == "ambiguous":
                 return "conflicting", ", ".join(present)
-            return "complete", ", ".join(present)
+            return "declared-root-coverage", ", ".join(present) + "; declaration/root-entry coverage only; assigned families not checked"
         if present:
             return "legacy-only", ", ".join(present)
         return "missing", "no repo-self mapping docs found"
@@ -1273,13 +1436,25 @@ def detect_mapping_state(root: Path, canonical_authority: str, repo_self: bool =
     if mapping.is_file() and manifest.is_file():
         if canonical_authority == "ambiguous":
             return "conflicting", ", ".join(present)
-        return "complete", ", ".join(present)
+        if assigned_paths:
+            data, error = parse_json_document(manifest)
+            problems = [error] if error else assigned_mapping_problems(root, data, canonical_authority, assigned_paths)
+            if problems:
+                return "incomplete", "; ".join(problems)
+            return "assigned-coverage", ", ".join(present) + "; exact assigned sources/projections checked; semantic parity not checked"
+        return "declared-root-coverage", ", ".join(present) + "; declaration/root-entry coverage only; assigned families not checked"
     if legacy.is_file():
         return "legacy-only", relpath(legacy)
     if present:
         return "legacy-only", ", ".join(present)
     root_entries = [path for path in (root / "CLAUDE.md", root / "AGENTS.md") if path.is_file()]
     if canonical_authority in AUTHORITY_VALUES and len(root_entries) == 1:
+        canonical_entry = {"claude": "CLAUDE.md", "codex": "AGENTS.md", "shared": "shared/team.yaml"}[canonical_authority]
+        invalid = [source for source in assigned_paths if not safe_relative_path(root, source)
+                   or not (source.startswith(AUTHORITY_ROOTS[canonical_authority]) or source == canonical_entry)
+                   or not (root / source).is_file()]
+        if invalid:
+            return "incomplete", "assigned source is not a confined canonical file: " + ", ".join(invalid)
         return "not-required", "unmapped single-surface team"
     return "missing", "no format-mapping artifact found"
 
@@ -1322,7 +1497,7 @@ def detect_stamp_status(
     return "PASS", "; ".join(passes)
 
 
-def classify_team(root: Path, repo_self: bool = False) -> Classification:
+def classify_team(root: Path, repo_self: bool = False, assigned_paths: Iterable[str] = ()) -> Classification:
     if repo_self:
         canonical_authority, canonical_evidence = detect_canonical_authority(root, repo_self=True)
         mapping_state, mapping_evidence = detect_mapping_state(root, canonical_authority, repo_self=True)
@@ -1345,7 +1520,7 @@ def classify_team(root: Path, repo_self: bool = False) -> Classification:
     nonteam = detect_nonteam(root, cfg, agent_tomls)
     if nonteam:
         canonical_authority, canonical_evidence = detect_canonical_authority(root)
-        mapping_state, mapping_evidence = detect_mapping_state(root, canonical_authority)
+        mapping_state, mapping_evidence = detect_mapping_state(root, canonical_authority, assigned_paths=assigned_paths)
         stamp_status, stamp_evidence = detect_stamp_status(root, False, False)
         return Classification(
             layout=detect_layout(root),
@@ -1366,7 +1541,7 @@ def classify_team(root: Path, repo_self: bool = False) -> Classification:
     claude_ok, claude_reason = claude_surface_runnable(root)
     codex_ok, codex_reason = codex_surface_runnable(root, cfg, cfg_err, agent_tomls)
     canonical_authority, canonical_evidence = detect_canonical_authority(root)
-    mapping_state, mapping_evidence = detect_mapping_state(root, canonical_authority)
+    mapping_state, mapping_evidence = detect_mapping_state(root, canonical_authority, assigned_paths=assigned_paths)
     stamp_status, stamp_evidence = detect_stamp_status(root, claude_ok, codex_ok)
 
     if activation:
@@ -1528,7 +1703,7 @@ def validate_repo_self(reporter: Reporter, root: Path, classify_only: bool = Fal
         authority_verdict,
         f"{classification.canonical_authority} | {classification.canonical_evidence}",
     )
-    mapping_verdict = "PASS" if classification.mapping_state == "complete" else "FAIL"
+    mapping_verdict = "PASS" if classification.mapping_state == "declared-root-coverage" else "FAIL"
     reporter.emit(
         "MAPPING_STATE",
         "repo-self-mapping-state",
@@ -1675,8 +1850,8 @@ def parse_live_tools_env() -> set[str] | None:
     return {part.strip() for part in raw.split(",") if part.strip()}
 
 
-def validate_team(reporter: Reporter, root: Path, classify_only: bool) -> None:
-    classification = classify_team(root)
+def validate_team(reporter: Reporter, root: Path, classify_only: bool, assigned_paths: Iterable[str] = ()) -> None:
+    classification = classify_team(root, assigned_paths=assigned_paths)
     if classification.runnable_claude and classification.runnable_codex:
         runnable = "dual"
     elif classification.runnable_codex:
@@ -1712,7 +1887,7 @@ def validate_team(reporter: Reporter, root: Path, classify_only: bool) -> None:
     )
     if classification.team_class == "non-team package/data":
         mapping_verdict = "SKIP"
-    elif classification.mapping_state in {"complete", "not-required"}:
+    elif classification.mapping_state in {"declared-root-coverage", "assigned-coverage", "not-required"}:
         mapping_verdict = "PASS"
     elif classification.mapping_state == "missing" and classification.team_class == "Claude-only":
         mapping_verdict = "SKIP"
@@ -1744,7 +1919,7 @@ def validate_team(reporter: Reporter, root: Path, classify_only: bool) -> None:
         reporter.emit("G7", "host-tool-readiness", "SKIP", "non-team package/data")
         skill_verdict, skill_evidence = validate_skill_mirror(root, required=False)
         reporter.emit("G8", "skill-mirror-parity", skill_verdict, skill_evidence)
-        reporter.emit("G9", "target-v2-config-keys", "SKIP", "non-team package/data")
+        reporter.emit("G9", "target-runtime-profile", "SKIP", "non-team package/data")
         reporter.emit("G10", "generated-j5-markdown-quality", "SKIP", "non-team package/data")
         return
     if classification.team_class == "Claude-only":
@@ -1757,7 +1932,7 @@ def validate_team(reporter: Reporter, root: Path, classify_only: bool) -> None:
         reporter.emit("G7", "host-tool-readiness", "SKIP", reason)
         skill_verdict, skill_evidence = validate_skill_mirror(root, required=False)
         reporter.emit("G8", "skill-mirror-parity", skill_verdict, skill_evidence)
-        reporter.emit("G9", "target-v2-config-keys", "SKIP", reason)
+        reporter.emit("G9", "target-runtime-profile", "SKIP", reason)
         reporter.emit("G10", "generated-j5-markdown-quality", "SKIP", reason)
         return
 
@@ -1793,14 +1968,15 @@ def validate_team(reporter: Reporter, root: Path, classify_only: bool) -> None:
     )
 
     if cfg_err:
-        reporter.emit("G9", "target-v2-config-keys", "FAIL", f".codex/config.toml parse error: {cfg_err}")
+        reporter.emit("G9", "target-runtime-profile", "FAIL", f".codex/config.toml parse error: {cfg_err}")
     else:
-        v2_problems = v2_config_problems(cfg)
+        profile_problems = target_config_problems(cfg)
         reporter.emit(
             "G9",
-            "target-v2-config-keys",
-            "PASS" if not v2_problems else "FAIL",
-            "v2 feature block present and current" if not v2_problems else "; ".join(v2_problems[:6]),
+            "target-runtime-profile",
+            "PASS" if not profile_problems else "FAIL",
+            f"profile={target_runtime_profile(cfg)}; bounded static schema checks; target client/live support checked separately"
+            if not profile_problems else "; ".join(profile_problems[:6]),
         )
 
     role_issues: list[str] = []
@@ -1848,7 +2024,9 @@ def validate_team(reporter: Reporter, root: Path, classify_only: bool) -> None:
     )
 
     live_tools = parse_live_tools_env()
-    if live_tools is None:
+    if target_runtime_profile(cfg) != "v2":
+        reporter.emit("G7", "host-tool-readiness", "SKIP", "portable-cli lifecycle not probed by the observed-host v2 tool check; record target-native evidence separately")
+    elif live_tools is None:
         reporter.emit("G7", "host-tool-readiness", "SKIP", "set CODEX_PREFLIGHT_LIVE_TOOLS or use preflight-codex-runtime.sh --live-tools")
     else:
         missing = [tool for tool in REQUIRED_HOST_TOOLS if tool not in live_tools]
@@ -1886,7 +2064,10 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--repo-self", action="store_true", help="Validate the A-Team repo-self Codex surface")
     parser.add_argument("--classify", action="store_true", help="Only emit deterministic classification evidence")
     parser.add_argument("--all", action="store_true", help="Sweep every direct teams/* child")
+    parser.add_argument("--assigned-path", action="append", default=[], help="Exact canonical source file requiring mapped projection coverage (repeatable; target only)")
     args = parser.parse_args(argv)
+    if args.assigned_path and not args.target:
+        parser.error("--assigned-path requires one explicit target")
 
     selected = sum(bool(value) for value in (args.repo_self, args.all, args.target))
     if selected != 1:
@@ -1909,7 +2090,7 @@ def main(argv: list[str]) -> int:
         root = (Path(args.target).resolve() if Path(args.target).is_absolute() else (Path.cwd() / args.target).resolve())
         reporter = Reporter()
         print_header(root)
-        validate_team(reporter, root, classify_only=args.classify)
+        validate_team(reporter, root, classify_only=args.classify, assigned_paths=args.assigned_path)
         overall_failed = reporter.failed
     return 1 if overall_failed else 0
 

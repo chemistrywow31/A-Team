@@ -7,13 +7,15 @@ description: Apply Codex-native prompt patterns for agents, skills, rules, and p
 
 Use this skill when generating or optimizing agent prompts, skills, rules, or project instructions. Select only guidance relevant to the assigned artifact; historical Claude research assets stay under the canonical source tree.
 
-## Compact Generation Contract
+## Effective Generation Contract
+
+- Prioritize effectiveness for the selected platform/model. Preserve useful XML or labeled data, examples, task steps, and checks; concision is secondary. Use supported reasoning-effort controls and clear deliverables instead of requesting private reasoning transcripts. Public derivations and decision evidence remain useful.
 
 - Give each agent exactly one adjacent `Reasoning`, `Workflow`, and `Self-Critique` sequence in that order: role-specific decision criteria, execution steps, then checks of likely failures. Do not duplicate this contract with mandatory `Preflight`/`Verification` blocks or fixed four/five-slot essays.
 - Request concise decisions and verification evidence, never private reasoning transcripts. Keep input/output, ownership, boundaries, uncertainty, and completion requirements explicit.
-- Include exactly one rejection example in each agent or skill. Choose the boundary that changes behavior; do not mandate normal or edge examples.
+- Include at least one meaningful rejection/defer/escalation example in each authored agent or skill. Add positive or contrast examples when they clarify behavior; do not impose a fixed count. J5 size overages require independent usefulness review.
 - Reuse confirmed requirements and existing authorization. Ask only for material missing decisions, unresolved authority, or actions outside that authorization. Continue independent work during supported asynchronous clarification; unanswered required questions do not supply approval.
-- Give the existing independent reviewer one coherent frozen artifact batch. After fixes, rerun every criterion citing a changed file plus dependent mappings/parity. Run preflight for new delivery, changed active runtime artifacts, or missing current readiness evidence; reuse its current validator and strict-model results.
+- Give the existing independent reviewer one coherent frozen artifact batch. After fixes, rerun every criterion citing a changed file plus dependent mappings/parity. Run preflight for new delivery, changed active runtime artifacts, or missing current readiness evidence; reuse its current validator and runtime/model probe results.
 - Use only EC-1 report statuses from `.codex/rules/execution-contract.md`. Missing required context uses `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {missing}` in `CONCLUSIONS`, never as a status.
 
 ## Proportional-Design Generation
@@ -31,14 +33,14 @@ Apply this A-Team contract to rule generation and architecture, implementation, 
 
 - Put project guidance in `AGENTS.md`, registered runtime behavior in `.codex/config.toml` and `agents/**/*.toml`, discoverable skills in `.agents/skills/{skill}/SKILL.md`, and enforceable constraints in `.codex/rules/`.
 - Apply `.codex/rules/reasoning-and-self-critique.md` and `.codex/rules/prompt-engineering-patterns.md` for prompt structure; use `.codex/rules/codex-agent-config-patterns.md` and `.codex/rules/codex-runtime-config.md` for current model/config decisions. Do not copy a generic model guide into every prompt.
-- Translate lifecycle, tool, path, and isolation intent to Codex-native constructs. Runtime permissions belong in config/TOML; do not copy Claude-only skill frontmatter or runtime assumptions.
+- Select actual lifecycle, tool, path, and isolation behavior through `.codex/rules/context-isolation.md`; label observed-host v2 details separately from portable target capabilities. Runtime permissions belong in config/TOML; do not copy Claude-only skill frontmatter or runtime assumptions.
 - Preserve exact assigned ownership, declared authority/mappings, and canonical-first order. Mirror the resulting Codex skill byte-for-byte between `.codex/skills/` and `.agents/skills/`.
 
 ## Application Guide
 
-1. Identify the required behavior and choose the smallest structural instruction that makes it observable.
+1. Identify the required behavior and use current official guidance for the target model/runtime. Keep the structure that makes correct execution and completion observable.
 2. Write task-specific decision, execution, completion, and escalation conditions under the applicable contract.
-3. Supply selected pattern paths with scope, exact owned/forbidden paths, criteria, and worklog paths in writer dispatches.
+3. Supply only applicable pattern paths with scope, exact owned/forbidden paths, criteria, and worklog paths in writer dispatches. The canonical `select.py` preserves scenario/tag selection while excluding historical `claude-4-patterns/` and `raw/`. Its outputs are candidates to adapt, not a blanket assembly recipe; do not copy source payload into the Codex skill package.
 4. Check frontmatter, reference paths, runtime vocabulary, uncertainty handling, rejection behavior, and any applicable safeguard decision.
 
 ## Examples
@@ -48,3 +50,7 @@ Apply this A-Team contract to rule generation and architecture, implementation, 
 Reject a deployment prompt that requires an unconditional whole-package checksum and residual-task gate but supplies no evidence/likelihood, protected impact, cheapest adequate alternative, ordinary-path/new-failure cost, or removal/override/monitoring. Do not let it block routine config edits, copy/start, or intentional stop/restart.
 
 This rejection does not remove a narrowly scoped integrity or task-drain control backed by credible corruption, security, data-loss, compliance, or irreversible-mutation risk. Preserve that justified high-impact control, require the same five fields, and use the existing independent reviewer.
+
+## Sources And Adaptation
+
+Shared source: `.claude/skills/prompt-patterns/SKILL.md`. Inventoried native inputs: `.codex/rules/codex-agent-config-patterns.md` and `.codex/rules/context-isolation.md`. [OpenAI GPT-6 guidance](https://developers.openai.com/api/docs/guides/latest-model) and [GPT-6 Astra prompting guidance](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra), checked 2026-10-06, govern native prompting. A-Team contracts and authored examples are project policy, not vendor text or unseen system prompts. Claude adaptive-thinking/manual-worked-solution advice is applied only to a selected Claude surface using its current model/mode guidance.

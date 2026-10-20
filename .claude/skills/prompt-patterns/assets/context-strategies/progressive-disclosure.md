@@ -7,32 +7,51 @@ applies_when:
   - generating-coding-team
   - context-constrained
 tags: [just-in-time, lazy-loading, metadata, exploration]
-source: raw/context-engineering-blog.md
+historical-source: raw/context-engineering-blog.md
+source: https://code.claude.com/docs/en/memory
+reviewed: 2026-10-06
 ---
 
 # Progressive Disclosure
 
 ## Core Principle
 
-Rather than pre-loading all relevant data, agents maintain lightweight identifiers (file paths, stored queries, URLs) and dynamically load data into context at runtime using tools. This mirrors human cognition — people do not memorize entire corpuses but use external organization systems to retrieve information on demand.
+Keep useful identifiers in startup context and retrieve detail when the task needs it. Match context loading to the decision, rather than requiring directory traversal or a document stack before every action.
 
-## Pattern
+## Retrieval Options
 
-**Lightweight identifiers over full content:**
-- File paths instead of file contents
-- Saved queries instead of query results
-- URLs and bookmarks instead of full documents
-- Database schema instead of row data
+| Identifier | Retrieve when needed |
+| --- | --- |
+| File path or section | Actual source content for the relevant claim |
+| Saved query | Current results for the task's question |
+| Source URL | The referenced current document |
+| Schema location | Definitions needed to interpret the selected data |
 
-**Metadata as guidance signals:**
-- File names hint at purpose (`test_utils.py` in `tests/` vs `src/core_logic/`)
-- Folder hierarchies signal organization and ownership
-- File sizes suggest complexity (large file = investigate deeper)
-- Timestamps proxy relevance (recent = likely active)
-- Naming conventions reveal intent without reading contents
+Names, sizes, dates, and folder locations can guide search; they do not establish authority, freshness, or correctness. Inspect the actual declaration/source when those facts matter.
 
-**Incremental discovery:** Each interaction yields context informing the next decision. Agents assemble understanding layer by layer, maintaining only necessary working memory. Claude Code uses `head` and `tail` to analyze data without loading full objects. Glob and grep enable targeted retrieval without indexing.
+## Worked Example
+
+```text
+Task: verify how a role registration resolves its config_file.
+Start with the named project config and the native path-resolution rule.
+Read the referenced role file when checking the resolved target.
+Do not load all roles or all worklogs merely because they are available.
+```
+
+## Native Loading
+
+For Claude, an `@path/to/file` import is an option for stable material needed in every relevant session. A normal reference is preferable for conditional details. Use the target's supported tools and loading behavior; do not assume an import syntax or inherited skill content transfers to another runtime.
 
 ## A-Team Application
 
-When generating execution agents: equip them with exploration tools (Read, Grep, Glob, Bash) and instruct them to inspect metadata before loading full content. When generating coding teams: include rules that agents must use targeted file reads, never bulk-load directories. When generating research agents: instruct them to scan folder structures and file names first, then selectively deep-dive. Generated CLAUDE.md files must reference key documents via `@path/to/file` imports for pre-loaded norms, while leaving code-level context to just-in-time retrieval.
+Pass the role, task, exact inputs, and necessary decision paths. Retrieve additional source evidence when a question depends on it. Keep the skill's main entry useful for routing, with substantial conditional procedures in linked references.
+
+## Examples
+
+### Rejection Case
+
+Reject classifying a target's canonical authority from its directory name alone. Read its declaration and required mappings before allowing a mutation, even when metadata appears familiar.
+
+## Sources And Attribution
+
+A-Team-authored retrieval example and authority boundary, informed by [Claude memory/imports](https://code.claude.com/docs/en/memory), checked 2026-10-06. The historical-source article provides context for on-demand retrieval, not a mandatory preload recipe.

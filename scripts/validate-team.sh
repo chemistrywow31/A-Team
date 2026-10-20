@@ -13,11 +13,11 @@
 #   validate-team.sh --help
 #
 # Output: one line per check, in the EC-3.6 verifier verdict format
-#   {check-id} {check-name} | PASS|FAIL|SKIP | {evidence}
+#   {check-id} {check-name} | PASS|FAIL|SKIP|REVIEW_REQUIRED | {evidence}
 # Store these lines in verifier-owned evidence files and return the criterion
 # lines with those evidence paths in the EC report; do not paste raw output.
 #
-# Exit: 0 when every check passed, 1 when any check FAILed.
+# Exit: 0 when checks pass, 1 for FAIL or unresolved REVIEW_REQUIRED.
 #
 # Portability: POSIX sh. JSON is parsed with python3, never with the external
 # JSON CLI that .claude/rules/hooks-integration.md forbids depending on (it is
@@ -37,6 +37,8 @@ G_TOTAL=0
 G_PASSED=0
 G_FAILED=0
 G_SKIPPED=0
+REVIEW_REQUIRED=0
+G_REVIEW_REQUIRED=0
 TEAMS_VALIDATED=0
 TEAMS_SKIPPED=0
 
@@ -79,12 +81,14 @@ emit() {
 	PASS) PASSED=$((PASSED + 1)) ;;
 	FAIL) FAILED=$((FAILED + 1)) ;;
 	SKIP) SKIPPED=$((SKIPPED + 1)) ;;
+	REVIEW_REQUIRED) REVIEW_REQUIRED=$((REVIEW_REQUIRED + 1)) ;;
 	esac
 }
 
 pass() { emit "$1" "$2" PASS "$3"; }
 fail() { emit "$1" "$2" FAIL "$3"; }
 skip() { emit "$1" "$2" SKIP "$3"; }
+review() { emit "$1" "$2" REVIEW_REQUIRED "$3; independent usefulness verdict required"; }
 
 # Collapse a multi-line value into one evidence-safe line.
 oneline() {
@@ -727,7 +731,7 @@ check_caps() {
 	if [ "$_n" -eq 0 ]; then
 		skip L1 rule-line-cap-100 "no rule files to measure"
 	elif [ -n "$_over" ]; then
-		fail L1 rule-line-cap-100 "$(printf '%s' "$_over" | wc -w | tr -d ' ') of $_n rules over ${CAP_RULE_LINES}L: $_over"
+		review L1 rule-line-cap-100 "$(printf '%s' "$_over" | wc -w | tr -d ' ') of $_n rules over ${CAP_RULE_LINES}L: $_over"
 	else
 		pass L1 rule-line-cap-100 "all $_n rules <= ${CAP_RULE_LINES} lines"
 	fi
@@ -737,7 +741,7 @@ check_caps() {
 	if [ "$_n" -eq 0 ]; then
 		skip L2 agent-line-cap-300 "no agent files to measure"
 	elif [ -n "$_over" ]; then
-		fail L2 agent-line-cap-300 "$(printf '%s' "$_over" | wc -w | tr -d ' ') of $_n agents over ${CAP_AGENT_LINES}L: $_over"
+		review L2 agent-line-cap-300 "$(printf '%s' "$_over" | wc -w | tr -d ' ') of $_n agents over ${CAP_AGENT_LINES}L: $_over"
 	else
 		pass L2 agent-line-cap-300 "all $_n agents <= ${CAP_AGENT_LINES} lines"
 	fi
@@ -747,7 +751,7 @@ check_caps() {
 	if [ "$_n" -eq 0 ]; then
 		skip L3 skill-line-cap-200 "no SKILL.md files to measure"
 	elif [ -n "$_over" ]; then
-		fail L3 skill-line-cap-200 "$(printf '%s' "$_over" | wc -w | tr -d ' ') of $_n skills over ${CAP_SKILL_LINES}L: $_over"
+		review L3 skill-line-cap-200 "$(printf '%s' "$_over" | wc -w | tr -d ' ') of $_n skills over ${CAP_SKILL_LINES}L: $_over"
 	else
 		pass L3 skill-line-cap-200 "all $_n SKILL.md <= ${CAP_SKILL_LINES} lines"
 	fi
@@ -758,56 +762,72 @@ check_frontmatter() {
 	if [ ! -d "$_ad" ]; then
 		skip F1 agent-frontmatter-fields "no agents/ directory"
 		skip F2 agent-model-value "no agents/ directory"
+		skip F5 agent-native-optional-values "no agents/ directory"
 		return
 	fi
 
-	_n=0
-	_missing=""
-	_badstart=""
-	_badmodel=""
-	for _f in $(find "$_ad" -type f -name '*.md' 2>/dev/null | sort); do
-		_n=$((_n + 1))
-		# Frontmatter = lines between the first '---' and the next '---'.
-		[ "$(head -1 "$_f")" = '---' ] || _badstart="$_badstart $(basename "$_f")"
-		_fm=$(awk 'NR==1&&$0!="---"{exit} NR==1{next} /^---[[:space:]]*$/{exit} {print}' "$_f")
-		_lack=""
-		for _k in name description model; do
-			printf '%s\n' "$_fm" | grep -qE "^$_k:" || _lack="$_lack$_k,"
-		done
-		[ -n "$_lack" ] && _missing="$_missing $(basename "$_f"):${_lack%,}"
+	# This bounded native check validates scalar forms, not model availability or
+	# all YAML. Unknown/custom metadata remains the target client's concern.
+	_records=$(python3 - "$_ad" <<'PY_NATIVE'
+from pathlib import Path
+import re
+import sys
 
-		_mv=$(printf '%s\n' "$_fm" | grep -E '^model:' | head -1 | sed 's/^model: *//; s/["'"'"']//g; s/ *$//')
-		if [ -n "$_mv" ]; then
-			case "$_mv" in
-			opus | sonnet | haiku) : ;;
-			*) _badmodel="$_badmodel $(basename "$_f")=$_mv" ;;
-			esac
-		fi
-	done
-
-	if [ "$_n" -eq 0 ]; then
-		skip F1 agent-frontmatter-fields "0 agent .md files found"
-		skip F2 agent-model-value "0 agent .md files found"
-		return
-	fi
-
-	if [ -n "$_missing" ] || [ -n "$_badstart" ]; then
-		fail F1 agent-frontmatter-fields "first-line --- missing in:${_badstart:- none}; fields missing in:${_missing:- none} (of $_n agents)"
-	else
-		pass F1 agent-frontmatter-fields "all $_n agents start with --- and declare name+description+model"
-	fi
-
-	if [ -n "$_badmodel" ]; then
-		fail F2 agent-model-value "model not in opus|sonnet|haiku:$_badmodel"
-	else
-		pass F2 agent-model-value "all $_n agents use opus|sonnet|haiku"
-	fi
+paths = sorted(Path(sys.argv[1]).rglob("*.md"))
+missing, models, optional = [], [], []
+for path in paths:
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if not lines or lines[0] != "---" or "---" not in lines[1:]:
+        missing.append(f"{path.name}: missing or unclosed line-1 frontmatter")
+        continue
+    fields = {}
+    raw_fields = {}
+    for line in lines[1:lines.index("---", 1)]:
+        match = re.match(r"^([A-Za-z][\w-]*):\s*(.*?)\s*$", line)
+        if not match:
+            continue
+        key, value = match.groups()
+        if key in fields:
+            missing.append(f"{path.name}: duplicate {key}")
+        # Scalar comments do not belong to the value; quoted names stay intact.
+        value = re.split(r"\s+#", value, maxsplit=1)[0].strip()
+        raw_fields[key] = value
+        fields[key] = value.strip("\"'")
+    for field in ("name", "description", "model"):
+        if not fields.get(field):
+            missing.append(f"{path.name}: missing nonempty {field}")
+    model = fields.get("model", "")
+    aliases = {"opus", "sonnet", "haiku", "fable", "inherit"}
+    # Full IDs are syntactic pins; availability/effort compatibility is probed
+    # separately on the target. Do not maintain a dated model-ID allowlist.
+    if model not in aliases and not re.fullmatch(r"claude-(?=[a-z0-9.-]*[0-9])[a-z0-9]+(?:[.-][a-z0-9]+)*", model):
+        models.append(f"{path.name}={model or '<empty>'}")
+    if "effort" in fields and fields["effort"] not in {"low", "medium", "high", "xhigh", "max"}:
+        optional.append(f"{path.name}: unsupported effort={fields['effort']}")
+    if "maxTurns" in fields and not re.fullmatch(r"[1-9][0-9]*", raw_fields["maxTurns"]):
+        optional.append(f"{path.name}: maxTurns must be a positive integer")
+    if "omitClaudeMd" in fields and raw_fields["omitClaudeMd"] not in {"true", "false"}:
+        optional.append(f"{path.name}: omitClaudeMd must be boolean")
+for check, problems, evidence in (
+    ("F1 agent-frontmatter-fields", missing, "closed line-1 name+description+model frontmatter"),
+    ("F2 agent-model-value", models, "native alias/inherit/full-ID forms; model access not probed"),
+    ("F5 agent-native-optional-values", optional, "supplied effort/maxTurns/omitClaudeMd scalar values valid"),
+):
+    verdict = "SKIP" if not paths else "FAIL" if problems else "PASS"
+    print(f"{check}|{verdict}|" + ("; ".join(problems) if problems else f"{len(paths)} agents: {evidence}"))
+PY_NATIVE
+)
+	while IFS='|' read -r _check _verdict _evidence; do
+		emit "${_check%% *}" "${_check#* }" "$_verdict" "$_evidence"
+	done <<EOF_NATIVE
+$_records
+EOF_NATIVE
 }
 
-# J5.1 requires a deliberately small, fixed agent playbook shape.  These are
+# J5.1 requires a compact agent contract with useful boundary coverage.  These are
 # exact English generated headings; do not accept a prose mention as a section.
 # Section order uses line numbers, while Examples is bounded at the next H2 so
-# a Normal/Edge heading elsewhere in the document cannot cause a false FAIL.
+# useful positive/contrast examples may supplement a boundary case.
 check_agent_j5_sections() {
 	_ad="$1/.claude/agents"
 	if [ ! -d "$_ad" ]; then
@@ -845,6 +865,13 @@ check_agent_j5_sections() {
 		for _section in Reasoning Workflow Self-Critique Boundaries "Uncertainty Protocol" Examples; do
 			_count=$(grep -cE "^##[[:space:]]+$_section[[:space:]]*$" "$_f" 2>/dev/null || true)
 			[ "$_count" -le 1 ] || _structure="$_structure $(basename "$_f"):duplicate H2 $_section"
+			_content=$(awk -v heading="## $_section" '
+				$0 ~ ("^" heading "[[:space:]]*$") { inside=1; next }
+				inside && /^##[[:space:]]+/ { inside=0 }
+				inside && $0 !~ /^[[:space:]#]*$/ && $0 !~ /^#/ { count++ }
+				END { print count + 0 }
+			' "$_f")
+			[ "$_content" -gt 0 ] || _structure="$_structure $(basename "$_f"):empty $_section"
 		done
 		_gates=$(grep -E '^##[[:space:]]+(Preflight|Verification)( Gate)?[[:space:]]*$' "$_f" 2>/dev/null | oneline)
 		[ -z "$_gates" ] || _structure="$_structure $(basename "$_f"):duplicate contract gates $_gates"
@@ -852,22 +879,18 @@ check_agent_j5_sections() {
 		if [ -z "$_x" ]; then
 			_examples="$_examples $(basename "$_f"):missing Examples"
 		else
-			_example_counts=$(awk '
-				$0 == "## Examples" { in_examples=1; next }
+			_boundary=$(awk '
+				/^## Examples[[:space:]]*$/ { in_examples=1; next }
 				in_examples && /^##[[:space:]]+/ { in_examples=0 }
 				in_examples && /^#{3,}[[:space:]]+/ {
-					heading=$0
-					sub(/^#{3,}[[:space:]]+/, "", heading)
-					if (heading == "Rejection Case") rejection++
-					lower=tolower(heading)
-					if (lower ~ /(^|[[:space:]])(normal|edge)([[:space:]]|$)/) normal_edge++
+					boundary=(tolower($0) ~ /(rejection|boundary|defer|escalat)/)
+					next
 				}
-				END { printf "%d %d", rejection + 0, normal_edge + 0 }
+				in_examples && boundary && $0 !~ /^[[:space:]#]*$/ { content++ }
+				END { print content + 0 }
 			' "$_f")
-			_reject=${_example_counts%% *}
-			_normal_edge=${_example_counts#* }
-			if [ "$_reject" -ne 1 ] || [ "$_normal_edge" -ne 0 ]; then
-				_examples="$_examples $(basename "$_f"):rejection=$_reject,normal-edge=$_normal_edge"
+			if [ "$_boundary" -eq 0 ]; then
+				_examples="$_examples $(basename "$_f"):missing nonempty rejection/defer/escalation boundary case"
 			fi
 		fi
 	done
@@ -885,7 +908,7 @@ check_agent_j5_sections() {
 	if [ -n "$_examples" ]; then
 		fail F4 agent-j5-rejection-examples "Examples failures:$_examples"
 	else
-		pass F4 agent-j5-rejection-examples "all $_n Examples sections have exactly one Rejection Case and 0 Normal/Edge headings"
+		pass F4 agent-j5-rejection-examples "all $_n Examples sections include boundary-case content; semantic usefulness requires independent review"
 	fi
 }
 
@@ -987,6 +1010,7 @@ validate_one() {
 	PASSED=0
 	FAILED=0
 	SKIPPED=0
+	REVIEW_REQUIRED=0
 
 	if [ ! -d "$_team" ]; then
 		printf '## %s\n' "$_team"
@@ -1024,16 +1048,17 @@ validate_one() {
 	check_counts "$_team"
 	check_execution_contract "$_team"
 
-	printf 'SUMMARY %s | total=%s passed=%s failed=%s skipped=%s\n' \
-		"$_team" "$TOTAL" "$PASSED" "$FAILED" "$SKIPPED"
+	printf 'SUMMARY %s | total=%s passed=%s failed=%s skipped=%s review_required=%s\n' \
+		"$_team" "$TOTAL" "$PASSED" "$FAILED" "$SKIPPED" "$REVIEW_REQUIRED"
 
 	G_TOTAL=$((G_TOTAL + TOTAL))
 	G_PASSED=$((G_PASSED + PASSED))
 	G_FAILED=$((G_FAILED + FAILED))
 	G_SKIPPED=$((G_SKIPPED + SKIPPED))
+	G_REVIEW_REQUIRED=$((G_REVIEW_REQUIRED + REVIEW_REQUIRED))
 	TEAMS_VALIDATED=$((TEAMS_VALIDATED + 1))
 
-	[ "$FAILED" -eq 0 ]
+	[ "$FAILED" -eq 0 ] && [ "$REVIEW_REQUIRED" -eq 0 ]
 }
 
 usage() {
@@ -1043,8 +1068,9 @@ Usage:
   validate-team.sh --all         validate every directory under teams/
   validate-team.sh --help
 
-Output: {check-id} {check-name} | PASS|FAIL|SKIP | {evidence}   (EC-3.6 format)
-Exit:   0 = all checks passed, 1 = at least one FAIL.
+Output: {check-id} {check-name} | PASS|FAIL|SKIP|REVIEW_REQUIRED | {evidence}   (EC-3.6 format)
+Exit:   0 = checks passed, 1 = FAIL or unresolved REVIEW_REQUIRED.
+REVIEW_REQUIRED needs an independent usefulness verdict in the criterion report.
 
 Store criterion lines in verifier-owned evidence files; return those paths in
 the EC report rather than pasting raw validator output.
@@ -1077,10 +1103,10 @@ main() {
 			validate_one "${_d%/}" || true
 			printf '\n'
 		done
-		printf 'TOTAL | teams=%s validated=%s team-skipped=%s checks=%s passed=%s failed=%s skipped=%s\n' \
+		printf 'TOTAL | teams=%s validated=%s team-skipped=%s checks=%s passed=%s failed=%s skipped=%s review_required=%s\n' \
 			"$((TEAMS_VALIDATED + TEAMS_SKIPPED))" "$TEAMS_VALIDATED" "$TEAMS_SKIPPED" \
-			"$G_TOTAL" "$G_PASSED" "$G_FAILED" "$G_SKIPPED"
-		[ "$G_FAILED" -eq 0 ] || exit 1
+			"$G_TOTAL" "$G_PASSED" "$G_FAILED" "$G_SKIPPED" "$G_REVIEW_REQUIRED"
+		[ "$G_FAILED" -eq 0 ] && [ "$G_REVIEW_REQUIRED" -eq 0 ] || exit 1
 		exit 0
 		;;
 	*)

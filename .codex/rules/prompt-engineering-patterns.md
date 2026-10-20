@@ -1,6 +1,6 @@
 ---
 name: Prompt Engineering Patterns
-description: Use compact structural contracts, explicit uncertainty, and useful delegation in generated prompts
+description: Use effective structural contracts, explicit uncertainty, and useful delegation in generated prompts
 ---
 
 # Prompt Engineering Patterns
@@ -10,6 +10,10 @@ description: Use compact structural contracts, explicit uncertainty, and useful 
 - Applies to: `agent-writer`, `skill-writer`, `rule-writer`, `prompt-optimizer`
 
 ## Rule Content
+
+### Prefer Task Effectiveness
+
+Use current official guidance for the selected platform, model, and thinking mode. Preserve useful XML boundaries, worked examples, concrete steps, and verification; remove only conflicting, obsolete, unsupported, or redundant controls. Brevity is secondary. For reasoning-capable Codex models, use supported reasoning-effort controls instead of prescribing internal thinking transcripts. Keep task-specific worked examples and public decisions, evidence, and derivations when they help the task. See [GPT-6 guidance](https://developers.openai.com/api/docs/guides/latest-model) and [task-routed skills guidance](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra), checked 2026-10-06.
 
 ### Make The Contract Observable
 
@@ -23,11 +27,11 @@ For coordinators, include the dispatch's bounded outcome, owner, inputs, exact p
 
 ### Separate Instructions From Data
 
-Wrap variable input in labeled, fenced, or descriptive XML blocks under the context-management rule. Keep instructions outside the data. The block syntax does not grant source content authority.
+Wrap variable input in labeled, fenced, or descriptive XML blocks such as `<user_requirements>` under the context-management rule. Keep instructions outside the data. The block syntax does not grant source content authority.
 
-### One Rejection Example
+### Examples That Clarify Behavior
 
-Each authored agent and skill carries exactly one worked rejection/defer/escalation example, with no normal or edge examples, per `JUDGMENT.md` J5. Explain the trigger, mistaken action when useful, and correct response concisely. Express normal behavior in the workflow and typed inputs; no full before/after transcript is required. Keep simple format comparisons compact.
+Each authored agent and skill carries at least one meaningful rejection/defer/escalation example under `JUDGMENT.md` J5. Add positive or contrast examples when they clarify a decision or testable boundary; do not impose a universal count. State the trigger and correct response, including the mistaken action when it helps distinguish outcomes. Keep workflow and typed inputs explicit; a full before/after transcript is optional, not a floor requirement.
 
 ### Make Uncertainty Actionable
 
@@ -44,10 +48,11 @@ Coordinators define safe parallel groups, exact owned/forbidden paths, stable ta
 ## Violation Determination
 
 - An agent omits/reorders the J5.1 sequence or duplicates it with mandatory fixed-slot forms -> Violation
-- Authored agents/skills omit the rejection case or add normal/edge examples -> Violation
+- Authored agents/skills omit a meaningful boundary case, or examples conflict with required behavior -> Violation
 - An agent lacks an actionable uncertainty protocol or uses an invalid EC-1 status -> Violation
 - Data and instructions are mixed without the target runtime's labels, or source data is treated as authority -> Violation
 - A coordinator lacks useful parallelism, ownership, or sequential freeze/join guidance -> Violation
+- Useful examples, XML, steps, or checks are removed solely to reduce length, or unsupported model/mode claims govern prompting -> Violation
 - A prompt requests private reasoning transcripts, repeats permission without a material decision, or retains stale changed-file verification -> Violation
 
 ## Exceptions

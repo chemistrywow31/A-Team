@@ -1,11 +1,11 @@
 ---
 name: Prompt Patterns
-description: Reference library of Anthropic-official prompt engineering patterns, templates, and Claude 4.6 best practices for generation agents
+description: Select task-relevant prompt patterns using current native model guidance and A-Team generation contracts
 ---
 
 # Prompt Patterns
 
-A curated library of prompt engineering patterns distilled from Anthropic's official sources, plus an explicitly attributed A-Team proportional-design contract. Generation agents (agent-writer, skill-writer, rule-writer) and the prompt-optimizer read from this library during their work.
+A maintained selection library informed by official Anthropic sources, with separately attributed A-Team contracts and authored examples. Historical snapshots are retained only for provenance. Generation agents (agent-writer, skill-writer, rule-writer) and the prompt-optimizer read from this library during their work.
 
 ## When to Use
 
@@ -15,11 +15,13 @@ Use this skill when generating or optimizing agent prompts, skill prompts, rule 
 
 This repository-specific contract is not attributed to the Anthropic sources below. For A-Team task returns, use only the statuses in `.claude/rules/execution-contract.md` EC-1. Missing required evidence or context uses `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {missing}` in `CONCLUSIONS`; never use `INSUFFICIENT_DATA` as a report status.
 
-## Compact Generation Contract
+## Effective Generation Contract
+
+- Prioritize effectiveness for the selected platform, model, and thinking mode. Retain useful XML, examples, steps, and verification; concision is secondary. For Claude, select supported native adaptive thinking/effort, and use manual worked-solution guidance only when thinking is disabled and supported. Public derivations and evidence are distinct from private reasoning.
 
 - For each agent, write exactly one adjacent `Reasoning`, `Workflow`, and `Self-Critique` sequence in that order. Make it task-specific: decision criteria, execution steps, then checks of the likely failure modes. Do not duplicate this contract with mandatory `Preflight`/`Verification` blocks or fixed four/five-slot essays.
 - Request concise decisions and verification evidence, never private reasoning transcripts. Keep input/output, ownership, uncertainty, boundaries, and completion requirements explicit.
-- Include exactly one rejection example in each agent or skill. Use the case that clarifies the boundary; do not mandate normal or edge examples.
+- Include at least one meaningful rejection/defer/escalation example in each authored agent or skill. Add positive or contrast examples when they clarify behavior. Do not impose a universal example count; size overages follow J5 independent usefulness review.
 - Reuse confirmed requirements and existing authorization. Ask only for material missing decisions, unresolved authority, or actions outside that authorization. Continue independent work during supported asynchronous clarification; do not assume an unanswered required question is approval.
 - Send one coherent frozen artifact batch to the existing independent reviewer. After fixes, rerun every criterion citing a changed file plus dependent mappings/parity. Run preflight only for new delivery, changed active runtime artifacts, or missing current readiness evidence, and reuse its current validation results for each selected runtime.
 - Follow `.claude/rules/reasoning-and-self-critique.md` and `.claude/rules/prompt-engineering-patterns.md` for the contract, and `.claude/rules/context-tier.md` for Claude model routing. Only when the selected output is Codex or dual, read `.codex/rules/codex-agent-config-patterns.md` and `.codex/rules/codex-runtime-config.md` for that projection's specifications. Preserve the target's explicit model and effort choices outside an authorized migration; do not copy a generic model guide into every generated prompt.
@@ -31,17 +33,13 @@ assets/
 ├── templates/               14 prompt blocks (Anthropic-derived; one has an attributed A-Team extension)
 ├── context-strategies/       7 agent context management patterns
 ├── advanced-techniques/      7 core prompt engineering techniques
-├── claude-4-patterns/        6 Claude 4.6 behavioral patterns
-└── raw/                      4 source snapshots (3311 lines) — provenance only, do not read
+├── claude-4-patterns/        6 historical Claude 4.6 patterns (excluded)
+└── raw/                      4 historical source snapshots — provenance only
 ```
 
-**Version note (checked 2026-07-25).** `raw/` and `claude-4-patterns/` are anchored to Claude 4.x:
-`raw/` contains 52 occurrences of "Opus 4.", 37 of "Sonnet 4.", and zero references to Claude 5.
-Nothing reads `raw/` — `select.py` never emits a `raw/` path, and the `source:` fields in the
-distilled files are citations, not read-triggers. Treat both directories as historical provenance.
-Where they conflict with Anthropic's Claude 5 context-engineering guidance, the newer guidance
-wins: prefer judgment over enumerated prohibitions, interface design over usage examples,
-progressive disclosure over upfront loading, and one statement of each fact over repetition.
+**Selection boundary (checked 2026-10-06).** `select.py` scans only `templates/`, `context-strategies/`, and `advanced-techniques/`. It never returns `claude-4-patterns/` or `raw/`, including through tag queries. Historical files remain intact and can be inspected explicitly for provenance; they do not override current native guidance. `source` and `historical-source` metadata are attribution, not read triggers.
+
+Selection returns candidates, not instructions to inject every block. Check each candidate against the actual task, model/mode, native tools, existing authorization, and higher-priority contracts. Preserve useful structure; adapt model-specific advice rather than generalizing it across providers. Do not add irrelevant candidates merely because they share a scenario tag.
 
 ## Selection Methods
 
@@ -112,11 +110,13 @@ This rejection does not remove a narrowly scoped integrity or task-drain control
 
 ## Sources
 
+Current native guidance checked 2026-10-06: [Claude prompting](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), [effort](https://platform.claude.com/docs/en/build-with-claude/effort), and [Claude Code subagents](https://code.claude.com/docs/en/sub-agents). Active rewrites label A-Team-authored examples separately; the sources below record the library’s origins, not a claim that every current pattern is verbatim vendor text.
+
 | Source | Content |
 |--------|---------|
 | github.com/anthropics/prompt-eng-interactive-tutorial | 10-element template, CoT, Few-shot, Tool Use, Prompt Chaining |
 | github.com/anthropics/courses | Structured Refusal, Dual-zone Output, Evaluation frameworks |
 | anthropic.com/engineering | Context engineering, Sub-agent architecture, Compaction |
-| platform.claude.com | Claude 4.6 best practices, Ready-to-use templates, Migration guide |
+| platform.claude.com | Dated prompting guidance and historical templates; re-check the selected model |
 
 The proportional-design contract and the extension in `anti-over-engineering.md` trace to `.worklog/202609/prevent-overengineering-three-teams/phase-2-a-team-generator-assessment/decisions.md` D6-D9. Do not attribute that extension to Anthropic.

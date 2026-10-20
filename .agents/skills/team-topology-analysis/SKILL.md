@@ -17,19 +17,19 @@ Evaluate whether a proposed team graph supports safe handoffs, bounded delegatio
 ## Core Knowledge
 
 - Prefer direct-specialist topologies. The coordinator stays user-facing; do not add a sub-coordinator.
-- A specialist may create one nested helper only for bounded, independent evidence or verification inside that specialist's owned artifact family.
+- Where the target runtime and dispatch permit delegation, a specialist may create one nested helper only for bounded, independent evidence or verification inside its owned artifact family. That helper may not delegate again. This is A-Team policy, not a universal vendor depth limit.
 - Stable task paths use phase-purpose names so joins, follow-ups, and worklog evidence stay traceable.
 - All agents share one filesystem. Parallel branches need explicit owned paths, forbidden paths, and the non-reversion rule.
-- Full-history forks are the default. Use `fork_turns = "none"` or a bounded positive fork only when isolation or a model or effort override requires it.
+- Select the target-supported lifecycle/profile from `.codex/rules/context-isolation.md`. On A-Team’s observed v2 host, full-history forks inherit the parent model/effort; use bounded/no-history forks when isolation or role overrides require them. Do not assume those parameters exist on another host.
 - Join points are explicit. Do not stop the coordinator at `wait_agent` while independent work still exists.
 
 ## Application Guide
 
-1. Map workflow stages, deliverables, and review relationships before drawing the graph.
+1. Establish the selected native runtime/profile, then map workflow stages, deliverables, and review relationships. Record installed support and live tools separately; use the native capacity counting unit without mixing root-inclusive and spawned-only counts.
 2. Choose the lightest topology that preserves clear ownership: pipeline for strict sequence, hub-and-spoke for coordinator-driven parallel work, hybrid for mixed staged and parallel work.
 3. Assign stable task paths and disjoint file ownership to every branch that can run in parallel.
-4. Define the lifecycle for each edge: `spawn_agent` for new bounded work, `send_message` for non-triggering updates, `followup_task` for a corrective or new idle-agent turn, `interrupt_agent` only for invalid or unsafe work, `list_agents` before joins or reroutes, and `wait_agent` only at a real synchronization boundary.
-5. Check whether any specialist would need more than one helper hop. If yes, the design is too deep for the runtime contract.
+4. Define each handoff’s input paths, exact ownership, acceptance criteria, return state, evidence-persistence owner, and verification. Use EC-1’s bounded inline fallback when the live sandbox blocks report writes. For the observed v2 profile, define each edge with `spawn_agent` for new bounded work, `send_message` for non-triggering updates, `followup_task` for a corrective or new idle-agent turn, `interrupt_agent` only for invalid or unsafe work, `list_agents` before joins or reroutes, and `wait_agent` only at a real synchronization boundary.
+5. Check whether any specialist would need more than one helper hop or an unavailable native capability. Flatten unsupported edges; when the host disallows delegation, execute locally and record that limitation.
 6. Flag bottlenecks, cycles, review loops without exit criteria, and shared-file hotspots before accepting the topology.
 
 ## Quality Checkpoints
@@ -40,12 +40,12 @@ Evaluate whether a proposed team graph supports safe handoffs, bounded delegatio
 - [ ] Task paths and join boundaries are explicit enough to support worklog tracing.
 - [ ] The topology can finish without circular dependency outside intentional review loops.
 
-## Example
+## Examples
 
-### Input
+### Rejection Case
 
-`Frontend, backend, and QA all need to edit the same API schema at the same time.`
+For “Frontend, backend, and QA all need to edit the same API schema at the same time,” reject overlapping writes; assign one schema owner, route feedback through review or coordinator, and keep the other roles read-only on that file.
 
-### Output
+## Sources And Adaptation
 
-Reject the topology as unsafe for a shared filesystem; assign one schema owner, route feedback through review or coordinator, and keep the other roles read-only on that file.
+Shared topology and ownership intent: `.claude/skills/team-topology-analysis/SKILL.md`. Codex-specific fork/helper/lifecycle behavior: `.codex/rules/context-isolation.md`, within its inventoried scope. Keep the target’s declared profile and live evidence current; static config alone cannot prove collaboration readiness.

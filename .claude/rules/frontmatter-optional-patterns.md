@@ -13,7 +13,7 @@ paths:
 
 ## Rule Content
 
-This rule provides canonical optional-field patterns. When writing an agent or skill that matches a pattern, apply the full configuration — do not omit fields that the pattern mandates.
+This rule provides canonical optional-field patterns. When writing an agent or skill that matches a pattern, apply the full configuration — do not omit fields that the pattern mandates. These are A-Team policy patterns, not a complete native schema; preserve existing model/effort pins under the context-tier rule.
 
 ### Pattern A: Read-Only Auditor Agent
 
@@ -25,13 +25,14 @@ name: Process Reviewer
 description: Audit team execution process and produce retrospective report
 model: opus
 effort: xhigh
+disallowedTools: [Agent]
 tools: ["Read", "Grep", "Glob", "Write"]   # Write only for audit report
 ---
 ```
 
 Apply to: process-reviewer, decision-auditor, dialogue-reviewer, code-reviewer, fact-checker, knowledge-reviewer, security-reviewer.
 
-The `Write` tool stays on the allowlist for the audit report — everything else is removed so the agent cannot Edit / Bash / modify team state.
+The allowlist limits available tools; it does not scope `Write` to a report path. Exact ownership and the live sandbox determine permitted writes. If the host blocks report persistence, use the coordinator-owned EC-1.12 handoff; do not grant broader permissions or claim tool presence proves path isolation.
 
 ### Pattern B: Research / Investigation Agent
 
@@ -43,6 +44,7 @@ name: Domain Researcher
 description: Investigate domain best practices and produce evidence-based recommendations
 model: opus
 effort: xhigh
+disallowedTools: [Agent]
 tools: ["Read", "Grep", "Glob", "Write", "WebFetch", "WebSearch"]
 ---
 ```
@@ -59,11 +61,12 @@ name: Skill Planner
 description: Plan the skills and rules needed for each agent based on role design
 model: opus
 effort: xhigh
+disallowedTools: [Agent]
 skills: ["prompt-patterns", "skill-discovery", "md-generation-standard"]
 ---
 ```
 
-`skills` preload is only meaningful when the agent would otherwise re-read those skills on every invocation. For one-shot reference, let Claude load skill content on demand.
+`skills` injects full content into the subagent startup context. Preload references used on every run; otherwise instruct reads of exact files. Parent skills are not inherited automatically, and Agent Teams teammates do not receive definition skill preload. See [subagents](https://code.claude.com/docs/en/sub-agents) and [Agent Teams](https://code.claude.com/docs/en/agent-teams), checked 2026-10-06.
 
 ### Pattern D: Execution Agent (Default)
 
@@ -75,10 +78,11 @@ name: Agent Writer
 description: Specialized in writing high-quality agent .md files
 model: opus
 effort: high
+disallowedTools: [Agent]
 ---
 ```
 
-No `tools` restriction — execution agents typically need Read, Edit, Write, Bash. No `skills` preload — they read skills on demand via upstream worklog references.
+No `tools` allowlist restriction — execution agents typically need Read, Edit, Write, Bash. `disallowedTools: [Agent]` enforces the specialist no-delegation policy supported by the coordinator-mandate rule. No `skills` preload — they read skills on demand via upstream worklog references.
 
 ### Pattern E: Coordinator
 
@@ -93,15 +97,15 @@ effort: max
 ---
 ```
 
-No `tools` restriction — the coordinator dispatches via Agent / Task tools and must retain full access. No `skills` preload — the coordinator reads context on demand.
+No `tools` restriction — the coordinator dispatches via Agent tool (`Task` is a compatibility alias) and must retain full access. No `skills` preload — the coordinator reads context on demand.
 
 ### Pattern F: Entry-Point Skill
 
-See `rules/yaml-frontmatter.md` Entry-Point Skill Mandate and the Entry-Point Skill section of `rules/output-structure.md`. The skill makes the CURRENT session adopt the coordinator playbook — it never spawns the coordinator as a subagent (a spawned coordinator cannot dispatch further agents or converse with the user). Standard shape:
+See `rules/yaml-frontmatter.md` Entry-Point Skill Mandate and the requested-surface guidance in `rules/output-structure.md`. The skill makes the CURRENT session adopt the coordinator playbook — it never spawns the coordinator as a subagent. Keeping phase ownership in the main session is A-Team policy; native subagents can nest, so runtime impossibility is not the rationale. Standard shape:
 
 ```yaml
 ---
-name: {EntryPointName}                 # Team-chosen, matching the folder: Callimachus, Tongzheng, Ventris
+name: {EntryPointName}                 # Preserve the team-chosen command/display identifier
 description: Entry point that makes the current session adopt the {coordinator} workflow to run {workflow}
 disable-model-invocation: true
 allowed-tools: ["Agent"]
@@ -109,7 +113,7 @@ argument-hint: "[team-specific hint]"
 ---
 ```
 
-`disable-model-invocation`, `allowed-tools`, and `argument-hint` are literal — they are what identifies a skill as the entry point. `name` is NOT: it is the one field the team chooses, and it must match the folder name, because the folder name is the slash command.
+Identify the coordinator entry from its declared workflow purpose or main-session adoption contract, then verify `disable-model-invocation`, `allowed-tools`, and `argument-hint`. An ordinary manual-only skill is not an entry. Preserve the team-chosen `name` and directory; native command naming uses those fields, not an A-Team-mandated display-name equality.
 
 ### Pattern G: Forked-Context Research Skill
 
@@ -131,7 +135,7 @@ See `rules/skill-context-fork.md` for when to prefer `context: fork` over plain 
 
 ## Violation Determination
 
-- Read-only auditor agent without `tools` allowlist → Violation
+- Read-only auditor agent without `tools` allowlist, or specialist missing its `disallowedTools: [Agent]` restriction → Violation
 - Research agent that needs web access missing `WebFetch` or `WebSearch` in `tools` → Violation
 - Entry-point skill not matching Pattern F → Violation
 - Skill uses `context: fork` without `agent` field → Violation
@@ -140,4 +144,4 @@ See `rules/skill-context-fork.md` for when to prefer `context: fork` over plain 
 
 - Patterns are defaults — deviations are allowed when the agent's responsibilities genuinely require a different toolset, but must be documented in the agent's `## Boundaries` section.
 
-Tradeoff: Pattern compliance costs one line of frontmatter per field. The payoff is fewer permission prompts, faster startup (preloaded skills), and tighter security (tools allowlist).
+Tradeoff: Preload spends startup context on full skill content, while on-demand reads spend tool calls. Choose from actual reuse; a tool allowlist narrows capability but does not enforce report-path ownership.

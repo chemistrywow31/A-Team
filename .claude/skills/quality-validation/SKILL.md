@@ -19,15 +19,17 @@ Review one coherent frozen artifact batch from fresh context. The producer never
 - Classify layout separately from runnable surfaces. Record the target's stamp, canonical authority, and mapping state.
 - Ambiguous authority permits assessment only. Never promote reference-only or activation-gated surfaces implicitly.
 - Read repo-root `JUDGMENT.md` J5 for the canonical quality floors. A green validator cannot override them; a false PASS blocks acceptance until the validator defect and the underlying failure are resolved.
+- Verify native schema from current platform evidence; preserve supported Claude model forms, skill names and `paths`, and distinguish tooling metadata from runtime skill preload. Select Codex checks from the target-supported profile rather than universally requiring observed-host v2 keys.
 - Keep static validation and live host-tool readiness as separate verdicts. Static config cannot prove that the active host exposes collaboration tools.
 
 ## Application Guide
 
-1. Confirm the batch is frozen and choose generated-team or A-Team repo-self validation. Repo-self means the repository root. Capture target class, runnable surfaces, activation/reference state, stamp, authority, and mappings before judging content; classification-only output is not acceptance evidence.
+1. Confirm the batch is frozen and choose generated-team or A-Team repo-self validation. Capability-only source maintenance does not require downstream team inventory or mutation. Repo-self means the repository root. Capture target class, runnable surfaces, activation/reference state, stamp, authority, and mappings before judging content; classification-only output is not acceptance evidence.
 2. Read J5 and compile its relevant floors once into the acceptance checklist:
-   - Agents: line-1 name/description frontmatter, ≤300 lines, exactly one adjacent `Reasoning < Workflow < Self-Critique` sequence, `Boundaries`, `Uncertainty Protocol`, and `Examples` with exactly one rejection case and no normal/edge cases. Require `model` in Claude-runnable markdown. A shared canonical role has no runtime-model field; inspect its mapped runnable projection/config for platform metadata.
-   - Skills: `skills/{name}/SKILL.md`, name/description frontmatter, ≤200 lines, and exactly one rejection example. Identify Claude coordinator-entry candidates by declared coordinator-workflow purpose or coordinator-adoption contract, independently of folder/name, invocation flag, and required-field validity. A Claude runnable team requires exactly one candidate. Then verify `disable-model-invocation: true`, `allowed-tools` granting Agent, `argument-hint`, and adoption of a resolvable coordinator playbook in the main session without spawning it. Ordinary manual-only review/deploy skills are not entries; missing, ambiguous, or malformed genuine entries fail.
-   - Rules: name/description frontmatter, ≤100 lines, observable `Violation Determination`, and `Exceptions`, including when there are none.
+   - Agents: line-1 name/description frontmatter, size reviewed above 300 lines, exactly one adjacent `Reasoning < Workflow < Self-Critique` sequence, `Boundaries`, `Uncertainty Protocol`, and `Examples` with at least one meaningful rejection/defer/escalation case and useful positive/contrast cases when they clarify behavior. Require `model` in Claude-runnable markdown. A shared canonical role has no runtime-model field; inspect its mapped runnable projection/config for platform metadata.
+   - Skills: `skills/{name}/SKILL.md`, name/description frontmatter, size reviewed above 200 lines, and at least one meaningful rejection/defer/escalation example. Identify Claude coordinator-entry candidates by declared coordinator-workflow purpose or coordinator-adoption contract, independently of folder/name, invocation flag, and required-field validity. A Claude runnable team requires exactly one candidate. Then verify `disable-model-invocation: true`, `allowed-tools` granting Agent, `argument-hint`, and adoption of a resolvable coordinator playbook in the main session without spawning it. Ordinary manual-only review/deploy skills are not entries; missing, ambiguous, or malformed genuine entries fail.
+   - Rules: name/description frontmatter, size reviewed above 100 lines, observable `Violation Determination`, and `Exceptions`, including when there are none.
+   - Size review: above 300/200/100 lines for agents/skills/rules is `REVIEW_REQUIRED`. The producer records size and usefulness; the independent criterion report accepts or rejects the current file with evidence. An author explanation or green parser alone cannot produce unconditional PASS. Preserve useful XML, examples, steps, and checks.
    - Claude settings: valid JSON with `hooks`, `permissions`, and `env`; reject destructive allows such as `rm -rf` and `git push --force`.
    - Reports/worklogs: six EC-1 fields in order, `CONCLUSIONS` ≤10 lines, nonempty evidence for `DONE`; substantive `references.md`, `findings.md`, and `decisions.md` with each decision citing a finding or reference.
    - Generated `CLAUDE.md`: actual objectives/scope, main-session coordinator deployment, context/worklog guidance, precedence, a non-stub body, and the `Generated by A-Team on` stamp.
@@ -43,13 +45,21 @@ Review one coherent frozen artifact batch from fresh context. The producer never
 Only for a selected Codex runnable surface, read `.codex/rules/codex-agent-config-patterns.md` and `.codex/rules/codex-runtime-config.md`, then apply these checks:
 
 - Record `STAMP`, `CANONICAL_AUTHORITY`, and `MAPPING_STATE`. Require `agent_type` in each Codex playbook and `model` in its directly paired TOML.
-- Check strict config, registry resolution from `.codex/`, v2 keys, and byte identity between `.codex/skills/` and `.agents/skills/` mirrors.
+- Check the target-supported config schema/validation command, registry resolution from `.codex/`, the declared runtime profile, and byte identity between `.codex/skills/` and `.agents/skills/` mirrors.
 - Run preflight for new delivery, changed active runtime artifacts, or missing current readiness evidence: `bash scripts/preflight-codex-runtime.sh --repo-self` for A-Team, or `bash scripts/preflight-codex-runtime.sh --team-dir {team}` for a target team.
-- Retain raw preflight output and reuse its current full validator records and strict-model result; do not rerun the same validator or model check separately.
+- Retain raw preflight output and reuse its current full validator records and runtime/model probe result; do not rerun the same validator or model check separately.
 - Where current preflight evidence does not cover a required Codex check, run `python3 scripts/validate_codex_team.py --repo-self` or `python3 scripts/validate_codex_team.py {team}` for the corresponding root and retain its raw output.
 
 ## Examples
 
+### Size Review
+
+A 220-line authored skill retains a useful worked conversion example. Record `REVIEW_REQUIRED`; inspect whether that example changes correct execution, and resolve the size criterion independently. Keep missing metadata or boundary examples as separate failures.
+
 ### Rejection Case
 
 Reject an overall PASS when validators are green but an agent places `Self-Critique` before `Workflow`. Cite the J5.1 ordering failure and the false-PASS evidence, then recheck the corrected agent, validator behavior, and dependent projections.
+
+## Sources
+
+J5 and the execution contract define A-Team acceptance. Native claims follow [Claude subagents](https://code.claude.com/docs/en/sub-agents), [Claude skills](https://code.claude.com/docs/en/skills), and the inventoried Codex runtime rules, checked 2026-10-06. Runtime evidence must name the client/profile and distinguish static validity, live tools, and model access.

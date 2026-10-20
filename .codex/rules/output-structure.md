@@ -1,6 +1,6 @@
 ---
 name: Output Structure
-description: Define requested Claude and Codex team surfaces while enforcing the current Codex v2 runtime layout
+description: Define requested Claude and Codex team surfaces with target-supported runtime profiles
 ---
 
 # Output Structure
@@ -47,16 +47,16 @@ Declare canonical authority and the generator stamp in `CLAUDE.md`. Apply the ou
 
 ### Codex Runtime Config
 
-Every runnable Codex surface must include `.codex/config.toml`. Multi-agent configs require the fields below. Model/effort values shown are defaults for new teams without explicit pins or explicitly authorized profile migration, and remain A-Team's approved repo-self profile.
+Every runnable Codex surface includes `.codex/config.toml`. Use `.codex/rules/codex-runtime-config.md` to select the target-supported profile; do not impose A-Team's observed v2 schema on a different client. Preserve the working repo-self v2 config.
 
-- root `model = "gpt-6-astra"`, `model_reasoning_effort = "xhigh"`, `approval_policy = "on-request"`, `sandbox_mode = "workspace-write"`, and `project_doc_fallback_filenames = ["CLAUDE.md"]`
-- `[features] multi_agent = true`
-- `[features.multi_agent_v2] enabled = true`, `max_concurrent_threads_per_session = 7`, `expose_spawn_agent_model_overrides = true`, and `wait_agent_enabled = true`
-- `[agents] enabled = true`, `default_subagent_model = "gpt-5.6-terra"`, `default_subagent_reasoning_effort = "high"`, and `interrupt_message = true`
+- Multi-agent surfaces enable the target-supported collaboration feature and role registration. Record the exact client/schema check and actual lifecycle tools separately.
+- Published `agents.max_concurrent_threads_per_session` counts spawned threads excluding root; this host's v2 capacity counts total session slots. Keep each profile's count semantics explicit.
+- Preserve host-selected root/unpinned defaults and explicit role model/effort/sandbox pins. Do not restore A-Team's absent root/default-subagent pins.
+- Record profile selection in setup/mapping metadata, not invented config keys. Retain protected-path, approval, verification, and rollback guidance.
 
 Treat each `[agents.<id>]` table id as the agent's stable snake_case runtime identity. Require each entry to include `description` and `config_file`. Resolve `config_file` relative to `.codex/`; use `../agents/...` for project-root configs. Require the referenced agent TOML's `name` to equal `<id>` exactly and to also include `description`, `model`, `model_reasoning_effort`, `sandbox_mode`, and nonempty `developer_instructions`.
 
-Default strong roles to `gpt-6-astra`/`xhigh` and read-heavy roles to `gpt-5.6-terra`/`high` only within that scope. Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring without fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort. Full-history forks inherit parent model/effort; use bounded/no-history forks and explicit parameters for role-specific routing.
+Default strong roles to `gpt-6-astra`/`xhigh` and read-heavy roles to `gpt-5.6-terra`/`high` only within that scope. Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring without fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort. On A-Team's observed v2 host, full-history forks inherit parent model/effort; use bounded/no-history forks and explicit parameters for role-specific routing. Other targets use their supported lifecycle under `.codex/rules/context-isolation.md`.
 
 ### Shared Deliverables
 
@@ -69,8 +69,8 @@ Every runnable team must ship `docs/RUNTIME-SETUP.md` after runtime artifacts fr
 - Generation starts without requested format, canonical authority, and surface-state decisions -> Violation
 - A requested runnable surface is missing its entry document or artifact tree -> Violation
 - `docs/RUNTIME-SETUP.md` is missing, or lacks the probe stamp or the rollback command -> Violation
-- `.codex/config.toml` is missing, or strict config uses deprecated v1 keys -> Violation
-- a multi-agent team omits `agents/`, `[features] multi_agent = true`, or the `[features.multi_agent_v2]` block -> Violation
+- `.codex/config.toml` is missing, or the target-supported config check rejects or ignores required fields -> Violation
+- a multi-agent team omits its supported collaboration/registration surface, mixes unverified profiles, or conflates capacity accounting -> Violation
 - coordinator or specialist TOML placement breaks the rules above -> Violation
 - an agent registry entry is incomplete or its `config_file` does not resolve from `.codex/` -> Violation
 - an `[agents.<id>]` table id is not a stable snake_case runtime identity, or its referenced agent TOML's `name` does not equal `<id>` exactly -> Violation

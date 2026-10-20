@@ -111,7 +111,7 @@ fi
 # Preserve only EC-3.6 criterion records in the advisory, never raw validator logs.
 # Strict evidence is already redacted by the validator. Require exactly one
 # record for this target and never turn SKIP, absent, or malformed evidence into PASS.
-awk '$1 != "R2" && $1 != "G2" && /^[A-Za-z0-9_]+ [^|]+ \| (PASS|FAIL|SKIP) \| /' "$VALIDATOR_FILE" >"$CRITERIA_FILE"
+awk '$1 != "R2" && $1 != "G2" && /^[A-Za-z0-9_]+ [^|]+ \| (PASS|FAIL|SKIP|REVIEW_REQUIRED) \| /' "$VALIDATOR_FILE" >"$CRITERIA_FILE"
 awk -v id="$STRICT_CRITERION" -v name="$STRICT_NAME" '
   $1 == id {
     count++
@@ -136,11 +136,26 @@ CONFIG_LINE=$(awk '/^      config\.toml/{sub(/^      /,""); print; exit}' "$DOCT
 FEATURE_LINES=$(grep '^multi_agent' "$FEATURES_FILE" 2>/dev/null || true)
 STATIC_RESULT="PASS"
 [ "$VALIDATOR_EXIT" -eq 0 ] || STATIC_RESULT="FAIL"
+# An over-target authored file is pending an independent usefulness verdict.
+# Keep that state visible even if a producer exits zero or supplies live tools.
+if [ "$VALIDATOR_EXIT" -le 1 ] && grep -q ' | REVIEW_REQUIRED | ' "$CRITERIA_FILE"; then
+  STATIC_RESULT="REVIEW_REQUIRED"
+fi
+if grep -q ' | FAIL | ' "$CRITERIA_FILE"; then
+  STATIC_RESULT="FAIL"
+fi
+RUNTIME_PROFILE="unknown"
+[ "$MODE" != "repo-self" ] || RUNTIME_PROFILE="v2"
+if grep -q '^G9 target-runtime-profile | PASS | profile=portable-cli;' "$CRITERIA_FILE"; then
+  RUNTIME_PROFILE="portable-cli"
+elif grep -q '^G9 target-runtime-profile | PASS | profile=v2;' "$CRITERIA_FILE"; then
+  RUNTIME_PROFILE="v2"
+fi
 STRICT_RESULT=$(awk -F ' [|] ' '{print $2}' "$STRICT_FILE")
 
 LIVE_CLASS="not-probed"
 LIVE_EVIDENCE="No live tool list supplied. Pass --live-tools or set CODEX_PREFLIGHT_LIVE_TOOLS to record the active session tool surface."
-if [ -n "$LIVE_TOOLS" ]; then
+if [ -n "$LIVE_TOOLS" ] && [ "$RUNTIME_PROFILE" = "v2" ]; then
   LIVE_CLASS="unsupported for v2"
   LIVE_EVIDENCE="provided: $LIVE_TOOLS"
   HAVE_ALL=yes
@@ -162,11 +177,18 @@ if [ -n "$LIVE_TOOLS" ]; then
     LIVE_EVIDENCE="core orchestration tools supplied but send_message is missing: $LIVE_TOOLS"
   fi
 fi
+if [ "$RUNTIME_PROFILE" != "v2" ]; then
+  LIVE_CLASS="not-probed"
+  LIVE_EVIDENCE="Profile=$RUNTIME_PROFILE; this check implements observed-host v2 lifecycle only. Record target-native lifecycle evidence separately; supplied v2 tools do not establish portable readiness."
+fi
 
 OVERALL_RESULT="PASS (static and strict config valid; host tools not probed)"
 PREFLIGHT_EXIT=0
 if [ "$STATIC_RESULT" = "FAIL" ] || [ "$STRICT_RESULT" = "FAIL" ]; then
   OVERALL_RESULT="FAIL (static=$STATIC_RESULT; strict-config=$STRICT_RESULT; host-tools=$LIVE_CLASS)"
+  PREFLIGHT_EXIT=1
+elif [ "$STATIC_RESULT" = "REVIEW_REQUIRED" ]; then
+  OVERALL_RESULT="REVIEW_REQUIRED (independent usefulness verdict pending; strict-config=$STRICT_RESULT; host-tools=$LIVE_CLASS)"
   PREFLIGHT_EXIT=1
 elif [ "$LIVE_CLASS" = "v2-ready" ]; then
   OVERALL_RESULT="V2-READY (static=PASS; strict-config=PASS; host-tools=v2-ready)"
@@ -198,6 +220,7 @@ OUTPUT="$TMP_DIR/output.md"
   echo "|---|---|"
   echo "| Target | \`$TARGET_PATH\` |"
   echo "| Codex | \`$VERSION\` |"
+  echo "| Configured profile | \`$RUNTIME_PROFILE\` (static selection, not live support) |"
   echo "| Doctor sandbox line | ${HOST_LINE:-not captured} |"
   echo "| Doctor config line | ${CONFIG_LINE:-not captured} |"
   echo "| Feature rows | $(printf '%s' "${FEATURE_LINES:-none}" | tr '\n' '; ' | sed 's/; $//') |"
@@ -231,7 +254,7 @@ OUTPUT="$TMP_DIR/output.md"
   echo "## Overall Preflight Result"
   echo
   echo "- Result: \`$OVERALL_RESULT\`"
-  echo "- Rule: host-tool readiness cannot override static target or strict-config failures."
+  echo "- Rule: host-tool readiness cannot override static target failures, pending usefulness review, or strict-config failures."
   echo
   echo "## Protected-Path Posture"
   echo

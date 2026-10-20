@@ -10,6 +10,7 @@ Generate all deliverables under `teams/{team-name}/`. Discovery must confirm the
 
 ## Design Philosophy
 
+- Prioritize prompt effectiveness using current official guidance for the selected platform and model. Preserve useful examples, XML boundaries, task steps, and checks; concision is secondary.
 - Complete the full version when the extra cost is marginal and the result materially improves reliability.
 - Search or inspect before building when the decision depends on current tools, external practices, or unfamiliar project context.
 - Take evidence-backed positions. Do not use vague agreement or false balance when a recommendation is required.
@@ -20,12 +21,14 @@ Generate all deliverables under `teams/{team-name}/`. Discovery must confirm the
 ## Runtime Contract
 
 - For a new team, stay in discovery until objectives, scope, workflow, role coverage, output format preference, canonical authority, and a requirements summary are confirmed. Reuse answers already supplied; scoped existing-team maintenance starts with classification.
+- Choose A-Team capability maintenance, named-target maintenance, or explicitly requested fleet work first. Capability improvement alone does not request a target inventory, downstream writes, or target-authority questions; bounded read-only examples may reproduce designer defects.
 - Follow host instruction precedence; explicit user instructions outrank repository guidelines and skills. Treat the user's action request as authorization for its scoped reversible work. Ask only for a material missing choice, unresolved authority, or an uncovered scope expansion or irreversible/external action. Interim summaries need no repeated approval; continue independent work while answers are pending, without inferring required answers from silence.
 - Act as the sole user-facing coordinator. Use direct specialists; do not create a sub-coordinator. A specialist may create one nested helper only for bounded, independent evidence or verification inside its owned artifact family, and that helper may not delegate again.
 - Give every dispatch a stable phase-purpose task name, explicit owned/forbidden paths, acceptance criteria, and the shared-filesystem non-reversion rule. A canonical edit and its same-family projection regeneration stay sequential under one owner.
 - Use `spawn_agent` for a new bounded task, `send_message` for a non-triggering update to a running agent, `followup_task` for a new or corrective turn on an existing idle agent, `interrupt_agent` only when work is invalidated or unsafe, `list_agents` before routing/join decisions, and `wait_agent` only at a real join boundary. If the host disallows delegation, execute locally and record the runtime limitation.
 - Choose `fork_turns` deliberately. Full-history forks inherit the parent model and reasoning effort; model/effort overrides require `fork_turns = "none"` or a positive bounded fork.
-- Use the validated profile in `.codex/rules/context-tier.md`: GPT-6 Astra/xhigh for coordinator and strong decision/production roles, Terra/high for bounded read-heavy roles. Keep explicit per-role pins and use bounded/no-history forks when a different role tier must apply. Preserve a generated target's model choices unless migration is in scope.
+- Follow `.codex/rules/context-tier.md` for the selected runtime profile. The host selects the main-session model and unpinned subagent defaults; A-Team's role TOMLs retain explicit model/effort pins. Use bounded/no-history forks for role overrides when the host supports them. Preserve a generated target's model and effort choices unless migration is in scope.
+- Assign report persistence explicitly. If a specialist cannot write under its live sandbox, use the execution contract's bounded `INLINE-FALLBACK`; the coordinator persists the evidence without broadening permissions.
 - Use `.codex/agents/` as the A-Team specialist playbook for the Codex runtime, regenerated from the canonical `.claude/agents/`. Generated teams must not use this path for runtime agent configs.
 - Use `agents/` as A-Team's thin official Codex multi-agent runtime registry. Keep each TOML file minimal and make the corresponding `.codex/agents/` playbook authoritative.
 - Treat project `.codex/config.toml` as the authoritative Codex runtime switch. Do not require `~/.codex/config.toml` for generated Codex teams.
@@ -95,10 +98,10 @@ Generate all deliverables under `teams/{team-name}/`. Discovery must confirm the
 - `.codex/rules/yaml-frontmatter.md`
 - `.codex/rules/anti-sycophancy.md`
 
-## Codex V2 Runtime
+## Codex Runtime Profiles
 
-- Project `.codex/config.toml` explicitly enables `features.multi_agent_v2` and keeps legacy `features.multi_agent` only for compatibility.
-- V2 concurrency is total-session concurrency and includes the root coordinator. Prompt policy, not legacy `agents.max_depth`, enforces the nested-helper bound.
+- A-Team's installed Codex 0.160.1 and current host support the v2 profile enabled in project `.codex/config.toml`; the same client reports `features.multi_agent` as stable. This observed profile is not a universal schema for generated targets.
+- Select future target configuration and lifecycle from its installed version, supported schema, and live tools. Published `agents.max_concurrent_threads_per_session` counts spawned threads excluding root; this active host reports total-session slots including root. Do not mix these capacity measures. Prompt policy enforces A-Team's nested-helper bound on supported v2 hosts.
 - All agents share the current working directory and filesystem. Parallel writers must have disjoint ownership; reviewers and preflight roles join only after producers freeze their artifacts.
 - Static config/registry validation does not prove the active host exposes v2 tools. Record live tool readiness separately during runtime preflight.
 - Configuration changes apply when the host loads them; report persisted settings separately from the model or registry of an already-running session.
@@ -110,4 +113,4 @@ See `.codex/docs/claude-adaptation-manifest.toml` for the machine-readable M5 pl
 
 ---
 
-Generated by A-Team on 2026-09-14
+Generated by A-Team on 2026-10-06

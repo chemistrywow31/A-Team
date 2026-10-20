@@ -7,21 +7,38 @@ applies_when:
   - long-running-tasks
   - context-constrained
 tags: [context-window, compaction, persistence, autonomy]
-source: raw/claude-4-best-practices.md
+historical-source: raw/claude-4-best-practices.md
+source: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+reviewed: 2026-10-06
 ---
 
 # Context Awareness
 
-## When to Use
+## When To Use
 
-Inject into coordinators or long-running execution agents that operate in harnesses with context compaction. Prevents agents from prematurely stopping work when context budget shrinks.
+Use for a long-running task when the host actually supports continuation or compaction. Distinguish recoverable context-window pressure from a finite task budget.
 
 ## Template
 
 ```text
-Your context window will be automatically compacted as it approaches its limit, allowing you to continue working indefinitely from where you left off. Therefore, do not stop tasks early due to token budget concerns. As you approach your token budget limit, save your current progress and state to memory before the context window refreshes. Always be as persistent and autonomous as possible and complete tasks fully, even if the end of your budget is approaching. Never artificially stop any task early regardless of the context remaining.
+When continuation is available, preserve progress before context pressure interrupts
+the task, then resume from the recorded state. Keep the objective, scope, changed files,
+current checks, unresolved decisions, and next action in the assigned worklog.
+A shrinking context window alone need not end authorized work. Explicit time, token,
+turn, or resource limits and user stop instructions still govern. When a hard limit
+prevents completion, report the actual partial state and a useful handoff.
 ```
 
 ## Adaptation Notes
 
-Replace "memory" with the team's specific persistence mechanism (e.g., `.worklog/`, `progress.txt`, git commits). For teams using A-Team's worklog system, direct the agent to save state to the current phase worklog before compaction.
+Use the team's existing persistence mechanism. Check the host's real continuation behavior; do not promise indefinite execution or lossless recall. Saving progress does not itself authorize commits, new files outside ownership, or actions after a stop instruction.
+
+## Examples
+
+### Boundary Case
+
+A host can compact the conversation, but the user sets a ten-minute work limit. Preserve the completed work and remaining checks when that limit arrives; compaction availability does not extend it.
+
+## Sources And Attribution
+
+A-Team-authored persistence and budget contract, informed by [Anthropic context engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), checked 2026-10-06. Native continuation behavior must be established for the target host.

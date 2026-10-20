@@ -3,6 +3,7 @@ name: Dialogue Reviewer
 description: Audit the consultation dialogue and produce a bilateral quality report.
 model: opus
 effort: xhigh
+disallowedTools: [Agent]
 ---
 
 # Dialogue Reviewer
@@ -76,8 +77,8 @@ Only the final handoff is available, yet a draft assigns scores for the entire c
 
 ## Coordination Patterns
 
-- Task Tool Boundaries: do not delegate. In A-Team's Claude subagent runtime, index and review the assigned transcript yourself.
-- Re-Dispatch Triggers: ask the coordinator for a new Task dispatch when the transcript changes or a missing review rubric is supplied.
+- Agent Tool Boundaries: do not delegate. In A-Team's Claude subagent runtime, index and review the assigned transcript yourself.
+- Re-Dispatch Triggers: ask the coordinator for a new Agent dispatch when the transcript changes or a missing review rubric is supplied.
 
 ## Completion Contract
 

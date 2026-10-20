@@ -7,61 +7,50 @@ applies_when:
   - writing-agent-prompts
   - writing-skill-prompts
 tags: [hallucination, evidence-first, grounding, status-routing, uncertainty]
-source: raw/tutorial-advanced-techniques.md
+source: https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations
+historical-source: raw/tutorial-advanced-techniques.md
+reviewed: 2026-10-06
 ---
 
 # Anti-Hallucination
 
-## Core Principle
+## Ground Claims And Expose Gaps
 
-Claude sometimes hallucinate and makes untrue claims. Two primary strategies counter this: (1) give Claude an explicit "out" so it can admit uncertainty instead of fabricating, and (2) force evidence extraction before answering so claims are grounded in source material. Combine both for maximum reliability.
+Match claims to evidence the agent actually inspected. Separate source facts, justified inferences, and unknowns. Missing evidence calls for a named gap or a targeted check; absolute certainty is not a prerequisite for every useful answer.
 
-## Pattern
+## Evidence Pattern
 
-**Strategy 1: Give Claude an out (Anthropic verbatim):**
-```
-Only answer if you know the answer with certainty.
-```
-Without this escape clause, Claude fabricates plausible-sounding answers. With it, Claude admits "I don't have that information."
+When answering from documents, collect relevant passages or precise references before drawing conclusions. Expose only the evidence needed to check the result; a source extract is an observable artifact, not a private scratchpad.
 
-**Strategy 2: Evidence-first with scratchpad (Anthropic verbatim):**
+```xml
+<document id="release-notes">
+<source>release-notes.md, section Storage</source>
+<document_content>Version 3 supports reading version 2 records.</document_content>
+</document>
+<question>Does version 3 read version 1 records?</question>
+<output>
+Cite the relevant passage, answer only to its scope, and name missing coverage.
+</output>
 ```
-Please read the below document. Then, in <scratchpad> tags, pull the most
-relevant quote from the document and consider whether it answers the user's
-question or whether it lacks sufficient detail. Then write a brief answer
-in <answer> tags.
-```
-Force Claude to extract relevant quotes before answering. This reduces hallucination from distractor information because Claude must locate evidence first.
 
-**Full evidence-first pattern with document reference:**
-```
-<question>What was the subscriber base on May 31, 2020?</question>
-Please read the below document. Then, find the exact quotes from the
-document that are most relevant to answering the question, and write
-them in <quotes> tags. Then, answer the question in <answer> tags.
+Expected result: the supplied passage establishes version 2 read compatibility. It does not establish version 1 support; request or inspect version 1 compatibility evidence if that answer is required. Do not convert absence of evidence into either a success or a failure claim.
 
-<document>{DOCUMENT_TEXT}</document>
-```
-Prefill: `<quotes>`
-
-**Status-Based Output Routing (from Anthropic courses):**
-```json
-{
-  "status": "COMPLETE | INSUFFICIENT_DATA | ERROR",
-  "result": { ... },
-  "ambiguities": [ ... ]
-}
-```
-Define clear criteria for each status:
-- **COMPLETE**: All required information present and processed
-- **INSUFFICIENT_DATA**: Input fails minimum quality thresholds (enumerate them)
-- **ERROR**: Processing failed (include error details)
+Use short quotations when exact wording matters; use file:line, section, or source links when they provide sufficient grounding. Preserve uncertainty when sources conflict or dates differ. For code claims, inspect the actual implementation and relevant execution evidence.
 
 ## A-Team Application
 
-When generating agents that consume external information (researchers, reviewers, analysts):
+- Keep the references → findings → decisions chain traceable. Cite evidence for each acceptance verdict.
+- Use only EC-1 statuses: `DONE`, `DONE_WITH_CONCERNS`, `BLOCKED`, `NEEDS_CONTEXT`.
+- Missing required context uses `STATUS: NEEDS_CONTEXT` and `INSUFFICIENT_DATA: {missing items}` in `CONCLUSIONS`. Partial verifiable results may use `DONE_WITH_CONCERNS` when the role contract permits; hard blockers use `BLOCKED`.
+- Do not map every tool error to a final blocker; apply the existing role uncertainty and bounded retry contract.
+- Label hypotheses as hypotheses. Do not demand a scratchpad transcript from every document-processing skill.
 
-- Every research agent must include the "give an out" clause: "If the source material does not contain sufficient information to answer, state explicitly what is missing. Do not infer or fabricate."
-- Review agents must use evidence-first: extract specific quotes/references in a scratchpad step before rendering a verdict. This directly maps to A-Team's evidence chain requirement (references -> findings -> decisions).
-- For agents producing structured output, use Status-Based Output Routing. Map to A-Team's completion statuses: COMPLETE -> DONE, INSUFFICIENT_DATA -> NEEDS_CONTEXT, ERROR -> BLOCKED.
-- Skill-writer must embed the scratchpad pattern in any skill that processes documents or external data.
+## Examples
+
+### Rejection Case
+
+Reject an overall PASS based solely on a successful parser when the criterion requires live tool readiness. Cite the parser result as static evidence, name the unperformed live check, and leave that criterion unverified.
+
+## Sources And Attribution
+
+A-Team-authored example, report routing, and evidence contract. The grounding/uncertainty approach is informed by [Anthropic hallucination guidance](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations), checked 2026-10-06. Historical tutorial extracts remain provenance, not current output mandates.

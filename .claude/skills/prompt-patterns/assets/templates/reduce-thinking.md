@@ -5,21 +5,37 @@ applies_when:
   - generating-execution-agent
   - context-constrained
 tags: [latency, thinking, efficiency, token-budget]
-source: raw/claude-4-best-practices.md
+historical-source: raw/claude-4-best-practices.md
+source: https://platform.claude.com/docs/en/build-with-claude/effort
+reviewed: 2026-10-06
 ---
 
 # Reduce Thinking
 
-## When to Use
+## When To Use
 
-Inject into lightweight or high-throughput agents where extended thinking wastes tokens and adds latency -- formatters, validators, simple task executors, or Tier 1 context agents.
+Use when representative tasks show unnecessary deliberation without a corresponding quality benefit. Do not infer that every formatter, validator, or tier needs lower effort; a validator can still face a difficult judgment.
 
-## Template
+## Task-Scoped Template
 
 ```text
-Extended thinking adds latency and should only be used when it will meaningfully improve answer quality - typically for problems that require multi-step reasoning. When in doubt, respond directly.
+Complete the requested transformation and its relevant check. Revisit the approach
+only when new evidence or a failed check justifies it. Report the result and any
+material uncertainty; include a worked derivation when the user needs to verify it.
 ```
 
-## Adaptation Notes
+## Native Adaptation
 
-Use as-is for Tier 1 and simple Tier 2 agents. Omit for Tier 3+ agents, research agents, and coordinators where deep reasoning is the point. For haiku-based agents, this block is less necessary since haiku naturally uses minimal thinking.
+For a selected Claude model, check its supported thinking modes and effort controls. Some models always think; prompting for a direct answer does not disable native thinking. Change model/effort settings only within authorized scope and evaluate the actual task. Keep public response-length preferences separate from internal effort.
+
+For another runtime, use its current native controls rather than translating Claude tier names or manual thinking budgets. Never replace effort configuration with a private-reasoning disclosure request.
+
+## Examples
+
+### Rejection Case
+
+Reject lowering a pinned reviewer’s effort merely because the job label says “validation.” Preserve the pin and assess the actual evidence task; propose a scoped change only when quality and runtime evidence justify it.
+
+## Sources And Attribution
+
+A-Team-authored template and preservation policy, informed by [Claude effort](https://platform.claude.com/docs/en/build-with-claude/effort), checked 2026-10-06. The older block remains traceable through historical-source; it does not establish current model defaults.

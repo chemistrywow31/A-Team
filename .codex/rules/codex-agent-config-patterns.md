@@ -13,7 +13,7 @@ description: Define current TOML patterns, model tiers, and sandbox posture for 
 
 ### Required TOML Shape
 
-Every generated agent config requires these fields; the model/effort values illustrate the scoped defaults under Current Model Guidance:
+A-Team requires these fields in generated role configs; distinguish this authoring floor from the target client's native optional fields. Model/effort values illustrate the scoped defaults under Current Model Guidance:
 
 ```toml
 name = "process_reviewer"
@@ -47,13 +47,13 @@ Validate required role sections in the authoritative playbook; validate the TOML
 
 ### Current Model Guidance
 
-- For new teams without explicit pins or explicitly authorized profile migration, default root/strong roles to `gpt-6-astra`/`xhigh` and read-heavy roles to `gpt-5.6-terra`/`high`; this remains A-Team's approved repo-self profile.
+- Preserve the host-selected root and unpinned defaults; A-Team has no project root/default-subagent model or effort pins. Its explicit strong-role `gpt-6-astra`/`xhigh` and read-heavy-role `gpt-5.6-terra`/`high` pins remain. Use those role defaults for new unpinned teams, not as a mandate to add root/default pins; validate against the target-supported runtime profile.
 - Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring; retaining a pin, including `gpt-5.4`, requires no fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort.
 
 ### Sandbox Posture
 
 - Roles that mutate repo artifacts use `workspace-write`; reviewer, auditor, and verifier roles that only inspect artifacts use `read-only`.
-- A review or probe role may use `workspace-write` only when its owned artifact set explicitly includes a report path or runtime advisory it must write.
+- A review or probe role may use `workspace-write` only when its owned artifact set explicitly includes a report path or runtime advisory it must write and the approved runtime policy permits it. Preserve existing sandbox pins. If its live sandbox blocks persistence, use execution-contract EC-1.12 `INLINE-FALLBACK` with a dispatch cap and coordinator persistence; do not bypass or broaden permissions.
 
 ### Coordinator Playbook Requirements
 
@@ -61,9 +61,11 @@ Validate required role sections in the authoritative playbook; validate the TOML
 
 ### Specialist Playbook Requirements
 
-- The authoritative specialist playbook under `.codex/agents/` includes Identity, Responsibilities, Input and Output, the adjacent H2 Reasoning/Workflow/Self-Critique sequence, Uncertainty Protocol, Examples with one rejection case, Completion Contract, File Ownership, and Boundaries. Keep the J5.1 floors and role-specific checks; omit duplicate Preflight/Verification forms and mandatory four/five slots.
+- The authoritative specialist playbook under `.codex/agents/` includes Identity, Responsibilities, Input and Output, the adjacent H2 Reasoning/Workflow/Self-Critique sequence, Uncertainty Protocol, Examples with at least one meaningful boundary case and any useful positive/contrast cases, Completion Contract, File Ownership, and Boundaries. Keep the J5.1 floors and role-specific checks; omit duplicate Preflight/Verification forms and mandatory four/five slots.
 
 ### Fork Override Constraint
+
+The following describes A-Team's observed v2 host. For other targets, select and verify their lifecycle/profile under `context-isolation.md`; do not claim these fork parameters are a universal CLI API.
 
 - Full-history forks inherit the parent model and reasoning effort; any explicit `spawn_agent` model or reasoning override requires `fork_turns = "none"` or a positive bounded fork.
 - Do not rely on omitted or `all` forks when overriding model or effort.
@@ -84,7 +86,7 @@ Validate required role sections in the authoritative playbook; validate the TOML
 - A registry entry points outside the intended TOML path or does not resolve from `.codex/` -> Violation
 - A `[agents.<id>]` table id is not a stable snake_case runtime identity, or its referenced agent TOML's `name` does not equal `<id>` exactly -> Violation
 - A default overrides explicit user/target model or effort pins outside authorized migration, or retaining a pin triggers fresh compatibility approval -> Violation
-- A reviewer or verifier uses `workspace-write` without an owned write artifact, or a writer role uses `read-only` while owning mutable paths -> Violation
+- A reviewer or verifier uses `workspace-write` without an owned write artifact, or a writer role claims mutable outputs under `read-only` without an approved persistence handoff -> Violation
 - The authoritative coordinator playbook omits topology, task-path, join, or non-reversion guidance -> Violation
 - The authoritative specialist playbook omits completion contract, file ownership, or boundaries -> Violation
 - A dispatch pattern claims model or effort override on a full-history fork -> Violation

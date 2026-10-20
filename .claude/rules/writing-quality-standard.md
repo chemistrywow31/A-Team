@@ -31,19 +31,20 @@ Prohibited words: "try to", "appropriately", "reasonably", "if needed", "as appr
 - Correct: "All code must pass linter checks and have test coverage no less than 80%"
 - Allowed: "Reasonable error handling (defined as: every public function must have error return with context)"
 
-### Length Limits
+### Effectiveness And Size Review
 
-- Single agent .md: No more than 300 lines
-- Single skill .md: No more than 200 lines
-- Single rule .md: No more than 100 lines
-- If content exceeds limits, must split into multiple files or use references for detailed content
+Prioritize prompt effectiveness using current official platform/model guidance. Preserve useful XML, examples, task steps, and checks; concision is secondary.
+
+- Agent, skill, and rule targets remain 300, 200, and 100 lines respectively.
+- An over-target authored file is `REVIEW_REQUIRED`. Record the current size, concrete usefulness rationale, and evidence in the ordinary worklog or criterion report. The independent reviewer accepts or rejects that current file; an author-only note cannot produce unconditional PASS.
+- Move detail to references when task routing preserves its usefulness. Do not delete effective instructions just to meet a number. EC report caps and explicit dispatch limits remain separate and bounded.
 
 ### Example Requirements
 
 Every generated .md that contains examples must meet these standards:
 
-- Each authored **skill .md** and **agent .md** contains exactly one worked rejection/defer/escalation case under the `JUDGMENT.md` J5 floor; additional cases require an explicit change to the task's example criteria.
-- Express normal behavior in `## Workflow` and named `## Input and Output` fields. Do not add normal or edge worked examples under the default floor.
+- Each authored **skill .md** and **agent .md** contains at least one meaningful rejection/defer/escalation case under `JUDGMENT.md` J5. Add useful positive or contrast examples that clarify behavior or a testable boundary; no universal example count applies.
+- Express normal behavior in `## Workflow` and named `## Input and Output` fields; examples may explain how those instructions apply.
 - Keep the rejection example concise: identify the triggering input and correct refusal, deferral, or escalation. Include the mistaken action only when it clarifies the boundary; a full before/after transcript is not required.
 - Each **rule .md** must contain at least one violation scenario description.
 
@@ -57,7 +58,7 @@ For each policy statement, grep the same file and its writers for a template or 
 
 ### Structural Over Instructional
 
-When a behavioral constraint can be enforced by prompt structure (dedicated sections, labeled output slots, fixed templates), use structure instead of instructions. Claude reliably follows structural boundaries but frequently ignores negative instructions like "do not X".
+When a behavioral constraint can be enforced by prompt structure (dedicated sections, labeled output slots, fixed templates), use structure instead of instructions. Use current model guidance and a concrete task outcome to judge whether the structure helps; do not claim a universal success rate.
 
 - Use dedicated sections (`## Boundaries`, `## Uncertainty Protocol`) instead of inline prohibitions
 - Use output templates with labeled slots instead of "output in X format" instructions
@@ -80,9 +81,9 @@ Format: one to two sentences after Violation Determination or within Exceptions,
 
 - Using descriptive tone instead of imperative sentences → Violation
 - Prohibited vague words appear without accompanying judgment criteria → Violation
-- File exceeds length limit → Violation
+- An over-target file is marked PASS without independent usefulness review, or useful content is cut only to satisfy length → Violation
 - Skill .md or agent .md has no rejection-case example → Violation
-- Skill .md or agent .md carries normal-case or edge-case examples not requested by the dispatch → Violation
+- An example contradicts the intended workflow or boundary → Violation
 - Agent .md has no Examples section → Violation
 - A file's template/example block contradicts a policy stated elsewhere in the same file, or in the rule that file implements → Violation
 - Rule .md has no violation determination → Violation

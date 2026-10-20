@@ -236,7 +236,7 @@ class ValidateCodexTeamAuthorityTests(unittest.TestCase):
                     root = self._write_authority_fixture(temporary_root / authority, authority)
                     classification = validator.classify_team(root)
                     self.assertEqual(classification.canonical_authority, authority)
-                    self.assertEqual(classification.mapping_state, "complete")
+                    self.assertEqual(classification.mapping_state, "declared-root-coverage")
 
     def test_unmapped_single_surface_declarations_do_not_need_manifest(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -274,7 +274,7 @@ root_relations:
             )
             classification = validator.classify_team(root)
             self.assertEqual(classification.canonical_authority, "claude")
-            self.assertEqual(classification.mapping_state, "complete")
+            self.assertEqual(classification.mapping_state, "declared-root-coverage")
 
     def test_indented_yaml_shared_declaration_is_complete(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -311,7 +311,7 @@ root_relations:
             )
             classification = validator.classify_team(root)
             self.assertEqual(classification.canonical_authority, "shared")
-            self.assertEqual(classification.mapping_state, "complete")
+            self.assertEqual(classification.mapping_state, "declared-root-coverage")
 
     def test_missing_declaration_and_runnable_disagreement_are_ambiguous(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -400,6 +400,239 @@ root_relations:
                 "artifacts": [{"canonical": True, "source": source, "targets": targets}],
             }), encoding="utf-8")
         return root
+
+
+class ValidateCodexTeamAssignedMappingTests(unittest.TestCase):
+    def test_root_mapping_is_narrow_and_missing_assigned_families_fail(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = ValidateCodexTeamAuthorityTests._write_authority_fixture(Path(directory), "claude")
+            assigned = [".claude/agents/planner.md", ".claude/rules/scope.md", ".claude/skills/research/SKILL.md"]
+            for source in assigned:
+                path = root / source
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("Canonical assigned source.\n", encoding="utf-8")
+            baseline = validator.classify_team(root)
+            self.assertEqual(baseline.mapping_state, "declared-root-coverage")
+            self.assertIn("assigned families not checked", baseline.mapping_evidence)
+            for source in assigned:
+                with self.subTest(source=source):
+                    classification = validator.classify_team(root, assigned_paths=[source])
+                    self.assertEqual(classification.canonical_authority, "claude")
+                    self.assertEqual(classification.mapping_state, "incomplete")
+                    self.assertIn(f"{source}: missing assigned mapping for codex", classification.mapping_evidence)
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                status = validator.main([str(root), "--classify", "--assigned-path", assigned[0], "--assigned-path", assigned[1]])
+            self.assertEqual(status, 1)
+            self.assertIn("MAPPING_STATE team-mapping-state | FAIL | incomplete", output.getvalue())
+            for source in assigned[:2]:
+                self.assertIn(source, output.getvalue())
+
+    def test_exact_assigned_coverage_ignores_unassigned_history_and_detects_missing_projection(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = ValidateCodexTeamAuthorityTests._write_authority_fixture(Path(directory), "claude")
+            source, target = ".claude/agents/planner.md", ".codex/agents/planner.md"
+            for name in (source, target, ".claude/agents/historical.md"):
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("Assigned fixture or unassigned history.\n", encoding="utf-8")
+            manifest_path = root / ".codex/docs/format-mapping.manifest.yaml"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["artifacts"].append({"canonical": True, "source": {"runtime": "claude", "path": source}, "targets": [{"runtime": "codex", "path": target}]})
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            classification = validator.classify_team(root, assigned_paths=[source])
+            self.assertEqual(classification.mapping_state, "assigned-coverage", classification.mapping_evidence)
+            self.assertIn("semantic parity not checked", classification.mapping_evidence)
+            self.assertNotIn("historical", classification.mapping_evidence)
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                validator.validate_team(validator.Reporter(), root, True, assigned_paths=[source])
+            self.assertIn("MAPPING_STATE team-mapping-state | PASS | assigned-coverage", output.getvalue())
+            (root / target).unlink()
+            classification = validator.classify_team(root, assigned_paths=[source])
+            self.assertEqual(classification.mapping_state, "incomplete")
+            self.assertIn("missing or unconfined projection", classification.mapping_evidence)
+
+    def test_documented_nested_yaml_maps_native_playbook_and_thin_toml(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = ValidateCodexTeamAuthorityTests._write_authority_fixture(Path(directory), "claude")
+            for name in (".claude/agents/coordinator.md", ".codex/agents/coordinator.md", "agents/coordinator.toml"):
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("Mapped native artifact.\n", encoding="utf-8")
+            # Exercise the actual emitted/documented nested shape, including
+            # source/targets, empty lists, maps, validation lists and sidecars.
+            documentation = (REPO_ROOT / ".codex/docs/claude-to-codex-mapping.md").read_text(encoding="utf-8")
+            example = documentation.split("Recommended manifest shape:", 1)[1].split("```yaml\n", 1)[1].split("```", 1)[0]
+            manifest = root / ".codex/docs/format-mapping.manifest.yaml"
+            manifest.write_text(example, encoding="utf-8")
+            parsed, error = validator.parse_json_document(manifest)
+            self.assertIsNone(error)
+            self.assertEqual(len(parsed["artifacts"]), 3)
+            self.assertEqual(parsed["artifacts"][1]["targets"], [])
+            self.assertEqual(parsed["artifacts"][2]["sidecar"]["carries"][-1], "sandbox_mode")
+            self.assertIn("frontmatter.description", parsed["artifacts"][2]["field_map"])
+            classification = validator.classify_team(root, assigned_paths=["CLAUDE.md", ".claude/agents/coordinator.md"])
+            self.assertEqual(classification.canonical_authority, "claude", classification.canonical_evidence)
+            self.assertEqual(classification.mapping_state, "assigned-coverage", classification.mapping_evidence)
+            (root / "agents/coordinator.toml").unlink()
+            self.assertEqual(validator.classify_team(root, assigned_paths=[".claude/agents/coordinator.md"]).mapping_state, "incomplete")
+
+    def test_runtime_label_cannot_relabel_source_or_other_native_surface(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = ValidateCodexTeamAuthorityTests._write_authority_fixture(Path(directory), "claude")
+            source = ".claude/agents/planner.md"
+            native = ".codex/agents/planner.md"
+            for name in (source, native, "agents/planner.toml", "agents/notes.md", "shared/agents/planner.md"):
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("Mapped fixture.\n", encoding="utf-8")
+            link = root / ".codex/agents/linked.md"
+            link.symlink_to(root / source)
+            manifest_path = root / ".codex/docs/format-mapping.manifest.yaml"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            artifact = {"canonical": True, "source": {"runtime": "claude", "path": source}, "targets": []}
+            manifest["artifacts"].append(artifact)
+            for runtime, target in (("codex", source), ("claude", native), ("codex", "shared/agents/planner.md"), ("codex", "agents/notes.md"), ("codex", ".codex/agents/linked.md")):
+                with self.subTest(runtime=runtime, target=target):
+                    # A valid sibling target must not hide the invalid record.
+                    artifact["targets"] = [{"runtime": "codex", "path": native}, {"runtime": runtime, "path": target}]
+                    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+                    classification = validator.classify_team(root, assigned_paths=[source])
+                    self.assertEqual(classification.mapping_state, "incomplete", classification.mapping_evidence)
+                    self.assertIn("runtime/path mismatch", classification.mapping_evidence)
+            artifact["targets"] = [{"runtime": "codex", "path": "agents/planner.toml"}]
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            self.assertEqual(validator.classify_team(root, assigned_paths=[source]).mapping_state, "assigned-coverage")
+
+    def test_shared_canonical_yaml_requires_actual_claude_and_codex_projections(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = ValidateCodexTeamAuthorityTests._write_authority_fixture(Path(directory), "shared")
+            source = "shared/agents/planner.md"
+            for name in (source, ".claude/agents/planner.md", ".codex/agents/planner.md", "agents/planner.toml"):
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("Mapped native fixture.\n", encoding="utf-8")
+            manifest_path = root / ".codex/docs/format-mapping.manifest.yaml"
+            yaml = """canonical_authority: shared/
+root_relations:
+  - source: shared/team.yaml
+    target: CLAUDE.md
+  - source: shared/team.yaml
+    target: AGENTS.md
+artifacts:
+  - id: planner
+    canonical: true
+    source:
+      runtime: shared
+      path: shared/agents/planner.md
+    targets:
+      - runtime: claude
+        path: .claude/agents/planner.md
+      - runtime: codex
+        path: .codex/agents/planner.md
+      - runtime: codex
+        path: agents/planner.toml
+"""
+            manifest_path.write_text(yaml, encoding="utf-8")
+            classification = validator.classify_team(root, assigned_paths=[source])
+            self.assertEqual(classification.mapping_state, "assigned-coverage", classification.mapping_evidence)
+            manifest_path.write_text(yaml.replace("path: .claude/agents/planner.md", "path: shared/agents/planner.md"), encoding="utf-8")
+            classification = validator.classify_team(root, assigned_paths=[source])
+            self.assertEqual(classification.mapping_state, "incomplete", classification.mapping_evidence)
+            self.assertIn("runtime/path mismatch", classification.mapping_evidence)
+            self.assertIn("missing assigned mapping for claude", classification.mapping_evidence)
+
+    def test_unsupported_yaml_shapes_fail_explicitly_instead_of_dropping_artifacts(self) -> None:
+        for body in (
+            "artifacts: [{source: unknown}]\n",
+            "artifacts: &alias\n  - id: planner\n",
+            "artifacts:\n  - id: planner\n    source: *alias\n",
+            "artifacts:\n  - id: planner\n    source: |\n      unsupported block scalar\n",
+            "artifacts:\n  - id: planner\n    id: duplicate\n",
+            "artifacts:\n  - id: planner\n   source: invalid indentation\n",
+        ):
+            with self.subTest(body=body):
+                parsed, error = validator.parse_a_team_manifest_yaml("canonical_authority: claude\n" + body)
+                self.assertEqual(parsed, {})
+                self.assertIsNotNone(error)
+                self.assertRegex(error, "unsupported|duplicate")
+        parsed, error = validator.parse_a_team_manifest_yaml("canonical_authority: 'claude' # supported comment\nartifacts: []\nmetadata:\n  label: 'owner''s # literal'\n")
+        self.assertIsNone(error)
+        self.assertEqual(parsed["metadata"]["label"], "owner's # literal")
+
+    def test_exact_assignments_reject_directory_glob_traversal_and_symlink_escape(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = ValidateCodexTeamAuthorityTests._write_authority_fixture(Path(directory) / "team", "claude")
+            (root / ".claude/agents").mkdir(parents=True)
+            outside = Path(directory) / "external.md"
+            outside.write_text("Outside.\n", encoding="utf-8")
+            (root / ".claude/agents/escape.md").symlink_to(outside)
+            for source in (".claude/agents", ".claude/agents/*.md", "../external.md", str(outside), ".claude/agents/escape.md"):
+                with self.subTest(source=source):
+                    classification = validator.classify_team(root, assigned_paths=[source])
+                    self.assertEqual(classification.mapping_state, "incomplete")
+                    self.assertIn("not a confined canonical file", classification.mapping_evidence)
+
+
+class ValidateCodexTeamRuntimeProfileTests(unittest.TestCase):
+    @staticmethod
+    def portable_config() -> dict:
+        return {"features": {"multi_agent": True}, "agents": {"enabled": True, "max_concurrent_threads_per_session": 6}}
+
+    @staticmethod
+    def v2_config() -> dict:
+        return {"features": {"multi_agent": True, "multi_agent_v2": {"enabled": True, "max_concurrent_threads_per_session": 7}}, "agents": {"enabled": True}}
+
+    def test_portable_and_v2_profiles_need_no_forced_flags_or_default_pins(self) -> None:
+        for cfg, profile in ((self.portable_config(), "portable-cli"), (self.v2_config(), "v2")):
+            with self.subTest(profile=profile):
+                self.assertEqual(validator.target_runtime_profile(cfg), profile)
+                self.assertEqual(validator.target_config_problems(cfg), [])
+                self.assertNotIn("model", cfg)
+                self.assertNotIn("default_subagent_model", cfg["agents"])
+        cfg = self.portable_config()
+        cfg["agents"]["max_threads"] = cfg["agents"].pop("max_concurrent_threads_per_session")
+        self.assertEqual(validator.target_config_problems(cfg), [])
+        # A-Team's observed profile remains strict about its own required tools.
+        self.assertIn("missing wait_agent_enabled=true", validator.v2_config_problems(self.v2_config()))
+
+    def test_mixed_profiles_and_invalid_native_values_fail(self) -> None:
+        mixed = self.v2_config()
+        mixed["agents"]["max_concurrent_threads_per_session"] = 6
+        self.assertTrue(any("mixed runtime profiles" in issue for issue in validator.target_config_problems(mixed)))
+        invalid = self.v2_config()
+        invalid["features"]["multi_agent_v2"]["wait_agent_enabled"] = "true"
+        self.assertIn("features.multi_agent_v2.wait_agent_enabled must be boolean", validator.target_config_problems(invalid))
+        for value in (0, -1, True, "6"):
+            cfg = self.portable_config()
+            cfg["agents"]["max_concurrent_threads_per_session"] = value
+            self.assertIn("agents.max_concurrent_threads_per_session must be a positive integer", validator.target_config_problems(cfg))
+        cfg = self.portable_config()
+        cfg["agents"]["wait_agent_enabled"] = True
+        self.assertIn("v2-only wait_agent_enabled in portable profile", validator.target_config_problems(cfg))
+
+    def test_target_output_accepts_portable_schema_without_claiming_v2_readiness(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / ".codex").mkdir()
+            (root / "agents").mkdir()
+            (root / "AGENTS.md").write_text("canonical_authority: codex\ncanonical_root: .codex/\n", encoding="utf-8")
+            (root / ".codex/config.toml").write_text('[features]\nmulti_agent = true\n[agents]\nenabled = true\nmax_concurrent_threads_per_session = 6\n[agents.planner]\ndescription = "Plan"\nconfig_file = "../agents/planner.toml"\n', encoding="utf-8")
+            (root / "agents/planner.toml").write_text('name = "planner"\nmodel = "gpt-5"\nmodel_reasoning_effort = "high"\nsandbox_mode = "read-only"\n', encoding="utf-8")
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output), mock.patch.object(validator, "run_strict_config", return_value=(True, "fixture CONFIG_OK")), mock.patch.object(validator, "parse_live_tools_env", return_value=set(validator.REQUIRED_HOST_TOOLS)):
+                validator.validate_team(validator.Reporter(), root, False)
+            self.assertIn("G9 target-runtime-profile | PASS | profile=portable-cli", output.getvalue())
+            self.assertIn("G3 runnable-codex-surface | PASS |", output.getvalue())
+            self.assertIn("G7 host-tool-readiness | SKIP | portable-cli lifecycle not probed", output.getvalue())
+            self.assertNotIn("v2-ready", output.getvalue())
+            (root / "README.md").write_text("Activation-gated: external renderer unavailable.\n", encoding="utf-8")
+            classification = validator.classify_team(root)
+            self.assertTrue(classification.runnable_codex)  # static package surface only
+            self.assertEqual(classification.team_class, "incomplete/activation-gated")
+            (root / "CLAUDE.md").write_text("canonical_authority: claude\ncanonical_root: .claude/\n", encoding="utf-8")
+            self.assertEqual(validator.classify_team(root).canonical_authority, "ambiguous")
 
 
 class ValidateCodexTeamProportionalContractTests(unittest.TestCase):
@@ -661,7 +894,20 @@ class ValidateCodexTeamJ5ContractTests(unittest.TestCase):
             "## Violation Determination\n- missing field -> violation\n## Exceptions\n- none\n",
             encoding="utf-8",
         )
+        self.fixture_root = root
         return validator.validate_generated_j5_markdown(root)
+
+    def test_rule_and_skill_size_overages_require_independent_review(self) -> None:
+        self.validate_agent(ValidateCodexTeamJ5AgentMetadataTests._agent_text())
+        rule = self.fixture_root / ".codex/rules/fixture.md"
+        rule.write_text(rule.read_text(encoding="utf-8") + "Useful constraint detail.\n" * 101, encoding="utf-8")
+        skill = self.fixture_root / ".codex/skills/fixture/SKILL.md"
+        skill.parent.mkdir(parents=True)
+        skill.write_text("---\nname: Fixture\ndescription: Useful skill\n---\n" + "Useful worked step.\n" * 201, encoding="utf-8")
+        verdict, evidence = validator.validate_generated_j5_markdown(self.fixture_root)
+        self.assertEqual(verdict, "REVIEW_REQUIRED", evidence)
+        self.assertIn("exceeds 100", evidence)
+        self.assertIn("exceeds 200", evidence)
 
     def test_compact_specific_contract_and_nested_workflow_checks_pass(self) -> None:
         text = ValidateCodexTeamJ5AgentMetadataTests._agent_text().replace(
@@ -700,18 +946,38 @@ class ValidateCodexTeamJ5ContractTests(unittest.TestCase):
                 self.assertEqual(verdict, "FAIL", evidence)
                 self.assertIn(f"duplicate contract gates: {heading}", evidence)
 
-    def test_rejection_only_examples_remain_required(self) -> None:
+    def test_useful_positive_examples_supplement_nonempty_boundary_case(self) -> None:
         base = ValidateCodexTeamJ5AgentMetadataTests._agent_text()
+        positive = base + "### Normal Case\nReturn the approved role map with resolved paths.\n"
+        self.assertEqual(self.validate_agent(positive)[0], "PASS")
         for text in (
             base.replace("### Rejection Case\n", ""),
-            base + "### Rejection Case\nDuplicate.\n",
-            base + "### Normal Case\nSurplus.\n",
-            base + "### Edge Case\nSurplus.\n",
+            base.replace("Reject unsupported work.", ""),
+            positive.replace("### Rejection Case\nReject unsupported work.\n", ""),
         ):
             with self.subTest(text=text):
                 verdict, evidence = self.validate_agent(text)
                 self.assertEqual(verdict, "FAIL", evidence)
-                self.assertIn("Examples rejection=", evidence)
+                self.assertIn("Examples missing nonempty", evidence)
+        for heading, body in (("Uncertainty Protocol", "Escalate missing facts."), ("Workflow", "Follow steps.")):
+            with self.subTest(heading=heading):
+                verdict, evidence = self.validate_agent(base.replace(body, ""))
+                self.assertEqual(verdict, "FAIL", evidence)
+                self.assertIn(f"empty {heading}", evidence)
+
+    def test_over_target_length_is_review_required_and_other_failures_remain(self) -> None:
+        base = ValidateCodexTeamJ5AgentMetadataTests._agent_text() + "Useful worked step.\n" * 301
+        verdict, evidence = self.validate_agent(base)
+        self.assertEqual(verdict, "REVIEW_REQUIRED", evidence)
+        self.assertIn("exceeds 300", evidence)
+        self.assertIn("independent usefulness verdict required", evidence)
+        reporter = validator.Reporter()
+        with contextlib.redirect_stdout(io.StringIO()):
+            reporter.emit("G10", "generated-j5-markdown-quality", verdict, evidence)
+        self.assertTrue(reporter.failed)
+        verdict, evidence = self.validate_agent(base.replace("## Uncertainty Protocol", "## Missing"))
+        self.assertEqual(verdict, "FAIL", evidence)
+        self.assertIn("REVIEW_REQUIRED", evidence)
 
 
 if __name__ == "__main__":

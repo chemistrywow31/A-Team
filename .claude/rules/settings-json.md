@@ -15,7 +15,7 @@ paths:
 
 ### Every Generated Team Must Include settings.json
 
-Every generated team must include `.claude/settings.json` at the team root. This file captures project-scope configuration: hooks, permissions, env vars, and plugin declarations. Without it, Claude Code falls back to user-level settings, which the team designer cannot control.
+Every generated runnable Claude surface must include `.claude/settings.json` at the team root. This captures project-scope hooks, permissions, env vars, and plugin declarations alongside other active settings sources. Do not generate it for Codex-only or reference-only surfaces.
 
 ### Required Sections
 
@@ -37,24 +37,17 @@ When the team uses Agent Teams mode (per CLAUDE.md deployment section), settings
 {
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  },
-  "teammateMode": "in-process"
+  }
 }
 ```
 
-Use `"in-process"` as default. Teams may switch to `"tmux"` only when split-pane visibility is critical and the user confirms their terminal supports it.
+Agent Teams is experimental and distinct from ordinary subagents. Confirm target availability in preflight. The native display default is `in-process`; do not emit a project display override without a team need. A selected `tmux` setup requires a compatible terminal. Preserve existing display preferences. See [Agent Teams](https://code.claude.com/docs/en/agent-teams), checked 2026-10-06.
 
-### Auto Mode Reality
+### Permission Mode And Scope
 
-Claude Code 2.1+ ships **auto mode** as the default permission mode: an AI classifier evaluates each tool call instead of prompting the user. Under auto mode the bands below still describe intent, but three things change and a generated `settings.json` cannot compensate for any of them:
+Probe the selected permission mode; do not infer auto mode from a version number. Deterministic permission rules evaluate deny, then ask, then allow. When auto mode is selected, narrow allow rules remain effective while broad arbitrary-execution grants are suspended; do not claim that every allow rule is ignored or that every config write is necessarily blocked. See [permissions](https://code.claude.com/docs/en/permissions) and [auto-mode configuration](https://code.claude.com/docs/en/auto-mode-config), checked 2026-10-06.
 
-1. **Bare tool grants are ignored at runtime.** `Write`, `Edit`, `Agent`, and shell wildcards in `permissions.allow` are classifier-bypassing; auto mode drops them. Keep writing them — they are the correct configuration when auto mode is off — but never claim they reduce prompting.
-2. **`ask` entries prompt unconditionally.** Deterministic rules are evaluated before the classifier, so every `ask` match is a guaranteed interruption. An `ask` entry the team's own pipeline triggers on every run is a self-inflicted prompt storm.
-3. **A team whose deliverables ARE config files trips the classifier's config-write rules.** `Self-Modification` and `Instruction Poisoning` name `.claude/settings*.json`, `CLAUDE.md`, `.claude/rules/`, `.claude/agents/`, `.claude/skills/`, `.claude/hooks/`, and `.mcp.json` as protected surfaces. Any team that generates, edits, or migrates agent configuration will be gated on every file it writes.
-
-The only lever for (3) is an `autoMode` carve-out, and it is honored **only from user settings** (`~/.claude/settings.json`) plus managed policy. `autoMode` written into a team's `settings.json` or `settings.local.json` is inert — Claude Code loads it and discards it. Never emit an `autoMode` key into a generated team.
-
-Because the fix lives outside the team, it must be handed to the user as advice: Phase 3.5 dispatches `runtime-preflight-advisor`, which probes the live runtime and writes `teams/{name}/docs/RUNTIME-SETUP.md`. Agents must not apply the carve-out themselves — Claude Code blocks an agent from writing its own auto-mode rules, and attempting it is a classified violation (verified 2026-07-25 against claude 2.1.220).
+`autoMode` is honored from managed, user, and per-invocation settings, not project or project-local files. Never emit it in a generated project. Describe any actual host restriction and user-applied setup in `docs/RUNTIME-SETUP.md`; do not alter the running session's auto-mode rules, expand permissions, or bypass the host to persist evidence. EC-1.12 provides the bounded coordinator report handoff.
 
 ### Permission Bands
 
@@ -64,7 +57,7 @@ These bands govern the deterministic rule set — authoritative when auto mode i
 2. **ask — externally visible or hard to reverse**: curl/wget transfers, rm, git push, npm/npx installs, API write operations (e.g., `"Bash(curl -X POST *)"`).
 3. **deny — irreversible or secret-exposing**: rm -rf variants, force push, reset --hard, clean -fd, pipe-to-shell, chmod -R 777, reads of `.env` / `secrets/**` / `*.pem`.
 
-Scoped overrides beat bare grants: `ask`/`deny` rules match before `allow`, so a team that must gate one directory keeps bare `Write` in allow and adds the scoped gate to ask (e.g., `"Write(profiles/**)"` for fixed-by-design profiles). Never demote bare `Write`/`Edit`/`Agent` to ask — with auto mode off that reintroduces a prompt on every deliverable and every dispatch, and with auto mode on the `ask` entry still fires unconditionally while the matching `allow` entry is ignored, so the demotion costs a prompt either way.
+Scoped overrides beat bare grants: `ask`/`deny` rules match before `allow`, so a team that must gate one directory keeps bare `Write` in allow and adds the scoped gate to ask (e.g., `"Write(profiles/**)"` for fixed-by-design profiles). Never demote bare `Write`/`Edit`/`Agent` to ask — with auto mode off that reintroduces a prompt on every deliverable and every dispatch, and with auto mode on the `ask` entry still fires unconditionally while broad arbitrary-execution `allow` grants may be suspended, so the demotion costs a prompt either way.
 
 Keep the `ask` list to operations a human should decide **every single time**. An entry the team's own pipeline hits on every run does not gate risk — it trains the user to approve reflexively, which is the failure the bands exist to prevent. If the team fetches with `curl` on every run, `curl` belongs in allow with a scoped pattern, not in ask.
 
@@ -85,17 +78,17 @@ One designed exception: the output-mode first-run hook (baseline, `rules/hooks-i
 
 ### Precedence
 
-Precedence: Managed (org-wide) > User (`~/.claude/settings.json`) > Project (`.claude/settings.json`) > Local (`.claude/settings.local.json`). Generated team settings operate at project scope — users may override but organizations may force back.
+For ordinary scalar settings, current precedence is managed > command line/per-invocation > project-local > shared project > user. Permission lists merge across scopes and evaluate deny before ask before allow; do not treat scalar precedence as replacement of all lower-scope lists. Some security-sensitive keys honor a stricter lower-scope value, and environment-variable precedence is key-specific. Verify the effective sources in preflight and preserve user/managed constraints. See [settings precedence](https://code.claude.com/docs/en/settings#settings-precedence), checked 2026-10-06.
 
 ## Violation Determination
 
-- Generated team missing `.claude/settings.json` → Violation
+- Generated runnable Claude surface missing `.claude/settings.json` → Violation
 - `settings.json` missing required sections (`hooks`, `permissions`, `env`) → Violation
 - Team declares Agent Teams mode in CLAUDE.md but settings.json lacks `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` → Violation
 - `permissions.allow` grants destructive operations (`"Bash(rm -rf *)"`, `"Bash(git push --force *)"`) without explicit user instruction → Violation
 - `permissions.allow` contains an interpreter, shell, or runner wildcard (`Bash(python3 *)`, `Bash(node *)`, `Bash(bash *)`, `Bash(npm run *)`) → Violation
 - Bare `Write`, `Edit`, or `Agent` placed in `ask`/`deny` instead of allow, without a decisions.md entry justifying the gate → Violation
-- Generated `settings.json` contains an `autoMode` key → Violation (inert; belongs in user settings, surfaced via `docs/RUNTIME-SETUP.md`)
+- Generated `settings.json` contains an `autoMode` key → Violation (unsupported project scope; surface applicable user/per-invocation setup via `docs/RUNTIME-SETUP.md`)
 - `permissions.ask` contains an operation the team's own documented pipeline invokes on every run, without a decisions.md entry justifying the per-run prompt → Violation
 - Any agent writes an `autoMode` block into `~/.claude/settings.json` or any settings file the running session loads → Violation (advise via `docs/RUNTIME-SETUP.md`; the user applies it)
 - `settings.local.json` committed to git (project template should gitignore it) → Violation

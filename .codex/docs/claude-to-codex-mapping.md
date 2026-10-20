@@ -31,7 +31,7 @@ For the A-Team repository itself, `.claude/` plus `CLAUDE.md` is the canonical s
 | `.codex/skills/` | `.claude/skills/` | Claude -> Codex adaptation | Codex-authored mirror uses Codex-valid frontmatter and vocabulary |
 | `.agents/skills/` | `.claude/skills/` | Claude -> Codex runtime | Runtime-discoverable Codex skill copy mirrors authored or adapted skills |
 | `.codex/docs/format-mapping.md` | N/A | Codex anchor | Per-team retained mapping artifact for round-trip conversion |
-| Codex `spawn_agent`, `send_message`, `followup_task`, `list_agents`, `interrupt_agent`, `wait_agent` | Claude `Task` / Agent Teams lifecycle | Bidirectional concept mapping | Map intent, ownership, and lifecycle; do not translate by tool-name substitution |
+| Codex `spawn_agent`, `send_message`, `followup_task`, `list_agents`, `interrupt_agent`, `wait_agent` | Claude `Agent` (legacy `Task` alias) / Agent Teams lifecycle | Bidirectional concept mapping | Map intent, ownership, and lifecycle; do not translate by tool-name substitution |
 | `scripts/` (repo root) | `scripts/` (repo root) | Shared placement, runtime-specific tools | `preflight-permissions.sh` is Claude-only; `preflight-codex-runtime.sh` and `validate_codex_team.py` are Codex-only |
 | `teams/{name}/docs/RUNTIME-SETUP.md` | same path | Bidirectional | Same filename both trees; body differs by probed runtime — Codex reports sandbox/approval posture, Claude Code reports auto-mode carve-outs |
 | N/A | Claude auto-mode carve-out (`autoMode` in user settings) | Claude-only | No Codex counterpart. Codex gates normal work with `approval_policy` / `sandbox_mode`, while protected `.codex/` and `.agents/` rewrites still require the documented bootstrap/approval posture. |
@@ -78,16 +78,16 @@ Deterministic field mapping:
 | `[agents.<id>]` table name plus referenced TOML `name` | output file identity | adapted | require exact equality and use the stable snake_case id for conversion bookkeeping |
 | `[agents.<id>].description` | summary line or frontmatter description | adapted | keep wording stable when possible |
 | `config_file` | playbook and target identity | adapted | resolve it relative to `.codex/config.toml`, then use the same grouped path under `.codex/agents/` and `.claude/agents/` |
-| `.codex/agents/{path}.md` body | markdown body | adapted | preserve role intent and section contract; translate Codex lifecycle tools, bounded helper rules, path references, and fork semantics into Claude-valid Task/Agent behavior |
+| `.codex/agents/{path}.md` body | markdown body | adapted | preserve role intent and section contract; translate Codex lifecycle tools, bounded helper rules, path references, and fork semantics into the selected Claude Agent/subagent or Agent Teams behavior |
 | `developer_instructions` | runtime bootstrap evidence | runtime-only | verify that the thin TOML points to the corresponding `.codex/agents/` playbook; do not export the bootstrap wrapper as the Claude role body |
-| `model` | sidecar metadata | sidecar | Claude agent markdown has no direct equivalent |
-| `model_reasoning_effort` | sidecar metadata | sidecar | retain only when round-trip preservation matters |
+| `model` | frontmatter `model` plus sidecar | adapted/manual | Claude has native aliases, full IDs, and `inherit`; choose a supported target model explicitly and retain the original provider-specific pin for round-trip fidelity |
+| `model_reasoning_effort` | frontmatter `effort` plus sidecar | adapted/manual | Claude has native effort; matching labels do not prove equivalent behavior or support. Preserve the original and verify the effective target model |
 | `sandbox_mode` | sidecar metadata | sidecar | retain only when round-trip preservation matters |
 
 Section handling:
 
 - `.codex/agents/**/*.md` contains the role contract; the TOML `developer_instructions` is intentionally a thin runtime bootstrap
-- tool names are not copied verbatim: Claude subagent mode keeps coordinator-only Task/Agent delegation, while Codex v2 may allow one bounded specialist helper hop
+- tool names are not copied verbatim: Claude subagent mode keeps coordinator-only Agent delegation by A-Team policy, while Codex v2 may allow one bounded specialist helper hop
 - runtime-only TOML keys that Claude cannot express must be retained in a sidecar when round-trip fidelity is required
 - Codex-native research agents such as `agents/research/domain-researcher.toml` and `agents/research/decision-auditor.toml` map to `.claude/agents/research/*.md` when exporting to Claude
 - TOML `name` is the Codex runtime identity and must equal the registry id exactly; `description` or playbook prose carries any human-facing display label during export
@@ -112,14 +112,14 @@ Deterministic field mapping:
 | stable role identity derived from the canonical path/role vocabulary | `[agents.<id>]` table id and referenced TOML `name` | adapted | emit the same snake_case value in both places; a mismatch is invalid |
 | file path | `config_file` | adapted | swap `.md` for `.toml`, then store it relative to `.codex/config.toml` as `../agents/{path}.toml` |
 | frontmatter `description` or first summary line | `[agents.<id>].description` | adapted | prefer explicit frontmatter when present |
-| markdown body | `.codex/agents/{path}.md` body | adapted | preserve role intent and section contract; translate Task/Agent behavior into current Codex lifecycle, task-path, shared-filesystem, and fork semantics |
+| markdown body | `.codex/agents/{path}.md` body | adapted | preserve role intent and section contract; translate the selected Claude Agent lifecycle into target-supported Codex lifecycle, task-path, shared-filesystem, and fork semantics |
 | generated playbook path | `developer_instructions` | adapted | write a thin bootstrap that tells the runtime agent to read `AGENTS.md` and the corresponding `.codex/agents/{path}.md` playbook |
 | unsupported Claude-specific metadata | sidecar or dropped | lossy/manual | call out in mapping artifact if present |
 
 Default injection policy:
 
-- if Claude provides no explicit runtime model metadata, inject Codex defaults during conversion
-- for new Codex teams, use the current validated tier profile from `.codex/rules/context-tier.md`: GPT-6 Astra/xhigh for strong roles and Terra/high for bounded read-heavy roles; preserve explicit user choices and record injected values
+- Claude supports explicit model/effort metadata and inheritance. Preserve the source intent; select target-native values from its verified profile, and record any cross-provider choice or injected default
+- for new Codex teams, use `.codex/rules/context-tier.md` with target availability and task requirements; explicit user choices outrank examples. A-Team retains its current per-role Astra/Terra pins while its host supplies root/default choices; this does not mandate those models for every target
 - restructuring preserves a target's existing model pins unless model migration is part of the authorized change; do not silently replace compatibility pins or reduce reasoning effort
 - record injected defaults in the manifest so reverse conversion does not pretend they came from Claude
 - convert Claude `settings.json` and hook intent to `.codex/config.toml`, optional Codex hooks, worklog rules, or mapping notes; do not require `.claude/settings.json` in Codex-native output
@@ -129,13 +129,21 @@ Default injection policy:
 
 Claude's context-tier rule owns native Claude tiers and shared context principles, not the Codex model profile. Codex projections combine those shared principles with `codex-runtime-config.md`, `codex-agent-config-patterns.md`, and `context-isolation.md` as listed in the scoped adaptation-input inventory. Keep target model/effort pins during unrelated maintenance; never infer a model conversion from a context tier alone.
 
-The 2026-09-14 adaptation keeps one compact `Reasoning` -> `Workflow` -> `Self-Critique` triad per agent. Adapt task-specific decisions and verification checks without duplicate Preflight/Verification forms or mandatory nine-slot essays. Preserve role ownership, uncertainty, required metadata, one rejection example, and runtime-specific lifecycle semantics. Interim summaries are nonblocking; an existing scoped authorization satisfies that scope's approval requirement, while new-team confirmation and uncovered material-change approvals remain explicit. Review frozen batches independently and invalidate changed-file criteria plus dependent mapping/parity checks after corrections.
+The 2026-10-06 adaptation keeps one task-specific `Reasoning` -> `Workflow` -> `Self-Critique` triad per agent. Adapt task-specific decisions and verification checks without duplicate Preflight/Verification forms or mandatory nine-slot essays. Preserve role ownership, uncertainty, required metadata, a meaningful boundary example plus useful positive/contrast cases, and runtime-specific lifecycle semantics. Prompt effectiveness comes first; the J5 size targets require an independent usefulness review when exceeded, rather than automatic content removal. Interim summaries are nonblocking; an existing scoped authorization satisfies that scope's approval requirement, while new-team confirmation and uncovered material-change approvals remain explicit. Review frozen batches independently and invalidate changed-file criteria plus dependent mapping/parity checks after corrections.
 
 - `AGENTS.md`: the active project contract for Codex.
 - `agents/`: project-level Codex agent configs referenced by `.codex/config.toml`.
 - `.codex/`: active Codex project config plus adapted rules, skills, playbooks, and mapping docs.
 - `.agents/skills/`: runtime skill packages that Codex can discover automatically.
 - `.claude/`: canonical source design for A-Team itself. For generated teams, consult the per-team manifest.
+
+### Current native evidence and capability scope
+
+Current [Claude subagent guidance](https://code.claude.com/docs/en/sub-agents) supports nesting and native model/effort metadata. A-Team enforces its direct-specialist Claude policy using `disallowedTools: [Agent]`; Codex's supported helper policy is adapted independently. Useful XML, worked examples, and checks are selected by model/task guidance, not copied as universal private-thinking requests.
+
+The installed Codex 0.160.1 and active host support A-Team's v2 profile. The [published config reference](https://learn.chatgpt.com/docs/config-file/config-reference) documents a spawned-thread limit excluding root; the active host's total-session slots include root. A future target's setup/mapping records its own observed profile, version and verification, without inserting invented profile keys into `config.toml`. Public docs, local parser support, live tool availability and model entitlement are separate evidence.
+
+Before any target classification or write, distinguish maintaining A-Team's restructuring capability from actually maintaining named teams or an explicitly requested fleet. Capability-only work remains in the designer. For authorized targets, report observed legacy baseline versus scope-triggered requirements; root declaration coverage is not proof that every assigned role/rule/skill is mapped. Validate the exact assigned family, and keep unassigned historical families outside the write scope.
 
 ## Per-Team Mapping Artifact
 
@@ -200,7 +208,10 @@ Recommended manifest shape:
 ```yaml
 spec_version: 1
 requested_format: dual-format
-canonical_runtime: claude
+canonical_authority: claude
+surface_state:
+  claude: runnable
+  codex: runnable
 supported_directions:
   - claude_to_codex
   - codex_to_claude
@@ -245,25 +256,30 @@ artifacts:
       path: ".claude/agents/coordinator.md"
     targets:
       - runtime: codex
+        path: ".codex/agents/coordinator.md"
+        canonical: false
+      - runtime: codex
         path: "agents/coordinator.toml"
         canonical: false
-    relation: "1:1"
+    relation: "1:N"
     transform_mode: adapted
     canonical: true
     field_map:
-      frontmatter.description: "description"
-      markdown_body: "developer_instructions"
+      frontmatter.description: "registry/TOML description"
+      frontmatter.model: "explicitly selected target-native model; preserve source in sidecar"
+      frontmatter.effort: "verified target-native effort; preserve source in sidecar"
     section_map:
-      markdown_body: "developer_instructions"
+      markdown_body: ".codex/agents/coordinator.md body"
     validation:
-      - "config_file must resolve from .codex/config.toml to the agent file path"
-      - "developer_instructions must be non-empty"
-    lossy: false
+      - "config_file must resolve from .codex/config.toml to ../agents/coordinator.toml"
+      - "developer_instructions bootstraps AGENTS.md and .codex/agents/coordinator.md"
+      - "role intent, authority, and completion contract retain semantic parity"
+    lossy: true
     sidecar:
       path: ".codex/docs/mapping-sidecars/agents/coordinator.runtime.yaml"
       carries:
-        - model
-        - model_reasoning_effort
+        - source_model_and_effort
+        - target_model_and_model_reasoning_effort
         - sandbox_mode
 ```
 

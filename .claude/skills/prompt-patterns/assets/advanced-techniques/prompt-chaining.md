@@ -7,59 +7,48 @@ applies_when:
   - writing-skill-prompts
   - generating-coding-team
 tags: [chaining, self-correction, iterative, multi-turn, extract-then-process]
-source: raw/tutorial-advanced-techniques.md
+historical-source: raw/tutorial-advanced-techniques.md
+source: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+reviewed: 2026-10-06
 ---
 
 # Prompt Chaining
 
-## Core Principle
+## Chain Only When The Handoff Adds Value
 
-Claude improves its own responses when asked to revise. Multi-turn conversations where Claude checks or improves its own work are a powerful pattern. Each step is a separate API call, enabling inspection and intervention between steps. The key insight: decompose complex work into generate-review-refine cycles.
+Break work into stages when an intermediate result needs inspection, a later step depends on verified output, or independent review is required. A simple skill may complete its work in one procedure. Stage count, separate API calls, and agent dispatches are not universal requirements.
 
-## Pattern
+## Conditional Verification
 
-**Self-correction chain (Anthropic verbatim):**
-```
-Step 1: "Name ten words that all end with the exact letters 'ab'."
-Step 2: "Please find replacements for all 'words' that are not real words.
-         If all the words are real words, return the original list."
-```
-The escape clause ("If all words are real") prevents Claude from second-guessing correct answers due to expectation bias.
-
-**Extract-then-process chain:**
-```
-Step 1: "Find all names from the below text: {TEXT}"
-        Prefill: <names>
-Step 2: "Alphabetize the list."
+```text
+Check that every extracted identifier occurs in the source and appears once.
+Correct only unsupported or duplicate entries. If the list is valid, retain it.
 ```
 
-**Quality improvement chain:**
-```
-Chain: Generate -> Review -> Improve
-Step 1: "Write a three-sentence short story about a girl who likes to run."
-Step 2: "Make the story better."
-```
+This A-Team-authored check makes the success condition explicit and permits no change when the artifact is already correct.
 
-**Conditional verification pattern (from courses):**
-- Original: "Find replacements for all invalid items."
-- Improved: "Find replacements for invalid items. If all items are valid, return the original list."
+## Worked Extract-Then-Process Example
 
-This prevents unnecessary modifications to correct output.
-
-**Multi-turn message format:**
-```python
-messages = [
-    {"role": "user", "content": first_user},
-    {"role": "assistant", "content": first_response},
-    {"role": "user", "content": second_user}
-]
+```xml
+<source>Owners: Lee, Rao, Lee.</source>
+<task>Extract distinct owner names, then sort them alphabetically.</task>
+<output>["Lee", "Rao"]</output>
 ```
 
-## A-Team Application
+Extraction and sorting have a real dependency. They can occur within one task; no separate worker or API round trip is needed unless inspection or isolation adds value. Use a supported output schema when machine parsing matters. Do not assume assistant prefill support for the selected model.
 
-When generating teams with quality review cycles:
+## Review And Correction
 
-- Code review agents must use the self-correction pattern: first pass identifies issues, second pass verifies fixes. Include the conditional escape clause so the reviewer does not fabricate issues when code is correct.
-- Skill-writer must structure multi-step skills as explicit chains: step 1 extracts/generates, step 2 reviews, step 3 refines. Document each step as a separate section in SKILL.md.
-- For coding teams, embed the generate-review-refine cycle directly in the workflow: developer agent generates code, code reviewer evaluates, developer incorporates feedback. Each handoff is a separate Task dispatch.
-- Process reviewer agents must use extract-then-process: first extract observations from the execution log, then analyze patterns, then produce recommendations. This prevents premature conclusions.
+A substantial generated artifact can use producer → independent reviewer → producer correction. Freeze the coherent batch before review; correction runs only when findings require it. A producer self-check does not replace A-Team's independent acceptance gate. After a change, rerun affected criteria and dependent mapping/parity evidence rather than automatically repeating every check.
+
+Keep native lifecycle choices in the target runtime contract. In Claude, use `Agent` when a separate specialist is actually needed; do not force every workflow step into a dispatch. Public evidence and results remain the handoff; no private scratchpad transcript is required.
+
+## Examples
+
+### Rejection Case
+
+Reject an obligatory generate/review/rewrite sequence for a valid two-item extraction. Run the relevant check and retain the correct output; add an independent reviewer only when the task's acceptance contract calls for one.
+
+## Sources And Attribution
+
+A-Team-authored examples and acceptance workflow, informed by [Claude prompting guidance](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices) and [Claude Code subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-10-06. Historical tutorial provenance does not prescribe current native API support or a universal pipeline.

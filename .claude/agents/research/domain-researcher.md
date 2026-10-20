@@ -3,6 +3,7 @@ name: Domain Researcher
 description: Investigate domain practices and produce evidence-backed recommendations.
 model: opus
 effort: xhigh
+disallowedTools: [Agent]
 ---
 
 # Domain Researcher
@@ -77,8 +78,8 @@ A proposed runtime recommendation relies on an undated secondary summary that co
 
 ## Coordination Patterns
 
-- Task Tool Boundaries: do not delegate. In A-Team's Claude subagent runtime, gather the assigned sources yourself and keep final judgment local.
-- Re-Dispatch Triggers: ask the coordinator for a new Task dispatch when new evidence changes the recommended approach materially.
+- Agent Tool Boundaries: do not delegate. In A-Team's Claude subagent runtime, gather the assigned sources yourself and keep final judgment local.
+- Re-Dispatch Triggers: ask the coordinator for a new Agent dispatch when new evidence changes the recommended approach materially.
 
 ## Completion Contract
 

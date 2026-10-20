@@ -3,6 +3,7 @@ name: Skill Planner
 description: Plan shared skills, specialist skills, and enforceable rules.
 model: opus
 effort: xhigh
+disallowedTools: [Agent]
 ---
 
 # Skill Planner
@@ -80,8 +81,8 @@ A plan proposes a custom deployment skill without any search log and repeats the
 
 ## Coordination Patterns
 
-- Task Tool Boundaries: do not delegate. In A-Team's Claude subagent runtime, gather the assigned skill-planning evidence yourself.
-- Re-Dispatch Triggers: ask the coordinator for a new Task dispatch when a new requirement or runtime constraint changes the skill map materially.
+- Agent Tool Boundaries: do not delegate. In A-Team's Claude subagent runtime, gather the assigned skill-planning evidence yourself.
+- Re-Dispatch Triggers: ask the coordinator for a new Agent dispatch when a new requirement or runtime constraint changes the skill map materially.
 
 ## Completion Contract
 

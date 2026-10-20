@@ -30,7 +30,8 @@ Default to Tier 2 when uncertain. Tier 1 requires an explicit zero-judgment just
 
 ### Declare Once In Claude Frontmatter
 
-- Write `model` and `effort` directly in agent YAML frontmatter; dispatch overrides are for stated debugging/escalation cases.
+- Write `model` and `effort` directly in agent YAML frontmatter under A-Team policy; dispatch overrides require a stated reason. Native Claude supports aliases including `fable`, full model IDs, and `inherit`; an omitted native effort inherits session effort. These native options do not authorize replacing a target pin. Check the selected model/client supports the requested effort.
+- A-Team tier defaults are design choices, not vendor model defaults. Record configured values separately from the effective invocation and model availability. See [Claude subagents](https://code.claude.com/docs/en/sub-agents) and [effort guidance](https://platform.claude.com/docs/en/build-with-claude/effort), checked 2026-10-06.
 - Put the Context Tier and Startup context notes in the authoritative role file. Do not duplicate model/effort in those notes; frontmatter is their single source.
 - When the selected output includes Codex, use `.codex/rules/codex-runtime-config.md`, `.codex/rules/codex-agent-config-patterns.md`, and `.codex/rules/context-isolation.md` for that target's runtime adaptation. Their platform defaults and controls do not change Claude model/effort or context assignments.
 

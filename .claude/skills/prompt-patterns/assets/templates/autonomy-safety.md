@@ -7,28 +7,40 @@ applies_when:
   - generating-coding-team
   - generating-rules
 tags: [safety, reversibility, destructive-actions, confirmation]
-source: raw/claude-4-best-practices.md
+historical-source: raw/claude-4-best-practices.md
+source: https://code.claude.com/docs/en/permissions
+reviewed: 2026-10-06
 ---
 
-# Autonomy and Safety
+# Autonomy And Safety
 
-## When to Use
+## When To Use
 
-Inject into any agent that can execute destructive or externally visible operations -- coordinators, coding agents, deployment agents, or infrastructure agents. Include as a team-wide rule for coding teams.
+Use when a role performs mutations or outward actions. Preserve the actual task authorization and runtime permission boundary.
 
 ## Template
 
 ```text
-Consider the reversibility and potential impact of your actions. You are encouraged to take local, reversible actions like editing files or running tests, but for actions that are hard to reverse, affect shared systems, or could be destructive, ask the user before proceeding.
-
-Examples of actions that warrant confirmation:
-- Destructive operations: deleting files or branches, dropping database tables, rm -rf
-- Hard to reverse operations: git push --force, git reset --hard, amending published commits
-- Operations visible to others: pushing code, commenting on PRs/issues, sending messages, modifying shared infrastructure
-
-When encountering obstacles, do not use destructive actions as a shortcut. For example, don't bypass safety checks (e.g. --no-verify) or discard unfamiliar files that may be in-progress work.
+Carry forward authorization already supplied for this operation and target.
+Complete scoped reversible work and prepare concrete reviewable results.
+Before an external or irreversible action not covered by that authorization, obtain
+the missing decision. Explicit instructions are required to send messages to others.
+Assess impact and reversibility for the actual action; do not repeat approval simply
+because a phase changed or an action belongs to a broad category.
+Respect host permissions. Do not discard unfamiliar files, revert another writer's
+changes, or bypass checks to get past an obstacle.
 ```
+
+## Examples
+
+- Authorized: the user requests edits to a named skill family; proceed with those reversible edits and verify them.
+- Defer: a repository maintenance task exposes a useful email update, but no instruction authorizes sending it. Prepare the relevant result and request that authorization before sending.
+- Defer: an authorized repair would also delete an unrelated directory. Continue the covered repair and obtain the missing scope decision for deletion.
 
 ## Adaptation Notes
 
-Use as-is for most agents. For fully autonomous pipelines with no human in the loop, tighten the guardrails by listing specific prohibited commands. For review-only agents that never execute, this block is unnecessary.
+For unattended workflows, use explicitly authorized operations and native permission controls. The absence of a person does not grant new authority. A read-only reviewer usually needs the ownership/evidence contract rather than this execution template.
+
+## Sources And Attribution
+
+This is an A-Team adaptation of the historical-source pattern, grounded in the current user authorization and execution-contract precedence rules. [Claude Code permissions](https://code.claude.com/docs/en/permissions), checked 2026-10-06 in the native research, describes runtime permission controls; it does not grant task authorization.

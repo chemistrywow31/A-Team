@@ -1,6 +1,6 @@
 # A-Team Prompt Engineering Knowledge Base
 
-Reference materials distilled from Anthropic's official documentation, tutorials, courses, and engineering blog. Writers read specific knowledge files during generation — not the entire index.
+Maintained patterns informed by official native guidance, with A-Team-authored contracts and examples. Read only relevant candidates. Selection is not blanket prompt assembly: adapt each pattern to the actual task, model/mode, and runtime. Current prompting sources were checked 2026-10-06; historical snapshots remain provenance.
 
 ## How to Use
 
@@ -23,29 +23,29 @@ Read these before writing:
 
 | Generating... | Key Knowledge Files |
 |---------------|-------------------|
-| **Coordinator** | `templates/parallel-tool-calls.md`, `context-strategies/compaction.md`, `context-strategies/sub-agent-dispatch.md`, `templates/commitment-over-exploration.md`, `claude-4-patterns/anti-overthinking.md` |
-| **Execution agent** | `templates/default-to-action.md`, `templates/investigate-before-answering.md`, `advanced-techniques/anti-hallucination.md`, `claude-4-patterns/tone-calibration.md` |
+| **Coordinator** | `templates/parallel-tool-calls.md`, `context-strategies/compaction.md`, `context-strategies/sub-agent-dispatch.md`, `templates/commitment-over-exploration.md`, `context-strategies/system-prompt-design.md` |
+| **Execution agent** | `templates/default-to-action.md`, `templates/investigate-before-answering.md`, `advanced-techniques/anti-hallucination.md`, `context-strategies/system-prompt-design.md` |
 | **Research agent** | `templates/research-structured.md`, `advanced-techniques/chain-of-thought.md`, `advanced-techniques/few-shot-patterns.md`, `context-strategies/progressive-disclosure.md` |
 | **Review/QA agent** | `templates/conservative-action.md`, `advanced-techniques/anti-hallucination.md`, `templates/avoid-excessive-markdown.md` |
-| **Coding team** | `templates/investigate-before-answering.md`, `templates/anti-over-engineering.md`, `templates/anti-hard-coding.md`, `claude-4-patterns/over-engineering-prevention.md` |
+| **Coding team** | `templates/investigate-before-answering.md`, `templates/anti-over-engineering.md`, `templates/anti-hard-coding.md`, `advanced-techniques/xml-tag-separation.md` |
 | **Frontend team** | `templates/frontend-aesthetics.md`, `templates/anti-over-engineering.md` |
 | **Long-running tasks** | `context-strategies/compaction.md`, `context-strategies/multi-window-workflow.md`, `context-strategies/structured-notes.md`, `templates/context-awareness.md` |
-| **Rules writing** | `claude-4-patterns/tone-calibration.md`, `advanced-techniques/xml-tag-separation.md` |
+| **Rules writing** | `context-strategies/system-prompt-design.md`, `advanced-techniques/xml-tag-separation.md` |
 | **Skill writing** | `advanced-techniques/few-shot-patterns.md`, `advanced-techniques/complex-prompt-template.md` |
-| **Prompt optimization** | `claude-4-patterns/tone-calibration.md`, `claude-4-patterns/anti-overthinking.md`, `claude-4-patterns/prefill-migration.md` |
+| **Prompt optimization** | `context-strategies/system-prompt-design.md`, `advanced-techniques/few-shot-patterns.md`, `advanced-techniques/chain-of-thought.md` |
 
 ---
 
 ## File Catalog
 
 ### templates/ — Ready-to-Use Anthropic Prompt Blocks
-Verbatim prompt blocks from official Anthropic documentation. Inject directly into generated prompts.
+Candidate prompt blocks with source attribution. Preserve useful content, adapt native details, and obey current A-Team contracts; selection does not authorize injection without checking applicability.
 
 | File | Purpose |
 |------|---------|
 | `default-to-action.md` | Make agents proactive — implement rather than suggest |
 | `conservative-action.md` | Make agents cautious — research before acting |
-| `parallel-tool-calls.md` | Maximize parallel tool execution (~100% success rate) |
+| `parallel-tool-calls.md` | Batch independent calls while preserving dependencies |
 | `investigate-before-answering.md` | Anti-hallucination — read code before claiming |
 | `avoid-excessive-markdown.md` | Flowing prose instead of bullet-point fragments |
 | `frontend-aesthetics.md` | Distinctive UI design, avoid "AI slop" aesthetic |
@@ -54,7 +54,7 @@ Verbatim prompt blocks from official Anthropic documentation. Inject directly in
 | `research-structured.md` | Competing hypotheses, confidence tracking, self-critique |
 | `autonomy-safety.md` | Reversibility-aware actions, confirm before destructive ops |
 | `context-awareness.md` | Context window compaction awareness for long tasks |
-| `commitment-over-exploration.md` | Prevent Opus 4.6 over-exploration loops |
+| `commitment-over-exploration.md` | Commit to an approach; reconsider when evidence changes |
 | `subagent-usage.md` | When to delegate vs work directly |
 | `reduce-thinking.md` | Prevent unnecessary extended thinking |
 
@@ -76,16 +76,16 @@ Core techniques from Anthropic's tutorial and courses, distilled for A-Team's ge
 
 | File | Purpose |
 |------|---------|
-| `chain-of-thought.md` | Visible reasoning steps before answering |
-| `few-shot-patterns.md` | In-prompt few-shot sets: 3-5 diverse examples. Does NOT govern generated `## Examples` sections (one rejection case) |
+| `chain-of-thought.md` | Native thinking/effort versus public worked solutions; no private transcripts |
+| `few-shot-patterns.md` | Relevant worked examples and boundary cases; no universal count |
 | `anti-hallucination.md` | Give-an-out + evidence-first extraction patterns |
-| `complex-prompt-template.md` | 10-element template with assembly order |
-| `xml-tag-separation.md` | Claude-specific XML boundary training advantage |
+| `complex-prompt-template.md` | Task-specific components and a worked review prompt |
+| `xml-tag-separation.md` | Descriptive source/data boundaries, not a security guarantee |
 | `prompt-chaining.md` | Generate → review → refine self-correction pattern |
-| `long-context.md` | Long documents top, instructions bottom, quote-grounding |
+| `long-context.md` | Task-specific document/query placement and grounded citations |
 
-### claude-4-patterns/ — Claude 4.6 Specific Patterns
-Behavioral changes and migration patterns specific to Claude 4.6.
+### claude-4-patterns/ — Historical, Excluded From Selection
+These archived patterns retain their original text for provenance. `select.py` scans only templates, context-strategies, and advanced-techniques; scenario and tag queries never return this directory or `raw/`. Inspect historical files only for an explicit historical comparison, not current defaults.
 
 | File | Purpose |
 |------|---------|
@@ -106,3 +106,11 @@ Behavioral changes and migration patterns specific to Claude 4.6.
 | `assets/raw/courses-advanced-patterns.md` | 891 | github.com/anthropics/courses |
 | `assets/raw/context-engineering-blog.md` | 405 | anthropic.com/engineering |
 | `assets/raw/claude-4-best-practices.md` | 1301 | platform.claude.com (5 pages merged) |
+
+## Selection Interface
+
+`--scenario/-s`, `--tags/-t` (comma-separated), `--list-scenarios`, `--list-tags`, `--verbose/-v`, and `--prefix` retain their interfaces. Scenario matches remain exact; tag matches remain case-insensitive substring matches. Combined filters select the union with scenario-weighted ordering. Use list commands for the actual active metadata; the table above is a curated starting point, not the full selector output.
+
+## Current Sources
+
+[Claude prompting guidance](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices), [effort](https://platform.claude.com/docs/en/build-with-claude/effort), and [Claude Code subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-10-06. Active files mark historical attribution separately from A-Team-authored workflow examples.

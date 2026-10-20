@@ -87,6 +87,14 @@ class ClaudeEntrySkillTests(unittest.TestCase):
         self.write_skill("coordinator-checks", "---\nname: Checks\ndescription: Run coordinator checks before release\ndisable-model-invocation: true\n---\nReview the output.\n")
         self.assert_entry_passes()
 
+    def test_native_skill_paths_metadata_and_display_name_are_preserved(self) -> None:
+        text = self.entry_text().replace("name: Launch", "name: Team Launch").replace(
+            "argument-hint:", "paths: [src/**]\nmetadata:\n  owner: native-team\nargument-hint:"
+        )
+        skill = self.write_skill("launch-native", text)
+        self.assert_entry_passes()
+        self.assertEqual(skill.read_text(encoding="utf-8"), text)
+
     def test_actual_a_team_entry_and_quality_checklist_are_unambiguous(self) -> None:
         self.write_skill("renamed-a-team", (REPO_ROOT / ".claude/skills/a-team/SKILL.md").read_text(encoding="utf-8"))
         self.write_skill("renamed-quality-review", (REPO_ROOT / ".claude/skills/quality-validation/SKILL.md").read_text(encoding="utf-8"))
@@ -275,6 +283,7 @@ class ClaudeJ5ContractTests(unittest.TestCase):
         (root / "CLAUDE.md").write_text("# Fixture\n", encoding="utf-8")
         (root / ".claude/agents/planner.md").write_text(text, encoding="utf-8")
         result = subprocess.run(["sh", str(VALIDATOR), str(root)], capture_output=True, text=True, check=False)
+        self.fixture_root = root
         # This fixture isolates agent contract checks; unrelated team checks lack
         # their artifacts and are intentionally outside these assertions.
         return result.stdout
@@ -310,16 +319,63 @@ class ClaudeJ5ContractTests(unittest.TestCase):
                 self.assertIn("F3 agent-j5-section-order | FAIL |", output)
                 self.assertIn(f"duplicate contract gates ## {heading}", output)
 
-    def test_rejection_only_examples_remain_required(self) -> None:
+    def test_useful_positive_examples_supplement_nonempty_boundary_case(self) -> None:
         base = self.agent_text()
+        positive = base + "### Normal Case\nMap approved roles once and return the resolved paths.\n"
+        self.assertIn("F4 agent-j5-rejection-examples | PASS |", self.run_agent(positive))
         for text in (
             base.replace("### Rejection Case\n", ""),
-            base + "### Rejection Case\nDuplicate.\n",
-            base + "### Normal Case\nSurplus.\n",
-            base + "### Edge Case\nSurplus.\n",
+            base.replace("Reject a role with conflicting owners.", ""),
+            positive.replace("### Rejection Case\nReject a role with conflicting owners.\n", ""),
         ):
             with self.subTest(text=text):
                 self.assertIn("F4 agent-j5-rejection-examples | FAIL |", self.run_agent(text))
+        for heading, body in (("Uncertainty Protocol", "Escalate conflicting ownership."),
+                              ("Workflow", "Map each role to its owned paths.\n### Verification\nCheck the mapped runtime paths resolve.")):
+            with self.subTest(heading=heading):
+                output = self.run_agent(base.replace(body, ""))
+                self.assertIn("F3 agent-j5-section-order | FAIL |", output)
+                self.assertIn(f"empty {heading}", output)
+
+    def test_over_target_length_requires_independent_review(self) -> None:
+        output = self.run_agent(self.agent_text() + "Useful worked step.\n" * 301)
+        self.assertIn("L2 agent-line-cap-300 | REVIEW_REQUIRED |", output)
+        self.assertIn("independent usefulness verdict required", output)
+        self.assertNotIn("L2 agent-line-cap-300 | PASS |", output)
+        self.assertIn("review_required=1", output)
+
+    def test_rule_and_skill_size_overages_require_independent_review(self) -> None:
+        self.run_agent(self.agent_text())
+        for relative, count in ((".claude/rules/fixture.md", 101), (".claude/skills/fixture/SKILL.md", 201)):
+            path = self.fixture_root / relative
+            path.parent.mkdir(parents=True)
+            path.write_text("---\nname: Fixture\ndescription: Useful fixture\n---\n" + "Useful authored detail.\n" * count, encoding="utf-8")
+        result = subprocess.run(["sh", str(VALIDATOR), str(self.fixture_root)], capture_output=True, text=True, check=False)
+        self.assertIn("L1 rule-line-cap-100 | REVIEW_REQUIRED |", result.stdout)
+        self.assertIn("L3 skill-line-cap-200 | REVIEW_REQUIRED |", result.stdout)
+        self.assertIn("review_required=2", result.stdout)
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_supported_native_model_and_effort_forms_preserve_names_and_fields(self) -> None:
+        models = ("opus", "sonnet", "haiku", "fable", "inherit", "claude-opus-4-6", "claude-3-5-sonnet-20241022")
+        for index, model in enumerate(models):
+            effort = ("low", "medium", "high", "xhigh", "max")[index % 5]
+            text = self.agent_text().replace("model: opus", f"model: '{model}' # preserved pin\neffort: {effort}\nmaxTurns: 12\nomitClaudeMd: false\ndisallowedTools: [Agent]\nskills: [native-skill]\npermissionMode: default\nmcpServers: [source]\nmetadata:\n  owner: team")
+            with self.subTest(model=model):
+                output = self.run_agent(text)
+                for criterion in ("F1 agent-frontmatter-fields", "F2 agent-model-value", "F5 agent-native-optional-values"):
+                    self.assertIn(f"{criterion} | PASS |", output)
+
+    def test_invalid_native_values_and_unclosed_frontmatter_still_fail(self) -> None:
+        for model in ("", "gpt-6-astra", "claude-", "claude-not-a-model", "[opus]", "opus sonnet"):
+            with self.subTest(model=model):
+                output = self.run_agent(self.agent_text().replace("model: opus", f"model: {model}"))
+                self.assertIn("F2 agent-model-value | FAIL |", output)
+        for field in ("effort: extreme", "maxTurns: 0", "maxTurns: true", "maxTurns: '12'", "omitClaudeMd: sometimes", "omitClaudeMd: 'false'"):
+            with self.subTest(field=field):
+                output = self.run_agent(self.agent_text().replace("model: opus", f"model: opus\n{field}"))
+                self.assertIn("F5 agent-native-optional-values | FAIL |", output)
+        self.assertIn("F1 agent-frontmatter-fields | FAIL |", self.run_agent(self.agent_text().replace("\n---\n", "\n", 1)))
 
 
 if __name__ == "__main__":

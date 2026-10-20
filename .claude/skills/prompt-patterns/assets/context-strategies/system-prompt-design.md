@@ -2,38 +2,54 @@
 name: System Prompt Design
 category: context-strategies
 applies_when:
+  - optimizing-prompts
   - generating-coordinator
   - generating-execution-agent
   - generating-review-agent
   - generating-research-agent
 tags: [system-prompt, instructions, altitude, minimal-prompt]
-source: raw/context-engineering-blog.md
+source: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+historical-source: raw/context-engineering-blog.md
+reviewed: 2026-10-06
 ---
 
 # System Prompt Design
 
-## Core Principle
+## Make The Intended Behavior Executable
 
-System prompts must hit the "right altitude" — specific enough to guide behavior, flexible enough to provide strong heuristics. Too specific creates brittle, high-maintenance logic. Too vague fails to give the model concrete signals and falsely assumes shared context. Strive for minimal information that fully outlines expected behavior.
+State what the role must accomplish, what evidence it needs, and what authority it has. Provide enough structure to avoid consequential ambiguity while leaving ordinary execution choices to the model. Prompt effectiveness is the criterion; shorter text is useful only when it removes distraction without losing behavior.
 
-## Pattern
+## Design And Evaluate
 
-**Two failure modes:**
-- Over-specified: Hardcoded complex logic for exact behavior. Fragile, high maintenance. Model ignores rules when the prompt is too long and important rules get lost in noise.
-- Under-specified: Vague high-level guidance. Model lacks concrete signals for desired output.
+1. Identify representative tasks, expected outputs, and the failure that an instruction must prevent.
+2. Select current official guidance for the actual platform, model, and thinking mode. Preserve explicit target settings unless changing them is authorized.
+3. Write the task contract with concrete inputs, boundaries, completion, and uncertainty handling. Use steps when order matters and XML or headings when they clarify source boundaries.
+4. Include realistic examples when they teach a consequential distinction. Keep at least one meaningful boundary case under A-Team J5; additional useful cases are allowed.
+5. Evaluate representative behavior and the known failure case. Fix demonstrated ambiguity, conflicting instructions, or omitted context. Do not treat reduced word count as an evaluation result.
 
-**Development process:**
-1. Start with a minimal prompt using the strongest available model
-2. Test against representative inputs
-3. Add instructions only based on identified failure modes
-4. Iterate: observe behavior, add/prune, re-test
+## Worked Scope Contrast
 
-**Organization:** Use XML tags (`<background_information>`, `<instructions>`) or Markdown headers (`## Tool guidance`, `## Output description`) to create distinct sections.
+```text
+Weak: Improve our team system.
+Executable: Improve A-Team's future restructuring workflow in the assigned source files.
+Use a generated team only as a bounded read-only example if needed to reproduce a defect.
+Completion: report source changes and evidence that capability-only intake does not mutate targets.
+```
 
-**CLAUDE.md principle:** For each line, ask "Would removing this cause Claude to make mistakes?" If not, cut it. Bloated CLAUDE.md files cause Claude to ignore actual instructions.
-
-**Curate examples, not edge cases:** Provide diverse canonical examples portraying expected behavior. Avoid stuffing exhaustive edge cases — "examples are the pictures worth a thousand words." Scope: this is about few-shot sets inside a prompt. It does NOT govern the `## Examples` section of a generated agent .md or skill SKILL.md, which carries exactly one rejection case (`rules/writing-quality-standard.md`).
+This example supplies a completion condition and a concrete boundary. It does not prescribe a private reasoning transcript or a universal process for every team request.
 
 ## A-Team Application
 
-When generating agent .md files: apply the right-altitude principle — imperative sentences, no vague words (per writing-quality-standard.md), but avoid over-specifying logic that the model handles natively. When generating CLAUDE.md: include only team-wide norms that agents cannot infer from code. Role-specific rules go in `rules/` with path-scoping where applicable. When generating skills: each SKILL.md carries exactly one rejection-case example (per writing-quality-standard.md) — not a normal case, not an edge case, and not an exhaustive scenario list. The prompt-optimizer agent must evaluate altitude during Phase 4.
+Place stable team-wide authority and coordination rules in the root entry; use role files for role behavior, scoped rules for constraints, and skills for on-demand procedures. Follow actual native loading semantics rather than assuming that all referenced files are loaded. Preserve one adjacent `Reasoning` → `Workflow` → `Self-Critique` sequence in each authored agent.
+
+When optimizing, compare the before/after behavior against the same acceptance criteria. Retain useful examples, calculations, verification, and task-specific steps even when they add length. Over-target authored files require J5's independent usefulness review; that review must not hide a missing contract or boundary case.
+
+## Examples
+
+### Rejection Case
+
+Reject deleting a realistic missing-authority example solely to meet a word target. Keep the example if it prevents an unauthorized mutation, and record any required size review with its usefulness rationale.
+
+## Sources And Attribution
+
+A-Team-authored composition/evaluation workflow and examples, informed by [Anthropic context engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), checked 2026-10-06. Platform-specific prompting and effort details stay in current native sources and their mapped adaptations.

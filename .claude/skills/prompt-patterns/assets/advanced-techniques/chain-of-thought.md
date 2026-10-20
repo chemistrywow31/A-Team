@@ -2,56 +2,56 @@
 name: Chain of Thought
 category: advanced-techniques
 applies_when:
+  - optimizing-prompts
   - generating-coordinator
   - generating-research-agent
   - generating-review-agent
   - writing-agent-prompts
 tags: [precognition, reasoning, CoT, structured-thinking, order-sensitivity]
-source: raw/tutorial-advanced-techniques.md
+source: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
+historical-source: raw/tutorial-advanced-techniques.md
+reviewed: 2026-10-06
 ---
 
 # Chain of Thought
 
-## Core Principle
+## Choose The Thinking Mode
 
-Giving Claude time to think step by step makes it more accurate, particularly for complex tasks. Thinking only counts when it is "out loud" — visible in the output. You cannot ask Claude to think internally and output only the answer; the reasoning must be externalized.
+Check the selected model and runtime before adding reasoning instructions. Claude's current guidance distinguishes native adaptive thinking with supported effort controls from manual worked-solution prompting when thinking is disabled. Some models keep thinking always on; do not infer a disabled mode from omitted configuration. Preserve existing model/effort choices unless migration is authorized.
 
-## Pattern
+Do not request private reasoning transcripts or hidden thinking blocks. Public calculations, evidence summaries, assumptions, and decision explanations remain useful deliverables. Choose them for the reader's task, rather than making them a ritual before every answer.
 
-**Structured thinking template (Anthropic verbatim):**
-```
-[Task]. First, [write/brainstorm about X] in <tag-name> tags,
-then [provide answer/final output].
-```
+## Patterns
 
-**Positive/negative argument tags for balanced analysis:**
-```
-Is this review sentiment positive or negative? First, write the best
-arguments for each side in <positive-argument> and <negative-argument>
-XML tags, then answer.
+**Native thinking enabled:** state the outcome, evidence standard, and completion criteria. Let the supported model control internal deliberation.
+
+```xml
+<task>Review the proposed schema migration against the supplied compatibility criteria.</task>
+<output>
+Give a verdict, cite the checks that support it, and name any unresolved assumption.
+</output>
 ```
 
-**Classification with reasoning-first and prefill:**
-```
-Think through your reasoning in <reasoning> tags, then provide your
-classification in <answer> tags.
-```
-Prefill: `<reasoning>`
+**Thinking disabled, when supported:** a task-specific worked solution can help a multistep problem. Ask for a useful derivation, not a record of private deliberation.
 
-**Brainstorm-then-answer for recall tasks:**
-```
-Name a famous movie starring an actor who was born in the year 1956.
-First brainstorm about some actors and their birth years in <brainstorm>
-tags, then give your answer.
+```text
+Explain the capacity calculation for 240 requests per minute with 20 requests
+per worker per minute. Show the arithmetic and state the equal-load assumption.
+Expected worked result: 240 / 20 = 12 workers before any separately justified reserve.
 ```
 
-**Order sensitivity warning:** Claude is more likely to choose the second of two options (in training data, second options were more likely correct). When order matters, place the preferred or more-likely answer second.
+**Decision summary:** for a comparison, request the decisive evidence and relevant tradeoff. Do not force equal arguments for options whose evidence is unequal, or order PASS/FAIL labels to manipulate a supposed positional bias.
 
 ## A-Team Application
 
-When generating agents that make judgment calls (coordinators, reviewers, researchers, auditors):
+Preserve one role-specific `Reasoning` → `Workflow` → `Self-Critique` contract under `.claude/rules/reasoning-and-self-critique.md`. It defines decision criteria, work, and checks; it is not an instruction to print internal thought. Use the existing EC-1 evidence and conclusions fields for public results. Do not insert a second thinking/scratchpad form.
 
-- Include a `<thinking>` or `<reasoning>` step before every decision output. Agent-writer must embed this in the agent's workflow instructions, not leave it to the agent's discretion.
-- For review agents evaluating multiple dimensions, use named argument tags (`<positive-argument>`, `<negative-argument>`) to force balanced consideration before verdict.
-- For classification tasks in rules (e.g., violation detection), structure the prompt as: analyze in tags first, then classify. This prevents snap judgments.
-- When presenting binary choices to Claude (e.g., PASS/FAIL), place the less common outcome first (FAIL first, PASS second) to counteract second-option bias.
+## Examples
+
+### Rejection Case
+
+Reject a reviewer instruction to reveal every internal thought before each verdict. Replace it with a verdict, the decisive source or test, and any missing evidence. Keep a calculation or worked example when it helps the user check the result.
+
+## Sources And Attribution
+
+A-Team-authored examples and workflow adaptation, informed by [Claude prompting guidance](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#thinking-and-reasoning) and [native effort controls](https://platform.claude.com/docs/en/build-with-claude/effort), checked 2026-10-06. The historical-source field records provenance only; it is not active guidance or a read trigger.

@@ -35,17 +35,16 @@ config_file = "../agents/coordinator.toml"
 
 - Use one coordinator with direct specialists.
 - Do not add relay coordinators or sub-coordinators.
-- One bounded helper hop is permitted only inside a specialist's owned artifact family.
+- Where the target host and dispatch permit it, one bounded helper hop is permitted only for independent evidence or verification inside a specialist's owned artifact family; a helper cannot delegate again. Native Claude restrictions do not define Codex capability. Use `.codex/rules/context-isolation.md` for the target-supported lifecycle and fork contract.
 
 ### Shared Filesystem Dispatch Contract
 
-- Every file-mutating dispatch states owned write paths, forbidden paths, acceptance criteria, and the non-reversion rule.
+- Every file-mutating dispatch states owned write paths, forbidden paths, acceptance criteria, and the non-reversion rule. Name report-persistence ownership; a live host-blocked report uses only EC-1.12's bounded coordinator handoff.
 - All agents share the same filesystem unless the runtime explicitly provisions isolation.
 
 ### Join Discipline
 
-- Inspect live agents before routing a follow-up or deciding to join.
-- `wait_agent` is reserved for a real join boundary when no independent coordinator work remains.
+- On A-Team's observed v2 host, inspect live agents with `list_agents` before routing or joining; use `wait_agent` only at a real join boundary when no independent coordinator work remains. For other target profiles use the supported equivalent and record unavailable readiness evidence.
 
 ## Violation Determination
 
@@ -54,7 +53,7 @@ config_file = "../agents/coordinator.toml"
 - The coordinator `developer_instructions` contain production ownership outside explicitly assigned coordinator artifacts -> Violation
 - A second coordinator exists only to relay tasks between the main coordinator and workers -> Violation
 - A file-mutating dispatch omits owned paths, forbidden paths, acceptance criteria, or the non-reversion rule -> Violation
-- The coordinator joins or waits without first inspecting live agent state -> Violation
+- The coordinator joins without the supported state check, waits while independent work remains, or assumes unavailable v2 lifecycle tools -> Violation
 
 ## Exceptions
 

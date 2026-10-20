@@ -28,11 +28,12 @@ Default to Tier 2 when uncertain. Tier 1 requires an explicit zero-judgment just
 
 ### Pin Runtime Fields Explicitly
 
-Set `model` and `model_reasoning_effort` in every `agents/**/*.toml` from the preserved target pins or applicable defaults above. Full-history forks inherit parent model/effort; use explicit role overrides with `fork_turns = "none"` or a positive bounded fork. Supply relevant paths and criteria so bounded context does not starve judgment tasks.
+Set `model` and `model_reasoning_effort` in every `agents/**/*.toml` from preserved target pins or the applicable A-Team authoring defaults above. These explicit role fields are distinct from optional project root/default-subagent settings. On A-Team's observed v2 host, full-history forks inherit parent model/effort; use explicit role overrides with `fork_turns = "none"` or a positive bounded fork. Other targets follow their supported lifecycle under `.codex/rules/context-isolation.md`. Supply relevant paths and criteria so bounded context does not starve judgment tasks.
 
 ### Approved A-Team Repo-Self Profile And Roles
 
-- Root and strong roles use `gpt-6-astra`/`xhigh`; project subagent default stays `gpt-5.6-terra`/`high`.
+- The host selects root and unpinned subagent defaults; A-Team deliberately has no project root/default model or effort pins. Strong and read-heavy roles retain explicit per-role pins in their TOMLs. Do not restore absent defaults or conflate persisted settings with an already-running session.
+- Use the target-supported schema and live evidence under `.codex/rules/codex-runtime-config.md`; published spawned-thread capacity excludes root, unlike this host's total-session accounting. A future authorized tier migration compares quality, latency, and cost on representative roles before changing pins.
 - Tier 2: `domain-researcher`, `runtime-preflight-advisor`, `dialogue-reviewer`.
 - Tier 3: `requirements-analyst`, `role-designer`, `skill-planner`, `rule-writer`, `skill-writer`, `agent-writer`, `prompt-optimizer`, `team-restructuring-master`.
 - Tier 4: `team-architect`, `decision-auditor`.
