@@ -1,0 +1,5 @@
+# Grok 1.0.62 project-supported subset. Session settings belong to the operator.
+# Empty rules preserve inherited permission and approval defaults.
+# Project rules only become active after existing folder trust.
+[permission]
+rules = []

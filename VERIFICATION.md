@@ -1,3 +1,5 @@
+> Historical verification of the original Claude/Codex baseline. Earlier PASS results do not establish Grok readiness. See [Grok setup](.grok/docs/RUNTIME-SETUP.md) for current scope and limitations.
+
 # VERIFICATION.md — Fresh-Context Acceptance Evidence (2026-07-03)
 
 Method: every acceptance below was performed per `rules/execution-contract.md` EC-3 — fresh-context verifier agents receiving ONLY acceptance criteria and artifact paths (no producer reasoning), executing checks with commands and citing file:line evidence. Producer self-critique never counted toward acceptance. Full verifier transcripts: `.worklog/202607/a-team-hardening/phase-5-verification/`.

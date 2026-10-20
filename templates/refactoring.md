@@ -1,26 +1,28 @@
 # Delegation Template: Refactoring
 
-Use for: restructuring existing files while preserving behavior (prompt optimization, rule consolidation, team restructuring execution). Fill every {{slot}}; keep all other lines verbatim. EC-* clauses live in the selected runtime's execution contract (`.claude/rules/execution-contract.md` or `.codex/rules/execution-contract.md`) (EC-1 = directive §7.1, EC-2 = §7.2, EC-3 = §7.3). J-* rubrics live in `JUDGMENT.md`.
+Use for: restructuring existing files while preserving behavior (prompt optimization, rule consolidation, team restructuring execution). Fill every {{slot}}; keep all other lines verbatim. EC-* clauses live in the selected runtime's execution contract (`.grok/policies/execution-contract.md`) (EC-1 = directive §7.1, EC-2 = §7.2, EC-3 = §7.3). J-* rubrics live in `JUDGMENT.md`.
 
-Select a runtime-native tier and effective model/effort from the target profile. Claude aliases in filled examples are illustrative; preserve explicit target pins and use the current host's delegation tool.
+Assign context tier by decision scope. Omit model/effort unless a measured native override is authorized; preserve existing target pins. Root uses advertised `spawn_subagent` with `background`, and `subagent_type` only when its live enum contains the selected role. A new acceptance reviewer never receives `resume_from`. These are dispatch templates, not executable tool argument objects.
 
 ## Template
 
 ```
-TASK ID: {{id}}   TIER: {{selected runtime tier; explicit model/effort or supported inheritance}}   RETRY BUDGET: per EC-2 (§7.2)
+TASK ID: {{id}}   CONTEXT TIER / PROFILE: {{decision scope; supported measured override or default omission}}   RETRY BUDGET: per EC-2 (§7.2)
+NON-REVERSION: shared filesystem; preserve concurrent edits and never revert work you did not make.
 OBJECTIVE: {{one sentence — what gets restructured, what must not change}}
 CONTEXT (absolute paths only): {{BRIEF absolute path}}; {{upstream decisions.md absolute paths}}
-SCOPE — IN: {{exact files to refactor}}
+SCOPE — IN: {{exact files to refactor; exact report/preimage/check-evidence files}}
 SCOPE — OUT (do not touch): {{files that stay frozen, e.g. frontmatter fields, other agents' files}}
 BEHAVIOR-PRESERVATION PROOF: run {{check commands}} BEFORE editing, save output; run the same
-  commands AFTER; both outputs go to {{worklog path}}; any regression = failed attempt
+  commands AFTER; both outputs go to {{exact owned evidence paths}}; any regression = failed attempt
 FORBIDDEN CHANGES: {{list, e.g. no requirement deleted, no Violation Determination weakened}}
 DIFF-SIZE CAP: at most {{N}} lines changed per file; about to exceed it = stop at the cap and report per J4.4
 ACCEPTANCE CRITERIA (mechanically checkable):
   1. Before/after check outputs are identical for every preserved behavior.
-  2. {{the improvement target, e.g. file shrinks ≥ 20% by wc -c}}
+  2. {{observable improvement; preserve useful contracts rather than impose a cosmetic size cut}}
 VERIFICATION: fresh-context verifier re-runs the before/after checks from the worklog, per EC-3 (§7.3)
-REPORT: EC-1 schema (§7.1); diffs and check outputs → files under {{worklog path}}, send paths
+REPORT PERSISTENCE: assigned specialist writes the exact REPORT output below; root owns only an explicitly bounded fallback.
+REPORT: EC-1 schema (§7.1); report → {{exact owned report path}}; diffs/check outputs → {{exact owned evidence paths}}; send paths
 ESCALATE IF: J4.1, J4.2, J4.3, or J4.4 fires; budget per EC-2.4
 BUDGET: max {{lines}} output lines / {{count}} tool calls
 ```
@@ -28,20 +30,23 @@ BUDGET: max {{lines}} output lines / {{count}} tool calls
 ## Filled example
 
 ```
-TASK ID: harden-07   TIER: strong; Claude opus example, preserve the selected runtime profile   RETRY BUDGET: per EC-2 (§7.2)
-OBJECTIVE: Slim rules/reasoning-and-self-critique.md by extracting canonical blocks; every requirement must survive.
+TASK ID: refactor_reasoning_contract   CONTEXT TIER / PROFILE: 3; model and effort omitted; effective values unverified   RETRY BUDGET: per EC-2 (§7.2)
+NON-REVERSION: shared filesystem; preserve concurrent edits and never revert work you did not make.
+OBJECTIVE: Consolidate the native reasoning template reference while preserving every effective decision and critique requirement.
 CONTEXT (paths only): .worklog/202607/a-team-hardening/brief.md; .worklog/202607/a-team-hardening/phase-2-audit/defects-token-waste.md
-SCOPE — IN: .claude/rules/reasoning-and-self-critique.md; .claude/templates/reasoning-self-critique-blocks.md (new)
-SCOPE — OUT (do not touch): .claude/agents/*.md; every other rule file
-BEHAVIOR-PRESERVATION PROOF: run grep -c 'Violation' and grep -n '^### ' on the rule BEFORE editing,
-  save output; run the same AFTER; outputs to .worklog/202607/a-team-hardening/phase-3-design/
+SCOPE — IN: .grok/policies/reasoning-and-self-critique.md; .grok/templates/reasoning-self-critique-blocks.md;
+  .worklog/202607/a-team-hardening/phase-3-design/refactor-report.md
+SCOPE — OUT (do not touch): .grok/agents/*.md; every other rule file
+BEHAVIOR-PRESERVATION PROOF: capture exact preimages and enumerate each clause BEFORE editing;
+  map each to its actual AFTER text and check heading/reference validity in the assigned report.
 FORBIDDEN CHANGES: no violation-determination item deleted; no canonical slot name renamed
 DIFF-SIZE CAP: at most 120 lines changed per file; about to exceed it = stop at the cap and report per J4.4
 ACCEPTANCE CRITERIA (mechanically checkable):
-  1. Every pre-edit violation item still greps in the post-edit rule or the extracted template.
-  2. Rule file shrinks ≥ 2,000 bytes by wc -c; extracted file contains both canonical blocks verbatim.
-VERIFICATION: fresh-context verifier re-runs the before/after greps from the worklog, per EC-3 (§7.3)
-REPORT: EC-1 schema (§7.1); outputs → .worklog/202607/a-team-hardening/phase-3-design/, send paths
+  1. Every pre-edit decision, workflow, critique, violation, and exception clause has a substantive destination.
+  2. The template preserves adjacent Reasoning/Workflow/Self-Critique and no duplicate mandatory form is introduced.
+VERIFICATION: fresh-context verifier reads the before/after clauses and re-runs the structural checks, per EC-3 (§7.3)
+REPORT PERSISTENCE: assigned specialist writes the exact REPORT output below; root owns only an explicitly bounded fallback.
+REPORT: EC-1 schema (§7.1); report and preimage/check evidence → .worklog/202607/a-team-hardening/phase-3-design/refactor-report.md
 ESCALATE IF: J4.1, J4.2, J4.3, or J4.4 fires
 BUDGET: max 40 output lines / 25 tool calls
 ```

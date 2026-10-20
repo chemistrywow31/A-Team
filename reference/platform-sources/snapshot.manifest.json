@@ -1,0 +1,1212 @@
+{
+  "schema_version": 1,
+  "base_commit": "1bec32fb6c120aaa22d79af7d466363331cefa34",
+  "entries": [
+    {
+      "source": ".agents/skills/a-team/SKILL.md",
+      "archive": "reference/platform-sources/.agents/skills/a-team/SKILL.md",
+      "sha256": "dad1f0979e419f05bded4a040e19f1df11774dda4cd785d1103f87c30bf0845f",
+      "mode": "100644"
+    },
+    {
+      "source": ".agents/skills/granularity-calibration/SKILL.md",
+      "archive": "reference/platform-sources/.agents/skills/granularity-calibration/SKILL.md",
+      "sha256": "505ded592d1340ca79948fa8050f3b810629841a2e54a60ffc22cb1aeec7cef5",
+      "mode": "100644"
+    },
+    {
+      "source": ".agents/skills/md-generation-standard/SKILL.md",
+      "archive": "reference/platform-sources/.agents/skills/md-generation-standard/SKILL.md",
+      "sha256": "3500cd3664040e8c285e5778c14d5d7f3ef2bb6661e719642293d3144a05de45",
+      "mode": "100644"
+    },
+    {
+      "source": ".agents/skills/prompt-optimization/SKILL.md",
+      "archive": "reference/platform-sources/.agents/skills/prompt-optimization/SKILL.md",
+      "sha256": "15db1cb081190d0e9d049b0db2c3af91f137ddf9cf3b07f37a09678e4a1fe004",
+      "mode": "100644"
+    },
+    {
+      "source": ".agents/skills/prompt-patterns/SKILL.md",
+      "archive": "reference/platform-sources/.agents/skills/prompt-patterns/SKILL.md",
+      "sha256": "f9d6ce559e13f510d840008bfa23137f8a18065494bf85ac99f3748c8f345d3e",
+      "mode": "100644"
+    },
+    {
+      "source": ".agents/skills/quality-validation/SKILL.md",
+      "archive": "reference/platform-sources/.agents/skills/quality-validation/SKILL.md",
+      "sha256": "ae67d469b3c3002b69c89cde27cbe0b36a4f170262c67c814344b2fc894c0f41",
+      "mode": "100644"
+    },
+    {
+      "source": ".agents/skills/role-decomposition/SKILL.md",
+      "archive": "reference/platform-sources/.agents/skills/role-decomposition/SKILL.md",
+      "sha256": "f9cc016519ce1f490c98a54728e4f6d5ca26e19ac4f6b13771b0575717048398",
+      "mode": "100644"
+    },
+    {
+      "source": ".agents/skills/skill-creator/SKILL.md",
+      "archive": "reference/platform-sources/.agents/skills/skill-creator/SKILL.md",
+      "sha256": "67aeb016d7db9de354d27753d9740c00d60dc9fd0671e965565f1dc343d1a32d",
+      "mode": "100644"
+    },
+    {
+      "source": ".agents/skills/skill-discovery/SKILL.md",
+      "archive": "reference/platform-sources/.agents/skills/skill-discovery/SKILL.md",
+      "sha256": "2fcd7959343abae8004411bf0850fdf60d6b8c2e9c3e20eee8d84dacc8779265",
+      "mode": "100644"
+    },
+    {
+      "source": ".agents/skills/skill-discovery/config.example.json",
+      "archive": "reference/platform-sources/.agents/skills/skill-discovery/config.example.json",
+      "sha256": "9dd3d54e8a37b6ff2ff2ea01dea0ceee67479aa9be87ff553ab5a455e91308e6",
+      "mode": "100644"
+    },
+    {
+      "source": ".agents/skills/structured-interview/SKILL.md",
+      "archive": "reference/platform-sources/.agents/skills/structured-interview/SKILL.md",
+      "sha256": "02a33d016ce909d5c59b5c0f24c36a67fc49fbbf5c56743d6505970805253812",
+      "mode": "100644"
+    },
+    {
+      "source": ".agents/skills/team-topology-analysis/SKILL.md",
+      "archive": "reference/platform-sources/.agents/skills/team-topology-analysis/SKILL.md",
+      "sha256": "bfa2e25b1328d89191d68f911e7ba264fe2b2a7e531811a3094d401cb2c356a0",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/discovery/requirements-analyst.md",
+      "archive": "reference/platform-sources/.claude/agents/discovery/requirements-analyst.md",
+      "sha256": "4be3f33547a6770ab36cd6f6000a54b23143dbf8cd27038ac1572933fada25bb",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/discovery/role-designer.md",
+      "archive": "reference/platform-sources/.claude/agents/discovery/role-designer.md",
+      "sha256": "18b374c40d12e8c5fdc54c40f513d0223054682c187ed3198797a35259e97a51",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/evolution/team-restructuring-master.md",
+      "archive": "reference/platform-sources/.claude/agents/evolution/team-restructuring-master.md",
+      "sha256": "89e3f28d0aa41bb41e35bc89a1ce0eb7f4c86f2d30bc65f44f47bdfc32048bdd",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/generation/agent-writer.md",
+      "archive": "reference/platform-sources/.claude/agents/generation/agent-writer.md",
+      "sha256": "5eb2c76baa5b765f100a17d1b17061320ad20917d05817c769a2969915f38226",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/generation/rule-writer.md",
+      "archive": "reference/platform-sources/.claude/agents/generation/rule-writer.md",
+      "sha256": "54cab59f0832bd5e97b98d576cad67694720cc2240ee8e786c0a482a17fbf441",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/generation/skill-writer.md",
+      "archive": "reference/platform-sources/.claude/agents/generation/skill-writer.md",
+      "sha256": "87b072105cd69891d4f57075c8666a3a15868d8cf20b068d69895b44b1bb86a0",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/optimization/prompt-optimizer.md",
+      "archive": "reference/platform-sources/.claude/agents/optimization/prompt-optimizer.md",
+      "sha256": "7a818e436ed7362c6ca9db12d08f987817ce23c4c00dce9148d0b19777bc7d62",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/planning/skill-planner.md",
+      "archive": "reference/platform-sources/.claude/agents/planning/skill-planner.md",
+      "sha256": "8926a30173f741613acebab49ba289edfe6e87621847a07cb792320a948e8ccb",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/research/decision-auditor.md",
+      "archive": "reference/platform-sources/.claude/agents/research/decision-auditor.md",
+      "sha256": "b0ce53cac5890851ed6e7d26e2ace245e245ec7278d0655decf2555d2e509ff4",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/research/domain-researcher.md",
+      "archive": "reference/platform-sources/.claude/agents/research/domain-researcher.md",
+      "sha256": "3ec9414c0c7d7974ee061a166bc57d3b856c3bc60e1a722789c0b356d32a5a2c",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/review/dialogue-reviewer.md",
+      "archive": "reference/platform-sources/.claude/agents/review/dialogue-reviewer.md",
+      "sha256": "62ad3a6450179a09e86bb0d950198aa92e53adc34bcf82fd8b621681c61f4e49",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/review/runtime-preflight-advisor.md",
+      "archive": "reference/platform-sources/.claude/agents/review/runtime-preflight-advisor.md",
+      "sha256": "4ea95975908321a58a49536568ae894088827b6a0106d6698c2a9efbe09857ee",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/agents/team-architect.md",
+      "archive": "reference/platform-sources/.claude/agents/team-architect.md",
+      "sha256": "2bae9ffbe8e0b869fa2d74242719207c5e9ff62e10c36d3bf66a601d390f4d51",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/output-styles/adhd-friendly.md",
+      "archive": "reference/platform-sources/.claude/output-styles/adhd-friendly.md",
+      "sha256": "14b3a429e116fb0e86b85e970eb9a125399b1920818f7089d2a8eeb6f4c37e9c",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/anti-sycophancy.md",
+      "archive": "reference/platform-sources/.claude/rules/anti-sycophancy.md",
+      "sha256": "f9cdf719588764b920e67f432669e51f1ddfa9a249eb9121910e9fd47c49fb22",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/context-management.md",
+      "archive": "reference/platform-sources/.claude/rules/context-management.md",
+      "sha256": "43ac9028f511cfeda757d5118797b93d2ca7c09205b0e5f52c06a22510f28358",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/context-tier.md",
+      "archive": "reference/platform-sources/.claude/rules/context-tier.md",
+      "sha256": "1eecfabe4ebcfd108d46abbd981d6538fc9edcd62e9f6477d41b46a4b44957a0",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/conversation-protocol.md",
+      "archive": "reference/platform-sources/.claude/rules/conversation-protocol.md",
+      "sha256": "8862fa1460b520f09ce5e777a19435655e82922ef45f619ae31ac420d293c9a1",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/coordinator-mandate.md",
+      "archive": "reference/platform-sources/.claude/rules/coordinator-mandate.md",
+      "sha256": "eefe551dd03a1f9f8f1663170e4f673551dbf0ea0878fded7fe67daeb13a0b0c",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/dual-platform-parity.md",
+      "archive": "reference/platform-sources/.claude/rules/dual-platform-parity.md",
+      "sha256": "76519209d71346c6e6a1755f1c349dccd8bb39e94e46ce2449d10a195d4c0cb7",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/execution-contract.md",
+      "archive": "reference/platform-sources/.claude/rules/execution-contract.md",
+      "sha256": "27c058a0e28e85b52f923f39e6820a29daf6084155fa6e1fd782be00a2c744bb",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/frontmatter-optional-patterns.md",
+      "archive": "reference/platform-sources/.claude/rules/frontmatter-optional-patterns.md",
+      "sha256": "b717791be227f711fdce7ae5e57105d2a2aa04dc4d5d1866e8f3d8d29d111e01",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/hooks-integration.md",
+      "archive": "reference/platform-sources/.claude/rules/hooks-integration.md",
+      "sha256": "5ce955f9ca145615f842b2c9064a50b99a286987730153c9716945f8a8028472",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/output-structure.md",
+      "archive": "reference/platform-sources/.claude/rules/output-structure.md",
+      "sha256": "5daddb731e1ed835e8f253428e1377660ba3bd8ec4c7aa7e2f64f1c9aca3386e",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/prompt-engineering-patterns.md",
+      "archive": "reference/platform-sources/.claude/rules/prompt-engineering-patterns.md",
+      "sha256": "9040f1cb9523b307e7c3d2404202eb931885fec69cc6d4f6e9810d0cb9ec63d9",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/proportional-design.md",
+      "archive": "reference/platform-sources/.claude/rules/proportional-design.md",
+      "sha256": "f2f6529f268b7115b68b013fe430298425dc24eb33033a2b54bab590f97fd578",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/reasoning-and-self-critique.md",
+      "archive": "reference/platform-sources/.claude/rules/reasoning-and-self-critique.md",
+      "sha256": "b49c94e8c230d8ec38f010ab4f70efd293076a29a2ed0d65a5561356a102295d",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/reviewer-mandate.md",
+      "archive": "reference/platform-sources/.claude/rules/reviewer-mandate.md",
+      "sha256": "ecbfe844a101ac73f1cdb76be563a87f0bd9e3b39640ee83fa7e56bb8cd6f838",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/settings-json.md",
+      "archive": "reference/platform-sources/.claude/rules/settings-json.md",
+      "sha256": "bb5017bffaf536b9bc02b5db71e7eeb18ef0706d50db0ef09c234152aa71d1bf",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/skill-context-fork.md",
+      "archive": "reference/platform-sources/.claude/rules/skill-context-fork.md",
+      "sha256": "916703566c815da337e330121ca0e0987d8e717130b34c8fe71fd4b97101e031",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/worklog.md",
+      "archive": "reference/platform-sources/.claude/rules/worklog.md",
+      "sha256": "a58c39ab221e37cc4ad73e0742160a610f4b82b257ec13720c6e67ce02080682",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/writing-quality-standard.md",
+      "archive": "reference/platform-sources/.claude/rules/writing-quality-standard.md",
+      "sha256": "627fc8f89ea11dd2bd50ab341936615c99814980f53d15f9766329670af974f0",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/rules/yaml-frontmatter.md",
+      "archive": "reference/platform-sources/.claude/rules/yaml-frontmatter.md",
+      "sha256": "fcd40b82deaa2c53fd824d4b2441a1b5303c06a4edbeb52bff06e25c0067d937",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/settings.json",
+      "archive": "reference/platform-sources/.claude/settings.json",
+      "sha256": "a12e59fa7ec0f9933333e7d9f36aee186ca2cd7778405efa0f033c312dbfb326",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/a-team/SKILL.md",
+      "archive": "reference/platform-sources/.claude/skills/a-team/SKILL.md",
+      "sha256": "b7edfd4fec0ba08d9c6adefc2a3dfa4a7392ca7bc2f7888bfcdd8ee47065912e",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/granularity-calibration/SKILL.md",
+      "archive": "reference/platform-sources/.claude/skills/granularity-calibration/SKILL.md",
+      "sha256": "ef9cd6d522331293afe4dd47b0c55cfb1efc2660c3f05ffb9eb8affb5a543d6a",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/md-generation-standard/SKILL.md",
+      "archive": "reference/platform-sources/.claude/skills/md-generation-standard/SKILL.md",
+      "sha256": "7804c526e92289bc5b2c28e18e60f3c6d1a67ac9354ceedbdf52ea742fe67022",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-optimization/SKILL.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-optimization/SKILL.md",
+      "sha256": "a4f444e68727fa9d2e69e2cfc032b275a39436b37f878dd0c10715cb14e067b5",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/INDEX.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/INDEX.md",
+      "sha256": "017294e3cfc54cf4eb3ab240ebdb4d1d93b37fb531775cc63a587a69f8dfe7b0",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/SKILL.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/SKILL.md",
+      "sha256": "e5af6a176c01d1567337b31e883b4aaeddf68a213338fa7b8dba796b250b2d5c",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/advanced-techniques/anti-hallucination.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/anti-hallucination.md",
+      "sha256": "a0889cf53e6e3b6a89491a6d3ce032b5d0523f79a86be1f11ce703e918c3e319",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/advanced-techniques/chain-of-thought.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/chain-of-thought.md",
+      "sha256": "fa95b0577af91aad340d2949fce74028ac73cc13775a3f22eae3aef9b14da5c7",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/advanced-techniques/complex-prompt-template.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/complex-prompt-template.md",
+      "sha256": "deb90252c017c82f4e7239fa6a19d8020c4aaa19613b6866ce2da2df084baf68",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/advanced-techniques/few-shot-patterns.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/few-shot-patterns.md",
+      "sha256": "fc5746435a9a0db345b01e2aeda0956d74d13f7d8fc60af5dc089f98cccd9c73",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/advanced-techniques/long-context.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/long-context.md",
+      "sha256": "9b00c4a8f076b30497560f00a979eecfe88068ae2600522624fb58ecc84ef5e5",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/advanced-techniques/prompt-chaining.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/prompt-chaining.md",
+      "sha256": "fbb9cda7c8d1e051fa4d991e2d1f20432caca29c3166653840081621821700e5",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/advanced-techniques/xml-tag-separation.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/xml-tag-separation.md",
+      "sha256": "e0096a34fbbc00a56556a8aebff489d0436fd2dd0733d10bc2f8e6eb1679cf2e",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/claude-4-patterns/adaptive-thinking.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/adaptive-thinking.md",
+      "sha256": "f05f036a28d85a173eec8fc7642263d8e19eb2c1c22285ece76745e8f55ffe07",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/claude-4-patterns/anti-overthinking.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/anti-overthinking.md",
+      "sha256": "c126bbdded3accf51290e77e9e124b2df280537c82bf38c7d44e8502fa6564b9",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/claude-4-patterns/over-engineering-prevention.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/over-engineering-prevention.md",
+      "sha256": "e64fc532ab51e80d05c6fcf78f724283ab6089dd7da14d86fdab19f58dee6fa5",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/claude-4-patterns/prefill-migration.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/prefill-migration.md",
+      "sha256": "066efc9f369e3a79389db855bf2e825c84f418adcb2983b9719a71685344e53d",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/claude-4-patterns/subagent-orchestration.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/subagent-orchestration.md",
+      "sha256": "040daa191b704e2ff605d44061ba375c3077249bc29f80a4a48692860f89cefc",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/claude-4-patterns/tone-calibration.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/tone-calibration.md",
+      "sha256": "a3edfdf068b742cadc85bd69a71528857e67991dedb33f02551f34a422a6b392",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/context-strategies/compaction.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/compaction.md",
+      "sha256": "3d4648784bd569e77e51bfceeda2d2aeb959b892d9969bc50459b11ac6b42d1a",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/context-strategies/hybrid-strategy.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/hybrid-strategy.md",
+      "sha256": "c2850beb2701e9768c028d3c4598dae10b387798a83b517b672d4e3ec994d0b2",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/context-strategies/multi-window-workflow.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/multi-window-workflow.md",
+      "sha256": "ddbd86806c6404337bc6a2e3e8342fc01c4dc04beb0e480f430578917f50d085",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/context-strategies/progressive-disclosure.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/progressive-disclosure.md",
+      "sha256": "afec5d76ddeb428e0a2ca9d941e768a82fed0f2ff24ee3eb445dc4ebaa5a55e3",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/context-strategies/structured-notes.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/structured-notes.md",
+      "sha256": "bc7473d8d1f3d3facc6663b746be998bed408ece12e619ac77ca8a8fe0674ba4",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/context-strategies/sub-agent-dispatch.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/sub-agent-dispatch.md",
+      "sha256": "4481d1ef4001853b1a824d0cd095cbd972d30c168dff63e1a5e360c7e45cb877",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/context-strategies/system-prompt-design.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/system-prompt-design.md",
+      "sha256": "feeaa4fb164535f2670d3a3e6e2497ac1c06d9ed910e6133f7175b9fb5f827d3",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/raw/claude-4-best-practices.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/raw/claude-4-best-practices.md",
+      "sha256": "38a87293a0c3be4f305ce60a60b4b6372e1f4d3ff7c8fa753115a352fe13bb7b",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/raw/context-engineering-blog.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/raw/context-engineering-blog.md",
+      "sha256": "beabf2dd927e5b12d0433c2f4cbd497853620728c4f967bfa74c60e3fae40feb",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/raw/courses-advanced-patterns.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/raw/courses-advanced-patterns.md",
+      "sha256": "5acefd3285776601493bc41297d58e25899700f3cbc58651d21be59129277b36",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/raw/tutorial-advanced-techniques.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/raw/tutorial-advanced-techniques.md",
+      "sha256": "4d06d388df1b22855e2f49ce41c68ad0295a0ea9f2c7e55d72aa700954ba7717",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/anti-hard-coding.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/anti-hard-coding.md",
+      "sha256": "84350d217e14c0c5439dbba9936e5a90ab3bacc12dea83aca1b4d80ff830eb8d",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/anti-over-engineering.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/anti-over-engineering.md",
+      "sha256": "1016d76faf18ee7c7fea85d7dd17e0e071fd8611cff1f4ffff2a81ab6da8f159",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/autonomy-safety.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/autonomy-safety.md",
+      "sha256": "db940ee902ab7a1199496456d181018ee8db5db3e2a0f2717d5cd4044e0bfa10",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/avoid-excessive-markdown.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/avoid-excessive-markdown.md",
+      "sha256": "2cc4a7174011c71690ffa309388fbc53dad38a544c9ed2e392f21d6179864eb7",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/commitment-over-exploration.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/commitment-over-exploration.md",
+      "sha256": "76445b250ac99be436acbb00e0ad58583232957e4c70420b86698dec56cadca1",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/conservative-action.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/conservative-action.md",
+      "sha256": "8a696e52e0abd8a927e3d4a4655ad8e2e96d782ef7accd0015c40772e8a300b9",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/context-awareness.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/context-awareness.md",
+      "sha256": "50df9504d96ba2ef3baef16795c3e15aba23df26b0e8e2c56afdd29a56987fd4",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/default-to-action.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/default-to-action.md",
+      "sha256": "6c4e4d216c2f0e1292ad61330bb40483931b0e55a54f3aaec0c2baa55d69f4b0",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/frontend-aesthetics.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/frontend-aesthetics.md",
+      "sha256": "cf0c19b93d74625d6817d6e8963a089c4312b05b08d745f26625ce58a0b357e8",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/investigate-before-answering.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/investigate-before-answering.md",
+      "sha256": "570a94bb4872dee8935e9f2e42ed9244d03424f2932474bd92d34f37b155f8e3",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/parallel-tool-calls.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/parallel-tool-calls.md",
+      "sha256": "e7e168f3e6842515eeacaabb7c5764c77ed6b78f8f4de836454d1e6f778a6903",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/reduce-thinking.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/reduce-thinking.md",
+      "sha256": "aef40806c1beaed6c7b9ccaf9a1916b10317edf1d7c6643829e8de76eb41326b",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/research-structured.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/research-structured.md",
+      "sha256": "edf3d668c70e98e8ebfaaf48938fbe7cc6f55049499680d1c4dd1a572d80e217",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/assets/templates/subagent-usage.md",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/subagent-usage.md",
+      "sha256": "42525fb00d04639ff48efd11b1afe8a9d4144c559a774f0b94c18e44a065baec",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/prompt-patterns/select.py",
+      "archive": "reference/platform-sources/.claude/skills/prompt-patterns/select.py",
+      "sha256": "18727d9792f512f20682ccb04b5355a0909f3f158652cde88ed5bec7048c1aae",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/quality-validation/SKILL.md",
+      "archive": "reference/platform-sources/.claude/skills/quality-validation/SKILL.md",
+      "sha256": "9f5e835350dbd4a57f94b5b7c540138d3d973d7c77bbc613121b2e8a496d46e6",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/role-decomposition/SKILL.md",
+      "archive": "reference/platform-sources/.claude/skills/role-decomposition/SKILL.md",
+      "sha256": "a617d1818a7fc33c1efbc4d6a8471477e2c998676f153b1ce263f579123e1100",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-creator/LICENSE.txt",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/LICENSE.txt",
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-creator/SKILL.md",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/SKILL.md",
+      "sha256": "dcd4803e61e913e6fc27294184cd3a71f09f5e924ff20c8a9a20173e7b3c2bcf",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-creator/agents/analyzer.md",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/agents/analyzer.md",
+      "sha256": "bf68f4cac5a56c673a928c2e6d619586c5b93ea364026ab37547772cb45a663a",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-creator/agents/comparator.md",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/agents/comparator.md",
+      "sha256": "fe1fc9787c495d864c5d6eada47396478572325fde1b33a96d78bf4b849b7a3e",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-creator/agents/grader.md",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/agents/grader.md",
+      "sha256": "57134da0c1a4eea33fbd74a1c9c44aa814f07d6bc64de303edb586f941e5d21a",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-creator/assets/eval_review.html",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/assets/eval_review.html",
+      "sha256": "ce477dcc74dc1c0d1d3352646a79167b5a63634e936b1019160025065974e452",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-creator/eval-viewer/generate_review.py",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/eval-viewer/generate_review.py",
+      "sha256": "fc9d1b9243fe5ab6012ebd579bd76d0035de1b79fd3b969de114defab26478fb",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-creator/eval-viewer/viewer.html",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/eval-viewer/viewer.html",
+      "sha256": "a53213426ee1100441d701a3a0d49cda7a842f992d2c36463f4d3cc0258575fa",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-creator/references/schemas.md",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/references/schemas.md",
+      "sha256": "8e8876180a8989b406a4d3edddf875b04cdfd5805cc8616686d552b11ce4455f",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-creator/scripts/__init__.py",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/scripts/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-creator/scripts/aggregate_benchmark.py",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/scripts/aggregate_benchmark.py",
+      "sha256": "123ef128ea5ccc01a4b1ac212ef5567f21e9c13d3d240609780beeb3200c49aa",
+      "mode": "100755"
+    },
+    {
+      "source": ".claude/skills/skill-creator/scripts/generate_report.py",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/scripts/generate_report.py",
+      "sha256": "13df7118a3c50c83c4c3250a606d5f2b20b25a3d44cbc392b3d669ec75281453",
+      "mode": "100755"
+    },
+    {
+      "source": ".claude/skills/skill-creator/scripts/improve_description.py",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/scripts/improve_description.py",
+      "sha256": "87d864570220b699fac52da309d2d6efdb060647bfebc74f768128e646accf80",
+      "mode": "100755"
+    },
+    {
+      "source": ".claude/skills/skill-creator/scripts/package_skill.py",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/scripts/package_skill.py",
+      "sha256": "1a33059b0db1ef73375d46d513e5ea81369d2e8838c970597b0d52ddef8d1c0f",
+      "mode": "100755"
+    },
+    {
+      "source": ".claude/skills/skill-creator/scripts/quick_validate.py",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/scripts/quick_validate.py",
+      "sha256": "67cf5703402013936c8fb75ad6a1afecd8841d45cc5e606b634eb05825fde365",
+      "mode": "100755"
+    },
+    {
+      "source": ".claude/skills/skill-creator/scripts/run_eval.py",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/scripts/run_eval.py",
+      "sha256": "43e3b8f80dbf69c343967ba77e268fae991d9fa3ed68b32a0ff02532cd48657f",
+      "mode": "100755"
+    },
+    {
+      "source": ".claude/skills/skill-creator/scripts/run_loop.py",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/scripts/run_loop.py",
+      "sha256": "7bd6f674203168520517eec94c55f493c0d154339b061b4d7c0f0dad187d0f21",
+      "mode": "100755"
+    },
+    {
+      "source": ".claude/skills/skill-creator/scripts/utils.py",
+      "archive": "reference/platform-sources/.claude/skills/skill-creator/scripts/utils.py",
+      "sha256": "3af8ae62c40c73ab712207436a0d9a981e845f25c5a7040229eb189cc8e45bb1",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-discovery/SKILL.md",
+      "archive": "reference/platform-sources/.claude/skills/skill-discovery/SKILL.md",
+      "sha256": "ad4a5b66fd9d17e8bdd6f9722aec8fddc8372ded42f3f4dc22716d94e9acdb58",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/skill-discovery/config.example.json",
+      "archive": "reference/platform-sources/.claude/skills/skill-discovery/config.example.json",
+      "sha256": "628aaf47bcbb7e54a9ccf22d23bf3c5fe66b61a88ec61049a3eb1ce52b74ebb0",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/structured-interview/SKILL.md",
+      "archive": "reference/platform-sources/.claude/skills/structured-interview/SKILL.md",
+      "sha256": "89794fb5d0b44fc35c9b9a864f0e80749c1ff96d97d53faf62d7d3d0996cdf3c",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/skills/team-topology-analysis/SKILL.md",
+      "archive": "reference/platform-sources/.claude/skills/team-topology-analysis/SKILL.md",
+      "sha256": "247b952ee067cfc8bba11fe61ede41ac3d83924939fdda0f75df3444ecd3fb46",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/templates/hooks-baseline.json",
+      "archive": "reference/platform-sources/.claude/templates/hooks-baseline.json",
+      "sha256": "577acc004c6bfcb365ddaec3eaa224f13a4dc378e9fa78ac3048b118dcb5aea7",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/templates/reasoning-self-critique-blocks.md",
+      "archive": "reference/platform-sources/.claude/templates/reasoning-self-critique-blocks.md",
+      "sha256": "33c9ae6f99e7a8baea05b47c2efcd75fc7bf6f00d1ba59e2f3dc9da94811df3e",
+      "mode": "100644"
+    },
+    {
+      "source": ".claude/templates/settings-baseline.json",
+      "archive": "reference/platform-sources/.claude/templates/settings-baseline.json",
+      "sha256": "bed06957955dfb13862957e1f6ba30b1ba913e2fcf3e9b44643abb8ddfe4b9b8",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/discovery/requirements-analyst.md",
+      "archive": "reference/platform-sources/.codex/agents/discovery/requirements-analyst.md",
+      "sha256": "0fa45e7704c3ec5a55e748127936216ab54a51679109f41bb80ffb5efb79eaff",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/discovery/role-designer.md",
+      "archive": "reference/platform-sources/.codex/agents/discovery/role-designer.md",
+      "sha256": "693c8b607a794aa44dbd80220da4e6af5df3d0acc5e27ebe2ae8e5e0d7bb45ae",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/evolution/team-restructuring-master.md",
+      "archive": "reference/platform-sources/.codex/agents/evolution/team-restructuring-master.md",
+      "sha256": "010ac648b20cbe6684ed45735c88e3701981dd86b61f225f5ee8fe14dba4306f",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/generation/agent-writer.md",
+      "archive": "reference/platform-sources/.codex/agents/generation/agent-writer.md",
+      "sha256": "f69c11292f19f70aaeeced6719a30fa5baf69556a264f57c0b0cbe2ddb9ce776",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/generation/rule-writer.md",
+      "archive": "reference/platform-sources/.codex/agents/generation/rule-writer.md",
+      "sha256": "a279b70d01f70ac92e02108a614de38aa94b0af1c19d3d5e40146468d50f6be2",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/generation/skill-writer.md",
+      "archive": "reference/platform-sources/.codex/agents/generation/skill-writer.md",
+      "sha256": "4b549a5d37a429891940316d9608f7ad1908a1d19aa216c8a9db56df2dd2ec08",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/optimization/prompt-optimizer.md",
+      "archive": "reference/platform-sources/.codex/agents/optimization/prompt-optimizer.md",
+      "sha256": "5af5412fc16e1605e251e60cc0a608abd43ca783e02a0d8c785de0427c1e6d36",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/planning/skill-planner.md",
+      "archive": "reference/platform-sources/.codex/agents/planning/skill-planner.md",
+      "sha256": "6a2f346a9ff52f6e04710327d560447e06d297b16de545bd6c290a9aa04fa3cb",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/research/decision-auditor.md",
+      "archive": "reference/platform-sources/.codex/agents/research/decision-auditor.md",
+      "sha256": "ff7692019dc4ce9813a5f7faccafa402c0063c5ef984e65d37f81c3cc7d1355a",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/research/domain-researcher.md",
+      "archive": "reference/platform-sources/.codex/agents/research/domain-researcher.md",
+      "sha256": "08ef2e68da20a9ad7143bbc632ad318cd99590a51fb2c7a6817650c412d085cb",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/review/dialogue-reviewer.md",
+      "archive": "reference/platform-sources/.codex/agents/review/dialogue-reviewer.md",
+      "sha256": "dd4949970de746e63f3d81f7803147f8196ef770f10691243535f9278016fdd7",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/review/runtime-preflight-advisor.md",
+      "archive": "reference/platform-sources/.codex/agents/review/runtime-preflight-advisor.md",
+      "sha256": "cc67f111b00dd1dd36347fef28cd239a8bcbf483b99b7f96ed6a072934fdffef",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/agents/team-architect.md",
+      "archive": "reference/platform-sources/.codex/agents/team-architect.md",
+      "sha256": "a0df806364343dc831ca13577611c46068326928103c569a6ec1cea900fbd30d",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/config.toml",
+      "archive": "reference/platform-sources/.codex/config.toml",
+      "sha256": "dd40f4bce2a98ae0cf4055a940761407703fb94647567a1a5d8980a5277af871",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/docs/RUNTIME-SETUP.md",
+      "archive": "reference/platform-sources/.codex/docs/RUNTIME-SETUP.md",
+      "sha256": "de2786249e2b2f08b9bcc76c359e4811008781686992732b581ec09e7529f837",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/docs/claude-adaptation-audit.md",
+      "archive": "reference/platform-sources/.codex/docs/claude-adaptation-audit.md",
+      "sha256": "ac7ff3f8ba548b1cd17ca0e69fc0322fd1ed2b6fa51275fc2ffc785976df1dca",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/docs/claude-adaptation-manifest.toml",
+      "archive": "reference/platform-sources/.codex/docs/claude-adaptation-manifest.toml",
+      "sha256": "a8c99ea4ed76f096a226e5e768b49cefa40408733841b2d9cbffb13e28fd5830",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/docs/claude-to-codex-mapping.md",
+      "archive": "reference/platform-sources/.codex/docs/claude-to-codex-mapping.md",
+      "sha256": "8f25b5a7b7a5ae45e5a58bdd918764bd2d3ded7e3028bd5bb0ee59525c0be598",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/anti-sycophancy.md",
+      "archive": "reference/platform-sources/.codex/rules/anti-sycophancy.md",
+      "sha256": "80b77b88af7f7144571e075bda04b967cfecc0bec634f01d8fa71da0afe346cf",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/codex-agent-config-patterns.md",
+      "archive": "reference/platform-sources/.codex/rules/codex-agent-config-patterns.md",
+      "sha256": "d5d02ff1bb28858f6bb68fb92c3914129be75f80383b6f6434b33eb9f50adf62",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/codex-native-output.md",
+      "archive": "reference/platform-sources/.codex/rules/codex-native-output.md",
+      "sha256": "5985a6f583e0ff4b6bce32ce7503f2b100d5d3b668ef9f7b64ef83d3c72087ec",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/codex-runtime-config.md",
+      "archive": "reference/platform-sources/.codex/rules/codex-runtime-config.md",
+      "sha256": "cbc68d5cbdfaae4dcbdc71e689a111f96436c329f16ccad9b7464fc17b378258",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/context-isolation.md",
+      "archive": "reference/platform-sources/.codex/rules/context-isolation.md",
+      "sha256": "3fd0ff9aaefeff7502eacfd62f559c2232fd1d196961fa2a5edc752d25544d64",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/context-management.md",
+      "archive": "reference/platform-sources/.codex/rules/context-management.md",
+      "sha256": "0ebc3c74098c7d69f0cbcb869b6bc8a3a67c00ab5564ea4e1f4df97d5f57bbd9",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/context-tier.md",
+      "archive": "reference/platform-sources/.codex/rules/context-tier.md",
+      "sha256": "986311cf8b0c1d49c29edd37df5c2287a993e03f3d7a45958b2c8f911b48bbf8",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/conversation-protocol.md",
+      "archive": "reference/platform-sources/.codex/rules/conversation-protocol.md",
+      "sha256": "8862fa1460b520f09ce5e777a19435655e82922ef45f619ae31ac420d293c9a1",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/coordinator-mandate.md",
+      "archive": "reference/platform-sources/.codex/rules/coordinator-mandate.md",
+      "sha256": "3464bd8bc3be58212c6238c0033416bccded95e475e4a33fb1c756a907cdb8fe",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/dual-platform-parity.md",
+      "archive": "reference/platform-sources/.codex/rules/dual-platform-parity.md",
+      "sha256": "16e4d7027670d0ac3fcf2f84a68033ee212312f707cbf96d555fd35b3462d1aa",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/execution-contract.md",
+      "archive": "reference/platform-sources/.codex/rules/execution-contract.md",
+      "sha256": "c8aae65b97acea1df53a62a8c07de10f4fdccb1efab89bf077be597c40ff9a74",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/output-structure.md",
+      "archive": "reference/platform-sources/.codex/rules/output-structure.md",
+      "sha256": "a8a962beac42250f3a5e3e57d54c2551bc399f02294c91db0f73191137098467",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/prompt-engineering-patterns.md",
+      "archive": "reference/platform-sources/.codex/rules/prompt-engineering-patterns.md",
+      "sha256": "fefe939d9597e4f7671be56bcdbf7e975a3da40f1072a71c26b3463ed66ce38d",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/proportional-design.md",
+      "archive": "reference/platform-sources/.codex/rules/proportional-design.md",
+      "sha256": "f2f6529f268b7115b68b013fe430298425dc24eb33033a2b54bab590f97fd578",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/reasoning-and-self-critique.md",
+      "archive": "reference/platform-sources/.codex/rules/reasoning-and-self-critique.md",
+      "sha256": "eba5ec6c1695954b85ce7ae7a59d2f07328f55b85942ab1131c4f766f3772b42",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/reviewer-mandate.md",
+      "archive": "reference/platform-sources/.codex/rules/reviewer-mandate.md",
+      "sha256": "5ab4bc0319f444b32ae61a0f83357d3746acd22e04a29bf2a4fcb080f0c2ee7c",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/worklog.md",
+      "archive": "reference/platform-sources/.codex/rules/worklog.md",
+      "sha256": "d5cafde94d7aa56aea292c86f17a07311c2941e8f25a30abbc60a914ce9a3ab5",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/writing-quality-standard.md",
+      "archive": "reference/platform-sources/.codex/rules/writing-quality-standard.md",
+      "sha256": "f6aa4af7021c78d4700eea68af76015cfa956a2497ab0cd30686d0559e5a6468",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/rules/yaml-frontmatter.md",
+      "archive": "reference/platform-sources/.codex/rules/yaml-frontmatter.md",
+      "sha256": "413506022d25e066079985ee51ee1ff4db92efcefdddc56cb7150fafd591fe91",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/skills/a-team/SKILL.md",
+      "archive": "reference/platform-sources/.codex/skills/a-team/SKILL.md",
+      "sha256": "dad1f0979e419f05bded4a040e19f1df11774dda4cd785d1103f87c30bf0845f",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/skills/granularity-calibration/SKILL.md",
+      "archive": "reference/platform-sources/.codex/skills/granularity-calibration/SKILL.md",
+      "sha256": "505ded592d1340ca79948fa8050f3b810629841a2e54a60ffc22cb1aeec7cef5",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/skills/md-generation-standard/SKILL.md",
+      "archive": "reference/platform-sources/.codex/skills/md-generation-standard/SKILL.md",
+      "sha256": "3500cd3664040e8c285e5778c14d5d7f3ef2bb6661e719642293d3144a05de45",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/skills/prompt-optimization/SKILL.md",
+      "archive": "reference/platform-sources/.codex/skills/prompt-optimization/SKILL.md",
+      "sha256": "15db1cb081190d0e9d049b0db2c3af91f137ddf9cf3b07f37a09678e4a1fe004",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/skills/prompt-patterns/SKILL.md",
+      "archive": "reference/platform-sources/.codex/skills/prompt-patterns/SKILL.md",
+      "sha256": "f9d6ce559e13f510d840008bfa23137f8a18065494bf85ac99f3748c8f345d3e",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/skills/quality-validation/SKILL.md",
+      "archive": "reference/platform-sources/.codex/skills/quality-validation/SKILL.md",
+      "sha256": "ae67d469b3c3002b69c89cde27cbe0b36a4f170262c67c814344b2fc894c0f41",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/skills/role-decomposition/SKILL.md",
+      "archive": "reference/platform-sources/.codex/skills/role-decomposition/SKILL.md",
+      "sha256": "f9cc016519ce1f490c98a54728e4f6d5ca26e19ac4f6b13771b0575717048398",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/skills/skill-creator/SKILL.md",
+      "archive": "reference/platform-sources/.codex/skills/skill-creator/SKILL.md",
+      "sha256": "67aeb016d7db9de354d27753d9740c00d60dc9fd0671e965565f1dc343d1a32d",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/skills/skill-discovery/SKILL.md",
+      "archive": "reference/platform-sources/.codex/skills/skill-discovery/SKILL.md",
+      "sha256": "2fcd7959343abae8004411bf0850fdf60d6b8c2e9c3e20eee8d84dacc8779265",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/skills/skill-discovery/config.example.json",
+      "archive": "reference/platform-sources/.codex/skills/skill-discovery/config.example.json",
+      "sha256": "9dd3d54e8a37b6ff2ff2ea01dea0ceee67479aa9be87ff553ab5a455e91308e6",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/skills/structured-interview/SKILL.md",
+      "archive": "reference/platform-sources/.codex/skills/structured-interview/SKILL.md",
+      "sha256": "02a33d016ce909d5c59b5c0f24c36a67fc49fbbf5c56743d6505970805253812",
+      "mode": "100644"
+    },
+    {
+      "source": ".codex/skills/team-topology-analysis/SKILL.md",
+      "archive": "reference/platform-sources/.codex/skills/team-topology-analysis/SKILL.md",
+      "sha256": "bfa2e25b1328d89191d68f911e7ba264fe2b2a7e531811a3094d401cb2c356a0",
+      "mode": "100644"
+    },
+    {
+      "source": ".gitignore",
+      "archive": "reference/platform-sources/.gitignore",
+      "sha256": "19d4a0d6cccc95139a963d8c227b058bc53cb49899a0045c4714e4ea58ac6f1c",
+      "mode": "100644"
+    },
+    {
+      "source": "AGENTS.md",
+      "archive": "reference/platform-sources/AGENTS.md",
+      "sha256": "65c8e909e1c34b9f83292cd8b244a3b0590d5caef9b53811aa25453209a7a768",
+      "mode": "100644"
+    },
+    {
+      "source": "AUDIT.md",
+      "archive": "reference/platform-sources/AUDIT.md",
+      "sha256": "e177278863487f1d5ab8c95d656515cd30847dab80cc0548a8f95b96ef623758",
+      "mode": "100644"
+    },
+    {
+      "source": "CHANGELOG.md",
+      "archive": "reference/platform-sources/CHANGELOG.md",
+      "sha256": "32069c3e038406236397076bffe0a6e215443c3ce766242c1a588cd4781cd74c",
+      "mode": "100644"
+    },
+    {
+      "source": "CLAUDE.md",
+      "archive": "reference/platform-sources/CLAUDE.md",
+      "sha256": "353fb950e304d6a026e0705970c1aec1c161d2d27903f81f0d1b38a0ace95b8e",
+      "mode": "100644"
+    },
+    {
+      "source": "JUDGMENT.md",
+      "archive": "reference/platform-sources/JUDGMENT.md",
+      "sha256": "5942f7cd6da796d062e49f520636a60c99c19de3bc820c3458737ab3b6513aff",
+      "mode": "100644"
+    },
+    {
+      "source": "VERIFICATION.md",
+      "archive": "reference/platform-sources/VERIFICATION.md",
+      "sha256": "971eba30a77e56209cce499f8e103802756697df52e509c28e7579ca0b84e4a2",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/discovery/requirements-analyst.toml",
+      "archive": "reference/platform-sources/agents/discovery/requirements-analyst.toml",
+      "sha256": "600786bc78d3e9e724b37211274eda9d477a27041ee91877157ab62b6ce0cfae",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/discovery/role-designer.toml",
+      "archive": "reference/platform-sources/agents/discovery/role-designer.toml",
+      "sha256": "cdc5fd30809bc63fffe0ba49a985ce676665686b2671e3872ca6afb1171923ed",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/evolution/team-restructuring-master.toml",
+      "archive": "reference/platform-sources/agents/evolution/team-restructuring-master.toml",
+      "sha256": "3759747166c038df445aebd41f0534c791f5765339c8ecf70c4a71e6221ba1c3",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/generation/agent-writer.toml",
+      "archive": "reference/platform-sources/agents/generation/agent-writer.toml",
+      "sha256": "82bf32164016a80c940b5e85f1f5971c06002119058410266653f6a633097729",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/generation/rule-writer.toml",
+      "archive": "reference/platform-sources/agents/generation/rule-writer.toml",
+      "sha256": "cf1a81ebbc9496a78c4d74f765e3f7e0a1170d3182e6f3feb9121aa55cf3c362",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/generation/skill-writer.toml",
+      "archive": "reference/platform-sources/agents/generation/skill-writer.toml",
+      "sha256": "8d4c430bb3cc45a41058b55aad2ad51aa2a905286f5afa2b78e875cee04ec643",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/optimization/prompt-optimizer.toml",
+      "archive": "reference/platform-sources/agents/optimization/prompt-optimizer.toml",
+      "sha256": "cbe52ac6c7bf6ba7060e2e9e88e7ea3178bcddb30e473ed38014c01e2b92883f",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/planning/skill-planner.toml",
+      "archive": "reference/platform-sources/agents/planning/skill-planner.toml",
+      "sha256": "45f5a1b3240da83844a73cd0834f72053a9f7d5bf165aff441045db24848c395",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/research/decision-auditor.toml",
+      "archive": "reference/platform-sources/agents/research/decision-auditor.toml",
+      "sha256": "3045911b84ba5cd3321f8256d260b72f93e5fe88c7713040d34c71b1fbab9f33",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/research/domain-researcher.toml",
+      "archive": "reference/platform-sources/agents/research/domain-researcher.toml",
+      "sha256": "fde03cc3e1083b6a804552c36bef9b761893d6a74d27048414bb3eb7e2331399",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/review/dialogue-reviewer.toml",
+      "archive": "reference/platform-sources/agents/review/dialogue-reviewer.toml",
+      "sha256": "c0b388647bc0ff94c6695df6e00fe8de24b32519c94226de53f194fd2cb38a98",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/review/runtime-preflight-advisor.toml",
+      "archive": "reference/platform-sources/agents/review/runtime-preflight-advisor.toml",
+      "sha256": "c44322a1fb09ac0eb32effdc5454a26b8dae0dd8b75abae73f0544390566f200",
+      "mode": "100644"
+    },
+    {
+      "source": "agents/team-architect.toml",
+      "archive": "reference/platform-sources/agents/team-architect.toml",
+      "sha256": "782524a69a960ae80712810067167bc715ef586e49c88b5c17dead6fa3fbcb6c",
+      "mode": "100644"
+    },
+    {
+      "source": "readme.md",
+      "archive": "reference/platform-sources/readme.md",
+      "sha256": "e27cab2d791d1b43b838c5bbe90d1e05aaa4974639a53544eb585e4d912715d2",
+      "mode": "100644"
+    },
+    {
+      "source": "scripts/preflight-codex-runtime.sh",
+      "archive": "reference/platform-sources/scripts/preflight-codex-runtime.sh",
+      "sha256": "ec22f8efb23b3dae14dbf26a427bb35f27025b5188105b3f188b7138e7956ef9",
+      "mode": "100755"
+    },
+    {
+      "source": "scripts/preflight-permissions.sh",
+      "archive": "reference/platform-sources/scripts/preflight-permissions.sh",
+      "sha256": "731b59bde9ed5333b4f188771287fce162141eae64b58823b8ef392bb0d97b16",
+      "mode": "100755"
+    },
+    {
+      "source": "scripts/validate-team.sh",
+      "archive": "reference/platform-sources/scripts/validate-team.sh",
+      "sha256": "7649f40987e6e83dc9dd72857932693121d5542c237d09111d7b8592079cc95f",
+      "mode": "100755"
+    },
+    {
+      "source": "scripts/validate_codex_team.py",
+      "archive": "reference/platform-sources/scripts/validate_codex_team.py",
+      "sha256": "0c130c0d4d4a2b18e9fe6be6083af3b4cb78324e2f7628891139cffed555c880",
+      "mode": "100755"
+    },
+    {
+      "source": "templates/implementation.md",
+      "archive": "reference/platform-sources/templates/implementation.md",
+      "sha256": "9c786378bb4b63127d4342dc28c128a7220de16a5887db45a6934aaa55b28b97",
+      "mode": "100644"
+    },
+    {
+      "source": "templates/refactoring.md",
+      "archive": "reference/platform-sources/templates/refactoring.md",
+      "sha256": "41d524f6ffd2999a5b3a38994fbbae3bfa43fb3501bfa02f11565d69fb6b7cde",
+      "mode": "100644"
+    },
+    {
+      "source": "templates/research.md",
+      "archive": "reference/platform-sources/templates/research.md",
+      "sha256": "9cfadfd376546ce6a24089f9d6b476a7a42adbbae3eff6efa2ca09a367fc9aa1",
+      "mode": "100644"
+    },
+    {
+      "source": "templates/review.md",
+      "archive": "reference/platform-sources/templates/review.md",
+      "sha256": "41df86e41d778a6b46660accb6d4f4e630a7968984239838d13b2b2f48a698b9",
+      "mode": "100644"
+    },
+    {
+      "source": "templates/search.md",
+      "archive": "reference/platform-sources/templates/search.md",
+      "sha256": "eb0aa9cb9efd113f54467b581349490086d34f66bf77f33957ce670d9ba09f9f",
+      "mode": "100644"
+    },
+    {
+      "source": "tests/test_preflight_codex_runtime.py",
+      "archive": "reference/platform-sources/tests/test_preflight_codex_runtime.py",
+      "sha256": "2ae8b2ead63d802cc879964aa1aad8ef8f76dd01051677645b75d2a53ee34cbf",
+      "mode": "100644"
+    },
+    {
+      "source": "tests/test_prompt_pattern_selection.py",
+      "archive": "reference/platform-sources/tests/test_prompt_pattern_selection.py",
+      "sha256": "04d64f32b9dec52864f720c819bfd24aece8d99014cf5c95aac90b20c70eea3c",
+      "mode": "100644"
+    },
+    {
+      "source": "tests/test_validate_claude_team.py",
+      "archive": "reference/platform-sources/tests/test_validate_claude_team.py",
+      "sha256": "bdb75063c7a4a2410d1ce61006ae8f5e10c742af702359c56fb4c593dfa68247",
+      "mode": "100644"
+    },
+    {
+      "source": "tests/test_validate_codex_team.py",
+      "archive": "reference/platform-sources/tests/test_validate_codex_team.py",
+      "sha256": "b8dd46e29e8cb55ac9aa2474ebc4e2b8f1e384d2d031856f52a5e4a3cab2cb0e",
+      "mode": "100644"
+    }
+  ]
+}

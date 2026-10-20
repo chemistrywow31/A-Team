@@ -1,0 +1,1316 @@
+{
+  "schema_version": 1,
+  "kind": "a-team-designer",
+  "generated_on": "2026-10-20",
+  "authority": {
+    "runtime": "grok",
+    "root": ".grok/",
+    "entry": "AGENTS.md",
+    "migration": "explicit-branch-native"
+  },
+  "runnable_surfaces": [
+    "grok"
+  ],
+  "reference_only_surfaces": [
+    {
+      "runtime": "claude",
+      "root": "reference/platform-sources/.claude/",
+      "entry": "reference/platform-sources/CLAUDE.md"
+    },
+    {
+      "runtime": "codex",
+      "root": "reference/platform-sources/.codex/",
+      "entry": "reference/platform-sources/AGENTS.md"
+    }
+  ],
+  "source_snapshot": {
+    "base_commit": "1bec32fb6c120aaa22d79af7d466363331cefa34",
+    "root": "reference/platform-sources/",
+    "manifest": "reference/platform-sources/snapshot.manifest.json",
+    "manifest_sha256": "6732701ae9545a2ed19afea6723f9872870002790fe3f666f5304587a7165e70"
+  },
+  "mappings": {
+    "roles": [
+      {
+        "id": "agent-writer",
+        "sources": [
+          "reference/platform-sources/.claude/agents/generation/agent-writer.md"
+        ],
+        "target": ".grok/agents/agent-writer.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "decision-auditor",
+        "sources": [
+          "reference/platform-sources/.claude/agents/research/decision-auditor.md"
+        ],
+        "target": ".grok/agents/decision-auditor.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "dialogue-reviewer",
+        "sources": [
+          "reference/platform-sources/.claude/agents/review/dialogue-reviewer.md"
+        ],
+        "target": ".grok/agents/dialogue-reviewer.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "domain-researcher",
+        "sources": [
+          "reference/platform-sources/.claude/agents/research/domain-researcher.md"
+        ],
+        "target": ".grok/agents/domain-researcher.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "prompt-optimizer",
+        "sources": [
+          "reference/platform-sources/.claude/agents/optimization/prompt-optimizer.md"
+        ],
+        "target": ".grok/agents/prompt-optimizer.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "requirements-analyst",
+        "sources": [
+          "reference/platform-sources/.claude/agents/discovery/requirements-analyst.md"
+        ],
+        "target": ".grok/agents/requirements-analyst.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "role-designer",
+        "sources": [
+          "reference/platform-sources/.claude/agents/discovery/role-designer.md"
+        ],
+        "target": ".grok/agents/role-designer.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "rule-writer",
+        "sources": [
+          "reference/platform-sources/.claude/agents/generation/rule-writer.md"
+        ],
+        "target": ".grok/agents/rule-writer.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "runtime-preflight-advisor",
+        "sources": [
+          "reference/platform-sources/.claude/agents/review/runtime-preflight-advisor.md"
+        ],
+        "target": ".grok/agents/runtime-preflight-advisor.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "skill-planner",
+        "sources": [
+          "reference/platform-sources/.claude/agents/planning/skill-planner.md"
+        ],
+        "target": ".grok/agents/skill-planner.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "skill-writer",
+        "sources": [
+          "reference/platform-sources/.claude/agents/generation/skill-writer.md"
+        ],
+        "target": ".grok/agents/skill-writer.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "team-architect",
+        "sources": [
+          "reference/platform-sources/.claude/agents/team-architect.md"
+        ],
+        "target": ".grok/agents/team-architect.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "team-restructuring-master",
+        "sources": [
+          "reference/platform-sources/.claude/agents/evolution/team-restructuring-master.md"
+        ],
+        "target": ".grok/agents/team-restructuring-master.md",
+        "mode": "adapted"
+      }
+    ],
+    "skills": [
+      {
+        "id": "a-team",
+        "sources": [
+          "reference/platform-sources/.claude/skills/a-team/SKILL.md"
+        ],
+        "target": ".grok/skills/a-team/SKILL.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "granularity-calibration",
+        "sources": [
+          "reference/platform-sources/.claude/skills/granularity-calibration/SKILL.md"
+        ],
+        "target": ".grok/skills/granularity-calibration/SKILL.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "md-generation-standard",
+        "sources": [
+          "reference/platform-sources/.claude/skills/md-generation-standard/SKILL.md"
+        ],
+        "target": ".grok/skills/md-generation-standard/SKILL.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "prompt-optimization",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-optimization/SKILL.md"
+        ],
+        "target": ".grok/skills/prompt-optimization/SKILL.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "prompt-patterns",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/SKILL.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/SKILL.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "quality-validation",
+        "sources": [
+          "reference/platform-sources/.claude/skills/quality-validation/SKILL.md"
+        ],
+        "target": ".grok/skills/quality-validation/SKILL.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "role-decomposition",
+        "sources": [
+          "reference/platform-sources/.claude/skills/role-decomposition/SKILL.md"
+        ],
+        "target": ".grok/skills/role-decomposition/SKILL.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "skill-creator",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/SKILL.md"
+        ],
+        "target": ".grok/skills/skill-creator/SKILL.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "skill-discovery",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-discovery/SKILL.md"
+        ],
+        "target": ".grok/skills/skill-discovery/SKILL.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "structured-interview",
+        "sources": [
+          "reference/platform-sources/.claude/skills/structured-interview/SKILL.md"
+        ],
+        "target": ".grok/skills/structured-interview/SKILL.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "team-topology-analysis",
+        "sources": [
+          "reference/platform-sources/.claude/skills/team-topology-analysis/SKILL.md"
+        ],
+        "target": ".grok/skills/team-topology-analysis/SKILL.md",
+        "mode": "adapted"
+      }
+    ],
+    "policies": [
+      {
+        "id": "anti-sycophancy",
+        "sources": [
+          "reference/platform-sources/.claude/rules/anti-sycophancy.md"
+        ],
+        "target": ".grok/policies/anti-sycophancy.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "context-isolation",
+        "sources": [
+          "reference/platform-sources/.claude/rules/skill-context-fork.md"
+        ],
+        "target": ".grok/policies/context-isolation.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "context-management",
+        "sources": [
+          "reference/platform-sources/.claude/rules/context-management.md"
+        ],
+        "target": ".grok/policies/context-management.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "context-tier",
+        "sources": [
+          "reference/platform-sources/.claude/rules/context-tier.md"
+        ],
+        "target": ".grok/policies/context-tier.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "conversation-protocol",
+        "sources": [
+          "reference/platform-sources/.claude/rules/conversation-protocol.md"
+        ],
+        "target": ".grok/policies/conversation-protocol.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "coordinator-mandate",
+        "sources": [
+          "reference/platform-sources/.claude/rules/coordinator-mandate.md"
+        ],
+        "target": ".grok/policies/coordinator-mandate.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "execution-contract",
+        "sources": [
+          "reference/platform-sources/.claude/rules/execution-contract.md"
+        ],
+        "target": ".grok/policies/execution-contract.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "grok-agent-config",
+        "sources": [
+          "reference/platform-sources/.claude/rules/frontmatter-optional-patterns.md"
+        ],
+        "target": ".grok/policies/grok-agent-config.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "grok-hooks",
+        "sources": [
+          "reference/platform-sources/.claude/rules/hooks-integration.md"
+        ],
+        "target": ".grok/policies/grok-hooks.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "grok-runtime-config",
+        "sources": [
+          "reference/platform-sources/.claude/rules/settings-json.md"
+        ],
+        "target": ".grok/policies/grok-runtime-config.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "output-structure",
+        "sources": [
+          "reference/platform-sources/.claude/rules/output-structure.md"
+        ],
+        "target": ".grok/policies/output-structure.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "prompt-engineering-patterns",
+        "sources": [
+          "reference/platform-sources/.claude/rules/prompt-engineering-patterns.md"
+        ],
+        "target": ".grok/policies/prompt-engineering-patterns.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "proportional-design",
+        "sources": [
+          "reference/platform-sources/.claude/rules/proportional-design.md"
+        ],
+        "target": ".grok/policies/proportional-design.md",
+        "mode": "copied"
+      },
+      {
+        "id": "reasoning-and-self-critique",
+        "sources": [
+          "reference/platform-sources/.claude/rules/reasoning-and-self-critique.md"
+        ],
+        "target": ".grok/policies/reasoning-and-self-critique.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "reviewer-mandate",
+        "sources": [
+          "reference/platform-sources/.claude/rules/reviewer-mandate.md"
+        ],
+        "target": ".grok/policies/reviewer-mandate.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "source-authority",
+        "sources": [
+          "reference/platform-sources/.claude/rules/dual-platform-parity.md"
+        ],
+        "target": ".grok/policies/source-authority.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "worklog",
+        "sources": [
+          "reference/platform-sources/.claude/rules/worklog.md"
+        ],
+        "target": ".grok/policies/worklog.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "writing-quality-standard",
+        "sources": [
+          "reference/platform-sources/.claude/rules/writing-quality-standard.md"
+        ],
+        "target": ".grok/policies/writing-quality-standard.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "yaml-frontmatter",
+        "sources": [
+          "reference/platform-sources/.claude/rules/yaml-frontmatter.md"
+        ],
+        "target": ".grok/policies/yaml-frontmatter.md",
+        "mode": "adapted"
+      }
+    ],
+    "other": [
+      {
+        "id": ".gitignore",
+        "sources": [
+          "reference/platform-sources/.gitignore"
+        ],
+        "target": ".gitignore",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::config.toml",
+        "sources": [],
+        "target": ".grok/config.toml",
+        "mode": "native"
+      },
+      {
+        "id": ".grok::docs::RUNTIME-SETUP.md",
+        "sources": [],
+        "target": ".grok/docs/RUNTIME-SETUP.md",
+        "mode": "native"
+      },
+      {
+        "id": ".grok::rules::core.md",
+        "sources": [],
+        "target": ".grok/rules/core.md",
+        "mode": "native"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::INDEX.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/INDEX.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/INDEX.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::advanced-techniques::anti-hallucination.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/anti-hallucination.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/advanced-techniques/anti-hallucination.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::advanced-techniques::chain-of-thought.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/chain-of-thought.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/advanced-techniques/chain-of-thought.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::advanced-techniques::complex-prompt-template.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/complex-prompt-template.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/advanced-techniques/complex-prompt-template.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::advanced-techniques::few-shot-patterns.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/few-shot-patterns.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/advanced-techniques/few-shot-patterns.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::advanced-techniques::long-context.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/long-context.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/advanced-techniques/long-context.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::advanced-techniques::prompt-chaining.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/prompt-chaining.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/advanced-techniques/prompt-chaining.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::advanced-techniques::xml-tag-separation.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/advanced-techniques/xml-tag-separation.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/advanced-techniques/xml-tag-separation.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::context-strategies::compaction.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/compaction.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/context-strategies/compaction.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::context-strategies::hybrid-strategy.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/hybrid-strategy.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/context-strategies/hybrid-strategy.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::context-strategies::multi-window-workflow.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/multi-window-workflow.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/context-strategies/multi-window-workflow.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::context-strategies::progressive-disclosure.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/progressive-disclosure.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/context-strategies/progressive-disclosure.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::context-strategies::structured-notes.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/structured-notes.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/context-strategies/structured-notes.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::context-strategies::sub-agent-dispatch.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/sub-agent-dispatch.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/context-strategies/sub-agent-dispatch.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::context-strategies::system-prompt-design.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/context-strategies/system-prompt-design.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/context-strategies/system-prompt-design.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::anti-hard-coding.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/anti-hard-coding.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/anti-hard-coding.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::anti-over-engineering.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/anti-over-engineering.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/anti-over-engineering.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::autonomy-safety.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/autonomy-safety.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/autonomy-safety.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::avoid-excessive-markdown.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/avoid-excessive-markdown.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/avoid-excessive-markdown.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::commitment-over-exploration.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/commitment-over-exploration.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/commitment-over-exploration.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::conservative-action.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/conservative-action.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/conservative-action.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::context-awareness.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/context-awareness.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/context-awareness.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::default-to-action.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/default-to-action.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/default-to-action.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::frontend-aesthetics.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/frontend-aesthetics.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/frontend-aesthetics.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::investigate-before-answering.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/investigate-before-answering.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/investigate-before-answering.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::parallel-tool-calls.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/parallel-tool-calls.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/parallel-tool-calls.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::reduce-thinking.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/reduce-thinking.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/reduce-thinking.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::research-structured.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/research-structured.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/research-structured.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::assets::templates::subagent-usage.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/assets/templates/subagent-usage.md"
+        ],
+        "target": ".grok/skills/prompt-patterns/assets/templates/subagent-usage.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::prompt-patterns::select.py",
+        "sources": [
+          "reference/platform-sources/.claude/skills/prompt-patterns/select.py"
+        ],
+        "target": ".grok/skills/prompt-patterns/select.py",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::LICENSE.txt",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/LICENSE.txt"
+        ],
+        "target": ".grok/skills/skill-creator/LICENSE.txt",
+        "mode": "copied"
+      },
+      {
+        "id": ".grok::skills::skill-creator::agents::analyzer.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/agents/analyzer.md"
+        ],
+        "target": ".grok/skills/skill-creator/agents/analyzer.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::agents::comparator.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/agents/comparator.md"
+        ],
+        "target": ".grok/skills/skill-creator/agents/comparator.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::agents::grader.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/agents/grader.md"
+        ],
+        "target": ".grok/skills/skill-creator/agents/grader.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::assets::eval_review.html",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/assets/eval_review.html"
+        ],
+        "target": ".grok/skills/skill-creator/assets/eval_review.html",
+        "mode": "copied"
+      },
+      {
+        "id": ".grok::skills::skill-creator::eval-viewer::generate_review.py",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/eval-viewer/generate_review.py"
+        ],
+        "target": ".grok/skills/skill-creator/eval-viewer/generate_review.py",
+        "mode": "copied"
+      },
+      {
+        "id": ".grok::skills::skill-creator::eval-viewer::viewer.html",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/eval-viewer/viewer.html"
+        ],
+        "target": ".grok/skills/skill-creator/eval-viewer/viewer.html",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::references::schemas.md",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/references/schemas.md"
+        ],
+        "target": ".grok/skills/skill-creator/references/schemas.md",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::scripts::__init__.py",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/scripts/__init__.py"
+        ],
+        "target": ".grok/skills/skill-creator/scripts/__init__.py",
+        "mode": "copied"
+      },
+      {
+        "id": ".grok::skills::skill-creator::scripts::aggregate_benchmark.py",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/scripts/aggregate_benchmark.py"
+        ],
+        "target": ".grok/skills/skill-creator/scripts/aggregate_benchmark.py",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::scripts::generate_report.py",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/scripts/generate_report.py"
+        ],
+        "target": ".grok/skills/skill-creator/scripts/generate_report.py",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::scripts::improve_description.py",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/scripts/improve_description.py"
+        ],
+        "target": ".grok/skills/skill-creator/scripts/improve_description.py",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::scripts::package_skill.py",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/scripts/package_skill.py"
+        ],
+        "target": ".grok/skills/skill-creator/scripts/package_skill.py",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::scripts::quick_validate.py",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/scripts/quick_validate.py"
+        ],
+        "target": ".grok/skills/skill-creator/scripts/quick_validate.py",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::scripts::run_eval.py",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/scripts/run_eval.py"
+        ],
+        "target": ".grok/skills/skill-creator/scripts/run_eval.py",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::scripts::run_loop.py",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/scripts/run_loop.py"
+        ],
+        "target": ".grok/skills/skill-creator/scripts/run_loop.py",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-creator::scripts::utils.py",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-creator/scripts/utils.py"
+        ],
+        "target": ".grok/skills/skill-creator/scripts/utils.py",
+        "mode": "adapted"
+      },
+      {
+        "id": ".grok::skills::skill-discovery::config.example.json",
+        "sources": [
+          "reference/platform-sources/.claude/skills/skill-discovery/config.example.json"
+        ],
+        "target": ".grok/skills/skill-discovery/config.example.json",
+        "mode": "copied"
+      },
+      {
+        "id": ".grok::templates::reasoning-self-critique-blocks.md",
+        "sources": [
+          "reference/platform-sources/.claude/templates/reasoning-self-critique-blocks.md"
+        ],
+        "target": ".grok/templates/reasoning-self-critique-blocks.md",
+        "mode": "copied"
+      },
+      {
+        "id": "AGENTS.md",
+        "sources": [
+          "reference/platform-sources/CLAUDE.md",
+          "reference/platform-sources/AGENTS.md"
+        ],
+        "target": "AGENTS.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "AUDIT.md",
+        "sources": [
+          "reference/platform-sources/AUDIT.md"
+        ],
+        "target": "AUDIT.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "CHANGELOG.md",
+        "sources": [
+          "reference/platform-sources/CHANGELOG.md"
+        ],
+        "target": "CHANGELOG.md",
+        "mode": "copied"
+      },
+      {
+        "id": "GROK.md",
+        "sources": [],
+        "target": "GROK.md",
+        "mode": "native"
+      },
+      {
+        "id": "JUDGMENT.md",
+        "sources": [
+          "reference/platform-sources/JUDGMENT.md"
+        ],
+        "target": "JUDGMENT.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "VERIFICATION.md",
+        "sources": [
+          "reference/platform-sources/VERIFICATION.md"
+        ],
+        "target": "VERIFICATION.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "readme.md",
+        "sources": [
+          "reference/platform-sources/readme.md"
+        ],
+        "target": "readme.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "requirements.txt",
+        "sources": [],
+        "target": "requirements.txt",
+        "mode": "native"
+      },
+      {
+        "id": "scripts::preflight-grok-runtime.sh",
+        "sources": [
+          "reference/platform-sources/scripts/preflight-permissions.sh",
+          "reference/platform-sources/scripts/preflight-codex-runtime.sh"
+        ],
+        "target": "scripts/preflight-grok-runtime.sh",
+        "mode": "adapted"
+      },
+      {
+        "id": "scripts::validate-team.sh",
+        "sources": [
+          "reference/platform-sources/scripts/validate-team.sh"
+        ],
+        "target": "scripts/validate-team.sh",
+        "mode": "adapted"
+      },
+      {
+        "id": "scripts::validate_grok_team.py",
+        "sources": [
+          "reference/platform-sources/scripts/validate-team.sh",
+          "reference/platform-sources/scripts/validate_codex_team.py"
+        ],
+        "target": "scripts/validate_grok_team.py",
+        "mode": "adapted"
+      },
+      {
+        "id": "templates::implementation.md",
+        "sources": [
+          "reference/platform-sources/templates/implementation.md"
+        ],
+        "target": "templates/implementation.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "templates::refactoring.md",
+        "sources": [
+          "reference/platform-sources/templates/refactoring.md"
+        ],
+        "target": "templates/refactoring.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "templates::research.md",
+        "sources": [
+          "reference/platform-sources/templates/research.md"
+        ],
+        "target": "templates/research.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "templates::review.md",
+        "sources": [
+          "reference/platform-sources/templates/review.md"
+        ],
+        "target": "templates/review.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "templates::search.md",
+        "sources": [
+          "reference/platform-sources/templates/search.md"
+        ],
+        "target": "templates/search.md",
+        "mode": "adapted"
+      },
+      {
+        "id": "tests::test_grok_skill_tools.py",
+        "sources": [],
+        "target": "tests/test_grok_skill_tools.py",
+        "mode": "native"
+      },
+      {
+        "id": "tests::test_preflight_grok_runtime.py",
+        "sources": [
+          "reference/platform-sources/tests/test_preflight_codex_runtime.py"
+        ],
+        "target": "tests/test_preflight_grok_runtime.py",
+        "mode": "adapted"
+      },
+      {
+        "id": "tests::test_prompt_pattern_selection.py",
+        "sources": [
+          "reference/platform-sources/tests/test_prompt_pattern_selection.py"
+        ],
+        "target": "tests/test_prompt_pattern_selection.py",
+        "mode": "adapted"
+      },
+      {
+        "id": "tests::test_validate_grok_team.py",
+        "sources": [
+          "reference/platform-sources/tests/test_validate_claude_team.py",
+          "reference/platform-sources/tests/test_validate_codex_team.py"
+        ],
+        "target": "tests/test_validate_grok_team.py",
+        "mode": "adapted"
+      }
+    ]
+  },
+  "source_only": [
+    {
+      "source": "reference/platform-sources/.agents/skills/a-team/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.agents/skills/granularity-calibration/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.agents/skills/md-generation-standard/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.agents/skills/prompt-optimization/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.agents/skills/prompt-patterns/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.agents/skills/quality-validation/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.agents/skills/role-decomposition/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.agents/skills/skill-creator/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.agents/skills/skill-discovery/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.agents/skills/skill-discovery/config.example.json",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.agents/skills/structured-interview/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.agents/skills/team-topology-analysis/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.claude/output-styles/adhd-friendly.md",
+      "reason": "Claude output-style implementation retained verbatim, including attribution; no verified equivalent native Grok activation is claimed."
+    },
+    {
+      "source": "reference/platform-sources/.claude/settings.json",
+      "reason": "Claude-specific settings or hook implementation; native Grok configuration and conditional hook guidance use independent schema evidence."
+    },
+    {
+      "source": "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/adaptive-thinking.md",
+      "reason": "Historical vendor-specific prompt reference; maintained generic patterns are adapted separately and this asset is not loaded as Grok guidance."
+    },
+    {
+      "source": "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/anti-overthinking.md",
+      "reason": "Historical vendor-specific prompt reference; maintained generic patterns are adapted separately and this asset is not loaded as Grok guidance."
+    },
+    {
+      "source": "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/over-engineering-prevention.md",
+      "reason": "Historical vendor-specific prompt reference; maintained generic patterns are adapted separately and this asset is not loaded as Grok guidance."
+    },
+    {
+      "source": "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/prefill-migration.md",
+      "reason": "Historical vendor-specific prompt reference; maintained generic patterns are adapted separately and this asset is not loaded as Grok guidance."
+    },
+    {
+      "source": "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/subagent-orchestration.md",
+      "reason": "Historical vendor-specific prompt reference; maintained generic patterns are adapted separately and this asset is not loaded as Grok guidance."
+    },
+    {
+      "source": "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/tone-calibration.md",
+      "reason": "Historical vendor-specific prompt reference; maintained generic patterns are adapted separately and this asset is not loaded as Grok guidance."
+    },
+    {
+      "source": "reference/platform-sources/.claude/skills/prompt-patterns/assets/raw/claude-4-best-practices.md",
+      "reason": "Historical vendor-specific prompt reference; maintained generic patterns are adapted separately and this asset is not loaded as Grok guidance."
+    },
+    {
+      "source": "reference/platform-sources/.claude/skills/prompt-patterns/assets/raw/context-engineering-blog.md",
+      "reason": "Historical vendor-specific prompt reference; maintained generic patterns are adapted separately and this asset is not loaded as Grok guidance."
+    },
+    {
+      "source": "reference/platform-sources/.claude/skills/prompt-patterns/assets/raw/courses-advanced-patterns.md",
+      "reason": "Historical vendor-specific prompt reference; maintained generic patterns are adapted separately and this asset is not loaded as Grok guidance."
+    },
+    {
+      "source": "reference/platform-sources/.claude/skills/prompt-patterns/assets/raw/tutorial-advanced-techniques.md",
+      "reason": "Historical vendor-specific prompt reference; maintained generic patterns are adapted separately and this asset is not loaded as Grok guidance."
+    },
+    {
+      "source": "reference/platform-sources/.claude/templates/hooks-baseline.json",
+      "reason": "Claude-specific hook configuration template; Grok lifecycle guidance is adapted separately, with no unverified hook configuration activated."
+    },
+    {
+      "source": "reference/platform-sources/.claude/templates/settings-baseline.json",
+      "reason": "Claude-specific settings or hook implementation; native Grok configuration and conditional hook guidance use independent schema evidence."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/discovery/requirements-analyst.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/discovery/role-designer.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/evolution/team-restructuring-master.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/generation/agent-writer.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/generation/rule-writer.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/generation/skill-writer.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/optimization/prompt-optimizer.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/planning/skill-planner.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/research/decision-auditor.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/research/domain-researcher.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/review/dialogue-reviewer.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/review/runtime-preflight-advisor.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/agents/team-architect.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/config.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/docs/RUNTIME-SETUP.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/docs/claude-adaptation-audit.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/docs/claude-adaptation-manifest.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/docs/claude-to-codex-mapping.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/anti-sycophancy.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/codex-agent-config-patterns.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/codex-native-output.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/codex-runtime-config.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/context-isolation.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/context-management.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/context-tier.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/conversation-protocol.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/coordinator-mandate.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/dual-platform-parity.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/execution-contract.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/output-structure.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/prompt-engineering-patterns.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/proportional-design.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/reasoning-and-self-critique.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/reviewer-mandate.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/worklog.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/writing-quality-standard.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/rules/yaml-frontmatter.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/skills/a-team/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/skills/granularity-calibration/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/skills/md-generation-standard/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/skills/prompt-optimization/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/skills/prompt-patterns/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/skills/quality-validation/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/skills/role-decomposition/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/skills/skill-creator/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/skills/skill-discovery/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/skills/skill-discovery/config.example.json",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/skills/structured-interview/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/.codex/skills/team-topology-analysis/SKILL.md",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/discovery/requirements-analyst.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/discovery/role-designer.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/evolution/team-restructuring-master.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/generation/agent-writer.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/generation/rule-writer.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/generation/skill-writer.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/optimization/prompt-optimizer.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/planning/skill-planner.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/research/decision-auditor.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/research/domain-researcher.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/review/dialogue-reviewer.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/review/runtime-preflight-advisor.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    },
+    {
+      "source": "reference/platform-sources/agents/team-architect.toml",
+      "reason": "Codex-specific projection, registry or adaptation reference; preserved for conversion provenance, not a Grok runtime surface."
+    }
+  ]
+}

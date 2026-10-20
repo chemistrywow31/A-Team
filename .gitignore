@@ -8,6 +8,7 @@
 # Python bytecode
 __pycache__/
 *.py[cod]
+.venv/
 
 # API key config files
 **/skills/*/config.json

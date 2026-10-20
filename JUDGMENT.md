@@ -2,18 +2,18 @@
 
 Purpose: make judgment calls explicit enough for the selected runtime role to apply from its assigned evidence. Cite criteria by number (e.g. "escalating per J1.2"). The coordinator's dispatch templates in `templates/` reference these sections; read the cited section before acting on it.
 
-Model names in examples illustrate Claude routing; actual dispatches use the selected runtime's current role profile, model, and effort. Do not translate aliases across providers by name.
+Examples distinguish task capability and evidence, not vendor model tiers. Native role model/effort are omitted until a measured profile is authorized; omitted model follows the parent in source, while omitted effort leaves installed session/default behavior unasserted. Do not treat parser acceptance as effective routing.
 
 Format per criterion: SIGNAL (observable condition) → ACTION (single imperative) → one POSITIVE example (signal fires, action is right) → one NEGATIVE example (look-alike where the signal does NOT fire).
 
-## J1 Escalate-Model Triggers
+## J1 Escalation Triggers
 
-Beyond the mechanical retry counters in `rules/execution-contract.md` EC-2, escalate when:
+Beyond the mechanical retry counters in `.grok/policies/execution-contract.md` EC-2, escalate when:
 
 ### J1.1 Unmappable blast radius
 - SIGNAL: The fix requires touching more than 3 files, and the dispatch does not state, for each file, both its purpose and the exact change it needs. Purposes you invent yourself do not count as mapped.
-- ACTION: Stop. Report NEEDS_CONTEXT listing the files whose purpose or change is unstated, or escalate one tier with that list.
-- POSITIVE: A haiku formatter is asked to "align frontmatter across the team" and finds agents, skills, and rules all affected, with no per-file changes stated. Escalate.
+- ACTION: Stop. Report NEEDS_CONTEXT listing the files whose purpose or change is unstated, or request a demonstrably adequate specialist with that list.
+- POSITIVE: A deterministic formatter is asked to "align frontmatter across the team" and finds agents, skills, and rules all affected, with no per-file changes stated. Escalate.
 - NEGATIVE: The dispatch itself lists 5 files, each with its purpose AND the exact change per file. Proceed — the blast radius is mapped, not unmappable.
 
 ### J1.2 Two plausible readings
@@ -22,10 +22,10 @@ Beyond the mechanical retry counters in `rules/execution-contract.md` EC-2, esca
 - POSITIVE: "Make the rules match our conventions" — repo conventions and the user's stated conventions differ. Ask.
 - NEGATIVE: The dispatch cites the exact convention file to follow. Follow it — one reading survives.
 
-### J1.3 Verification outruns your tier
-- SIGNAL: Checking your own output for correctness requires expertise the task tier lacks (security review, architecture judgment, domain facts you cannot cite).
-- ACTION: Deliver with STATUS DONE_WITH_CONCERNS, name the unverifiable aspect in RISKS, and name the required higher-tier verifier in NEXT. The coordinator must dispatch that verifier before accepting the artifact (EC-3) — the recommendation alone does not complete acceptance.
-- POSITIVE: A sonnet writer generates a permissions block and cannot judge whether `Bash(curl *)` belongs in allow or ask. Flag it; the coordinator holds acceptance until the security-competent verifier reports.
+### J1.3 Verification outruns demonstrated capability
+- SIGNAL: Checking your own output for correctness requires expertise the assigned role/profile lacks (security review, architecture judgment, domain facts you cannot cite).
+- ACTION: Deliver with STATUS DONE_WITH_CONCERNS, name the unverifiable aspect in RISKS, and name the required expert verifier in NEXT. The coordinator must dispatch that verifier before accepting the artifact (EC-3) — the recommendation alone does not complete acceptance.
+- POSITIVE: A writer generates a native permission pattern and cannot establish whether it safely bounds an external transfer. Flag it; the coordinator holds acceptance until the security-competent verifier reports.
 - NEGATIVE: The check is mechanical (line count, field presence, jq parse). Run it yourself — no expertise gap exists.
 
 ## J2 Definition of Done
@@ -47,7 +47,7 @@ Beyond the mechanical retry counters in `rules/execution-contract.md` EC-2, esca
 ### J3.1 Charter conflict without a resolver
 - SIGNAL: Two charter-level instructions conflict, EC-4 puts them at the same level, and neither has narrower Applicability.
 - ACTION: Stop work on the affected item. Present both instructions and the conflict to the user; continue unaffected work.
-- POSITIVE: CLAUDE.md demands a section that another charter rule prohibits at the same precedence level. Ask.
+- POSITIVE: AGENTS.md demands a section that another charter rule prohibits at the same precedence level. Ask.
 - NEGATIVE: A rule conflicts with a dispatch instruction. Do not ask — EC-4 already resolves it (rules outrank dispatches).
 
 ### J3.2 Irreversible or outward action without authorization
@@ -62,11 +62,11 @@ Beyond the mechanical retry counters in `rules/execution-contract.md` EC-2, esca
 - POSITIVE: "Keep all 16 rules always-loaded" and "cut always-loaded tokens by half." Ask.
 - NEGATIVE: X and Y are merely in tension and the user stated a priority order. Follow the order — tension with a tiebreaker is not contradiction.
 
-### J3.4 Retry budget exhausted with no higher tier
-- SIGNAL: Three total attempts consumed (EC-2.4) AND every authorized tier up to the highest available task tier has already attempted (the one-shot escalation attempt in EC-2.4 is spent or unavailable).
+### J3.4 Retry budget exhausted with no justified escalation
+- SIGNAL: Three total attempts consumed (EC-2.4) AND every authorized escalation option up to the highest evidenced available task capability has already attempted (the one-shot escalation attempt in EC-2.4 is spent or unavailable).
 - ACTION: Report BLOCKED with the full failure trace and one specific unblock request. Stop.
-- POSITIVE: haiku failed once, sonnet twice, opus spent its single escalation attempt; trace complete. Ask the user.
-- NEGATIVE: haiku + sonnet consumed all three attempts but opus has not attempted — opus still gets the single EC-2.4 escalation attempt. Escalate with the trace; do not ask the user yet.
+- POSITIVE: A utility failed once, an execution role twice, and the justified expert spent its single escalation attempt; trace complete. Ask the user.
+- NEGATIVE: Utility and execution roles consumed all three attempts but an evidenced adequate expert has not attempted — that expert still gets the single EC-2.4 escalation attempt. Escalate with the trace; do not ask the user yet.
 
 ## J4 Wrong-Direction Signals
 
@@ -81,7 +81,7 @@ Wrong direction means the approach is wrong, not the effort. Retrying into a wro
 ### J4.2 The fix keeps growing
 - SIGNAL: Each attempt touches more files or more lines than the previous attempt (lines touched = max(lines added, lines deleted) per attempt).
 - ACTION: Stop expanding. Return only this task's delta to the smallest failing state after checking for intervening edits; preserve all user/other-writer work. Write the trace and escalate per EC-2.
-- POSITIVE: Attempt 1 edits one rule; attempt 2 edits the rule plus three agents; the planned attempt 3 would edit CLAUDE.md too. Stop and escalate.
+- POSITIVE: Attempt 1 edits one rule; attempt 2 edits the rule plus three agents; the planned attempt 3 would edit AGENTS.md too. Stop and escalate.
 - NEGATIVE: Attempt 2 is smaller and passes more checks than attempt 1. Shrinking with progress is convergence — continue.
 
 ### J4.3 Checks pass only because they were weakened
@@ -98,23 +98,23 @@ Wrong direction means the approach is wrong, not the effort. Retrying into a wro
 
 ## J5 Quality Floor Per Artifact Type
 
-Each floor lists the exact check that proves it. A verifier runs these checks; a producer runs them before reporting. J5 is the CANONICAL floor definition — `skills/quality-validation/SKILL.md` compiles these floors into its team-sweep checklist; when the two disagree, J5 wins and quality-validation must be updated in the same change.
+Each floor lists the exact check that proves it. A verifier runs these checks; a producer runs them before reporting. J5 is the CANONICAL floor definition — `.grok/skills/quality-validation/SKILL.md` compiles these floors into its team-sweep checklist; when the two disagree, J5 wins and quality-validation must be updated in the same change.
 
 Prioritize task effectiveness using current official platform/model guidance. Preserve useful XML structure, examples, concrete steps, and checks; concision is secondary. Use one role-specific Reasoning/Workflow/Self-Critique contract; the headings below do not require fixed four/five slots, duplicate Preflight/Verification forms, or private reasoning transcripts. One independent review may cover a coherent frozen artifact batch. After corrections, invalidate and rerun every criterion citing a changed file plus dependent mapping/parity criteria; preserve only unaffected current evidence.
 
 The existing 300/200/100-line targets for authored agent/skill/rule files are review triggers, not permission to discard useful instructions. An over-target file is `REVIEW_REQUIRED`: the producer records its size and concrete usefulness rationale; an independent reviewer accepts or rejects the current file in the criterion report. An author-only marker or shorter file is not evidence of quality. Keep EC report caps separately bounded. Retain at least one meaningful rejection/defer/escalation example in authored agents and skills; add positive or contrast examples when they clarify behavior or a testable boundary. Do not force a universal example count.
 
 ### J5.1 Agent .md
-- SIGNAL: Artifact is an agent file.
-- ACTION: Enforce: line-1 frontmatter with `name` and `description`; sections `## Reasoning` before `## Workflow` before `## Self-Critique`; `## Boundaries`; `## Uncertainty Protocol`; `## Examples` containing at least one meaningful rejection/defer/escalation case, with useful positive/contrast examples allowed; lengths above 300 lines require the independent review above. For a Claude-runnable agent, frontmatter additionally has `model`. For a Codex playbook paired with `agents/**/*.toml`, frontmatter has `agent_type` and its directly paired TOML has `model`; do not require or duplicate `model` in that playbook. A platform-neutral shared role source has no runtime-model requirement; verify its runnable projection or runtime config carries the required platform fields. Check: `head -1` = `---`; `grep -cE '^(name|description):'` returns 2; `grep -n '^## '` for order and presence; inspect `## Examples` for boundary coverage and usefulness; `wc -l` and resolve any size review; then directly inspect the paired runnable artifact: Claude frontmatter `model`, Codex playbook `agent_type` plus paired TOML `model`, or shared projection/runtime config platform fields.
-- POSITIVE: A 240-line Codex playbook has line-1 `name`, `description`, and `agent_type`, all required sections in order, and exactly one rejection case; its directly paired `agents/reviewer.toml` declares `model`. Floor met.
-- NEGATIVE: All sections present but Self-Critique appears before Workflow. Floor failed — order is part of the floor, not a style preference.
+- SIGNAL: Artifact is a native agent file.
+- ACTION: Enforce flat `.grok/agents/{name}.md` with matching unique kebab-case name; line-1 YAML `name`/`description`; one adjacent `## Reasoning` → `## Workflow` → `## Self-Critique`; `## Boundaries`, `## Uncertainty Protocol`, input/output and completion contracts, exact ownership, and `## Examples` with a meaningful rejection/defer/escalation case. Validate supported keys/types and runtime posture under `.grok/policies/grok-agent-config.md`; specialists deny Task, execution-check roles retain Execute, coordinator tools are omitted. New roles omit model/effort unless a measured profile is declared; preserve supported target pins outside migration. Check with actual YAML parsing, ordered headers, reference resolution, line count, and native source inventory. Above 300 lines requires independent usefulness review; discovery alone does not prove tools/model/context.
+- POSITIVE: A 240-line flat specialist has all sections and a meaningful rejection case, native metadata with Task denial, exact startup paths, and current discovery evidence; effective-runtime gaps are separately labeled.
+- NEGATIVE: All headings exist but Self-Critique precedes Workflow, or a shell-check auditor uses an execution-excluding profile. Floor failed.
 
 ### J5.2 Skill SKILL.md
-- SIGNAL: Artifact is a skill file.
-- ACTION: Enforce: lives at `skills/{name}/SKILL.md`; frontmatter name/description; at least one meaningful rejection/defer/escalation example with useful positive/contrast examples allowed; lengths above 200 lines require independent usefulness review. Check all skills for path, frontmatter, an Examples section naming a refusal/defer/escalate case, and line count. Identify a Claude coordinator entry from its declared workflow purpose or coordinator-adoption contract, independent of folder/name, invocation flag, or whether required fields and adoption are valid. A Claude runnable team must have exactly one such entry; missing or ambiguous entries fail. Then separately verify the actual entry has `disable-model-invocation: true`, `allowed-tools` granting Agent, `argument-hint`, and a resolvable coordinator playbook that it adopts in the main session without spawning the coordinator. These are A-Team entry requirements, not universal platform metadata requirements. The manual-only flag controls invocation and does not identify an entry; ordinary manual-only review/deploy skills are exempt from entry-only checks. Never hide a malformed genuine entry by requiring its fields or adoption to pass before it becomes a candidate. Source: [Claude Code skill frontmatter](https://code.claude.com/docs/en/skills#frontmatter-reference).
-- POSITIVE: A renamed coordinator-entry skill plus an ordinary manual-only review skill produces exactly one entry candidate; the coordinator entry passes its metadata and main-session adoption checks.
-- NEGATIVE: A skill declares that it launches the team's coordinator workflow but lacks `allowed-tools` or tells the session to spawn the coordinator. It remains an entry candidate and fails the corresponding check; the invocation flag cannot make it valid or exempt.
+- SIGNAL: Artifact is a native skill file.
+- ACTION: Enforce `.grok/skills/{name}/SKILL.md`, line-1 name/description, resolvable assets, an ordered executable workflow, and at least one meaningful rejection/defer/escalation example. Above 200 lines requires independent usefulness review. Identify coordinator-entry candidates by workflow purpose/main-session adoption, independent of folder/name or already-valid metadata. A multi-agent team has exactly one; verify its explicit-invocation intent (`disable-model-invocation: true`), useful `argument-hint`, and resolvable coordinator playbook adopted by the current session without spawning it. Ordinary manual-only utilities are exempt from entry-only checks. Native skill model/effort and allowed-tools are not effective routing/permission controls; inspect and session evidence remain separate.
+- POSITIVE: A renamed entry plus a manual review utility produces one entry candidate; its metadata and current-session adoption pass, and referenced scripts are present and checked.
+- NEGATIVE: A genuine workflow entry tells root to spawn the coordinator. It remains an entry candidate and fails; metadata omissions cannot hide it from the check.
 
 ### J5.3 Rule .md
 - SIGNAL: Artifact is a rule file.
@@ -122,11 +122,11 @@ The existing 300/200/100-line targets for authored agent/skill/rule files are re
 - POSITIVE: 80 lines, both sections, checkable violations. Floor met.
 - NEGATIVE: Violation section says "output is low quality" — not observable. Floor failed — rewrite as a checkable condition.
 
-### J5.4 settings.json
-- SIGNAL: Artifact is a settings file.
-- ACTION: Enforce: parses with `jq .`; contains `hooks`, `permissions`, `env` keys; no destructive allows (`rm -rf`, `git push --force`). Check: `jq 'has("hooks"), has("permissions"), has("env")'`; grep the deny patterns.
-- POSITIVE: Parses, three keys, no destructive allows. Floor met.
-- NEGATIVE: Parses and has all keys, but `permissions.allow` contains `Bash(rm -rf *)`. Floor failed — parseability does not excuse unsafe grants.
+### J5.4 Native Runtime Configuration
+- SIGNAL: Artifact is `.grok/config.toml` or a native runtime profile.
+- ACTION: Parse TOML/YAML with real parsers; validate only supported project sections (`mcp_servers`, `plugins`, `permission`) and native agent keys/types. Reject broad destructive/arbitrary-execution grants, secret-bearing configuration, unsupported project controls, and any attempt to change trust/global settings for a pass. Confirm exact discovered source paths. Evaluate effective tools, role selection, shell execution, context, model/effort separately through bounded installed-session evidence; record unavailable evidence as UNVERIFIED/activation-gated. Apply `.grok/policies/grok-runtime-config.md` and verify portable setup/rollback.
+- POSITIVE: Minimal config parses, source inventory matches, and setup distinctly reports discovery PASS plus PENDING_NATIVE_AUTH for effective execution.
+- NEGATIVE: Inspect lists a profile with an ignored unknown key, and the reviewer calls its tool boundary enforced. Floor failed; loading is not enforcement.
 
 ### J5.5 Task report
 - SIGNAL: Artifact is a task return.
@@ -140,8 +140,8 @@ The existing 300/200/100-line targets for authored agent/skill/rule files are re
 - POSITIVE: Three populated files; both decisions cite findings. Floor met.
 - NEGATIVE: Three files exist but decisions.md contains only "TBD". Floor failed — presence without content is not a populated worklog.
 
-### J5.7 Generated CLAUDE.md
-- SIGNAL: Artifact is a generated team's CLAUDE.md.
-- ACTION: Enforce: team objectives + scope; deployment-mode section containing the coordinator-runs-in-main-session statement; worklog and context management section; precedence order; generator version stamp `Generated by A-Team on`. Check: grep each of the five markers; `wc -l` sanity (non-trivial content, not a stub).
-- POSITIVE: All five markers grep-hit and the file describes the actual team. Floor met.
-- NEGATIVE: All sections present but the deployment section says to spawn the coordinator via the Agent tool. Floor failed — the main-session statement is load-bearing, not boilerplate (production dead-lock evidence).
+### J5.7 Generated AGENTS.md
+- SIGNAL: Artifact is a generated team's root `AGENTS.md`.
+- ACTION: Enforce actual team objectives/scope; explicit Grok authority and canonical roots, requested format and runnable/activation states; deployment section placing the coordinator in the main session with target-local roster; worklog/context and precedence contracts; `Generated by A-Team on` stamp. Check exact resolvable native references, complete required policies/skills, and `docs/RUNTIME-SETUP.md` with verify/rollback and evidence limits. Multi-surface/conversion-retained mappings must agree with every runnable entry; a filename alone cannot identify authority. A declared single-agent team may document single-session execution instead of a separate coordinator role.
+- POSITIVE: A two-role native team declares its own roster, main-session coordinator, source authority, required policy/skill paths, stamped setup, and separately identified activation gaps.
+- NEGATIVE: All headings exist but the deployment section spawns the coordinator or silently promotes an archived surface. Floor failed.

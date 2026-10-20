@@ -1,17 +1,18 @@
 # Delegation Template: Search
 
-Use for: external skill discovery, tool lookup, finding existing solutions. Fill every {{slot}}; keep all other lines verbatim. EC-* clauses live in the selected runtime's execution contract (`.claude/rules/execution-contract.md` or `.codex/rules/execution-contract.md`) (EC-1 = directive §7.1, EC-2 = §7.2, EC-3 = §7.3). J-* rubrics live in `JUDGMENT.md`.
+Use for: external skill discovery, tool lookup, finding existing solutions. Fill every {{slot}}; keep all other lines verbatim. EC-* clauses live in the selected runtime's execution contract (`.grok/policies/execution-contract.md`) (EC-1 = directive §7.1, EC-2 = §7.2, EC-3 = §7.3). J-* rubrics live in `JUDGMENT.md`.
 
-Select a runtime-native tier and effective model/effort from the target profile. Claude aliases in filled examples are illustrative; preserve explicit target pins and use the current host's delegation tool.
+Assign context tier by decision scope. Omit model/effort unless a measured native override is authorized; preserve existing target pins. Root uses advertised `spawn_subagent` with `background`, and `subagent_type` only when its live enum contains the selected role. A new acceptance reviewer never receives `resume_from`. These are dispatch templates, not executable tool argument objects.
 
 ## Template
 
 ```
-TASK ID: {{id}}   TIER: {{selected runtime tier; explicit model/effort or supported inheritance}}   RETRY BUDGET: per EC-2 (§7.2)
+TASK ID: {{id}}   CONTEXT TIER / PROFILE: {{decision scope; supported measured override or default omission}}   RETRY BUDGET: per EC-2 (§7.2)
+NON-REVERSION: shared filesystem; preserve concurrent edits and never revert work you did not make.
 OBJECTIVE: {{one sentence, one deliverable}}
 CONTEXT (absolute paths only): {{BRIEF absolute path}}; {{upstream decisions.md absolute paths}}
-SCOPE — IN: {{what to search for}}
-SCOPE — OUT (do not touch): {{topics/dirs to leave alone; no file modifications}}
+SCOPE — IN: {{search topics; exact evidence files to create}}
+SCOPE — OUT (do not touch): {{topics/dirs; every path except exact assigned evidence outputs}}
 ACCEPTANCE CRITERIA (mechanically checkable):
   1. {{e.g. every candidate has name, source URL, license, last-update date}}
   2. {{e.g. at least N candidates or an explicit "none found" with queries listed}}
@@ -22,6 +23,7 @@ STOP CONDITION: stop when {{N}} independent sources agree, or after {{K}} querie
 BUDGET SHORTFALL: query budget exhausted before the candidate floor → report DONE_WITH_CONCERNS
   with the shortfall and the queries run — not DONE, not BLOCKED
 VERIFICATION: fresh-context verifier spot-checks {{M}} citations resolve and support the claim, per EC-3 (§7.3)
+REPORT PERSISTENCE: assigned specialist writes the exact REPORT output below; root owns only an explicitly bounded fallback.
 REPORT: EC-1 schema (§7.1); findings over 30 lines → write to {{output file}} and send the path
 ESCALATE IF: J1.1 (unmappable scope), J1.2 (ambiguous instruction), or J4.1 (same error class twice) fires
 BUDGET: max {{lines}} output lines / {{count}} tool calls
@@ -30,16 +32,19 @@ BUDGET: max {{lines}} output lines / {{count}} tool calls
 ## Filled example
 
 ```
-TASK ID: toeic-04   TIER: bounded; Claude sonnet example, preserve the selected runtime profile   RETRY BUDGET: per EC-2 (§7.2)
+TASK ID: search_toeic_skills   CONTEXT TIER / PROFILE: 2; model and effort omitted; effective values unverified   RETRY BUDGET: per EC-2 (§7.2)
+NON-REVERSION: shared filesystem; preserve concurrent edits and never revert work you did not make.
 OBJECTIVE: Find reusable external skills for TOEIC question generation to avoid writing custom ones.
 CONTEXT (absolute paths only): /Users/you/repo/.worklog/202607/toeic-team/brief.md; /Users/you/repo/.worklog/202607/toeic-team/phase-2-planning/decisions.md
-SCOPE — IN: SkillsMP, aitmpl.com, GitHub topic "claude-skills"; skills for language-quiz generation
-SCOPE — OUT (do not touch): paid marketplaces; do not modify any repo file
+SCOPE — IN: native skill catalogs and maintained source repositories; reusable language-quiz workflows;
+  .worklog/202607/toeic-team/phase-2-planning/skill-candidates.md (only write path)
+SCOPE — OUT (do not touch): paid marketplaces; every file except the exact REPORT path
 ACCEPTANCE CRITERIA (mechanically checkable):
   1. Every candidate row has: name, source URL, license, last-update date, Pattern A/B/C fit.
   2. At least 5 candidates, or "none found" with the exact queries listed.
 STOP CONDITION: stop when 3 independent sources agree the field is covered, or after 12 queries, whichever first
 VERIFICATION: fresh-context verifier spot-checks 3 citations resolve and support the claim, per EC-3 (§7.3)
+REPORT PERSISTENCE: assigned specialist writes the exact REPORT output below; root owns only an explicitly bounded fallback.
 REPORT: EC-1 schema (§7.1); findings over 30 lines → write to .worklog/202607/toeic-team/phase-2-planning/skill-candidates.md and send the path
 ESCALATE IF: J1.1, J1.2, or J4.1 fires
 BUDGET: max 40 output lines / 20 tool calls

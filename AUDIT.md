@@ -1,3 +1,5 @@
+> Historical audit of the original Claude/Codex baseline. This is not Grok acceptance evidence. See [Grok setup](.grok/docs/RUNTIME-SETUP.md) and [format mapping](.grok/docs/format-mapping.md) for this branch.
+
 # AUDIT.md — A-Team Hardening Defect Register (2026-07-03)
 
 ## §0 Parameter resolution (recorded per directive)

@@ -8,7 +8,7 @@ import unittest
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-SELECTOR = REPO_ROOT / ".claude/skills/prompt-patterns/select.py"
+SELECTOR = REPO_ROOT / ".grok/skills/prompt-patterns/select.py"
 
 
 class PromptPatternSelectionTests(unittest.TestCase):
@@ -48,7 +48,7 @@ class PromptPatternSelectionTests(unittest.TestCase):
                 self.assertEqual(len(paths), len(set(paths)))
                 self.assertFalse(any("/claude-4-patterns/" in path or "/raw/" in path for path in paths))
         # The archive is retained; default exclusion must not mean deletion.
-        self.assertTrue((SELECTOR.parent / "assets/claude-4-patterns/adaptive-thinking.md").is_file())
+        self.assertTrue((REPO_ROOT / "reference/platform-sources/.claude/skills/prompt-patterns/assets/claude-4-patterns/adaptive-thinking.md").is_file())
 
     def test_selected_instructions_remove_reproduced_conflicts(self) -> None:
         obsolete_directives = (
@@ -88,8 +88,10 @@ class PromptPatternSelectionTests(unittest.TestCase):
         self.assertRegex(grounding.lower(), r"missing|insufficient|unavailable")
         self.assertRegex(grounding.lower(), r"citation|cite|source")
         dispatch = self.payload("context-strategies/sub-agent-dispatch.md")
-        self.assertIn("Agent", dispatch)
-        self.assertIn(".codex/rules/context-isolation.md", dispatch)
+        self.assertIn("spawn_subagent", dispatch)
+        self.assertIn(".grok/policies/context-isolation.md", dispatch)
+        self.assertIn("without `resume_from`", dispatch)
+        self.assertNotIn(".codex/rules/", dispatch)
         self.assertRegex(dispatch.lower(), r"owned|ownership")
         self.assertRegex(dispatch.lower(), r"acceptance|completion")
 
