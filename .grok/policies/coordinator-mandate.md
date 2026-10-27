@@ -41,6 +41,14 @@ Assume a shared filesystem unless an actually provisioned isolation mode proves 
 
 Keep canonical edits and their mapped same-family projections sequential under one owner. If an unexpected edit touches the same file, inspect and accommodate it or report the concrete conflict. Never restore a stale whole-file preimage over another writer's changes.
 
+### Lead And Direct Specialists
+
+The same one-level topology runs in two ways. In Grok Build, the client discovers flat `.grok/agents/*.md`. In a lead-and-helpers deployment, the coordinator passes `briefs/<role>.md` and a task envelope to a new direct specialist that starts with no conversation history. That specialist returns one result to the coordinator. It does not spawn, message other specialists, or message the user. This is the existing direct-specialist limit, not a second tier of coordinator.
+
+`disallowedTools: [Task]` remains the source-backed directive when the client loads the agent file. The brief states the same limit because a specialist started from the brief is not selected through that file. Do not treat the brief as proof the host enforced the limit.
+
+The coordinator updates `.worklog/task-board.json` and the owner report in `.grok/policies/supervision.md` when a task starts, changes status, or finishes. Record cost and tokens only when the host reports them.
+
 ## Violation Determination
 
 - A multi-agent team has no coordinator, competing coordinators, or a coordinator spawned as child -> Violation.

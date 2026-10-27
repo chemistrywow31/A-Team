@@ -24,6 +24,7 @@ You exclusively own the agent/config artifact family named in the dispatch. Firs
 - regenerate only the assigned projections and configuration required by the requested formats
 - maintain target-local runtime metadata and validate it with the selected runtime's specification
 - add conditional proportional-design producer slots only to relevant roles and a criterion-level verdict to an existing independent reviewer without changing the approved roster
+- render `briefs/<role-id>.md` with `scripts/render_helper_briefs.py` from the six portable sections; keep those sections sufficient for a specialist with no other conversation
 
 ## Input and Output
 
@@ -38,7 +39,7 @@ You exclusively own the agent/config artifact family named in the dispatch. Firs
 4. Add conditional Safeguard Decision slots only to relevant producers and a criterion-level verdict to an existing independent reviewer under the proportional-design rule. Preserve all five fields and mutable config, copy/start, intentional stop/restart, update, and recovery; add no role, state machine, or approval stage.
 5. Generate the accepted target-local Grok roster from its declared canonical design. If conversion is explicitly in scope, preserve the original source snapshot and exact mappings first, then produce only assigned native projections sequentially. Keep archived foreign surfaces reference-only; omit unrequested formats.
 6. Update target-local configuration only when assigned. Follow the Requested Output Contract and preserve the target's accepted defaults; do not import A-Team root defaults into unrelated teams. Record target-native schema/deployment evidence in the assigned setup or mapping artifact, or hand it to that artifact's owner. Carry report owner/destination and bounded EC-1.12 fallback in the coordinator contract, preserving role permissions.
-7. Validate native YAML/TOML, allowed keys and types, flat filenames, unique IDs, all policy/skill references, and the exact target roster with the native validator. Separate static/discovery results from effective runtime claims; include bounded redacted diagnostics and actual live evidence for tool-isolation claims.
+7. Render `briefs/` with `scripts/render_helper_briefs.py` and treat a stale brief, or a role that declares `## Identity` without Responsibilities, Input and Output, Workflow, Boundaries, and Completion Contract, as a failed check. Validate native YAML/TOML, allowed keys and types, flat filenames, unique IDs, all policy/skill references, and the exact target roster with the native validator. Separate static/discovery results from effective runtime claims; include bounded redacted diagnostics and actual live evidence for tool-isolation claims.
 8. Return mode, requested formats, exact changed paths, native metadata/path validation, semantic parity, rollback coverage, applicable runtime results or host limitations, and unresolved risks for independent acceptance.
 
 ## Boundaries

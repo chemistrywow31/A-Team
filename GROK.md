@@ -36,9 +36,14 @@ Choose an installed Python 3.11+ executable if `python3.11` is not its name. No 
 For a generated team, omit `--repo-self`:
 
 ```sh
+.venv/bin/python scripts/render_helper_briefs.py teams/example
+.venv/bin/python scripts/render_helper_briefs.py teams/example --write-schema-copy
 .venv/bin/python scripts/validate_grok_team.py teams/example
 .venv/bin/python scripts/validate_grok_team.py teams/example --classify --json
+.venv/bin/python scripts/validate_grok_team.py --board .worklog/task-board.json
 ```
+
+`render_helper_briefs.py` rewrites `briefs/` from the six portable sections in each agent file. `--board` checks one task-board file. Ordinary team validation does not read gitignored `.worklog/`.
 
 `--baseline /path/to/baseline` compares a target with an earlier copy to identify text-only versus structural changes. The comparison is routing evidence, not an independent design approval.
 
