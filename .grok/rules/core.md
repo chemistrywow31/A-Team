@@ -7,12 +7,12 @@ description: Route exact native policies while preserving scoped authority, owne
 
 ## Applicability
 
-This is the only always-loaded project rule. Read root `AGENTS.md` and the assigned role's startup references before acting; load complete policies by the triggers below, not all 19 bodies on every turn.
+This is the only always-loaded project rule. Read root `AGENTS.md` and the assigned role's startup references before acting; load complete policies by the triggers below, not every policy body on every turn.
 
 ## Required Policy Routing
 
 - Every role reads `.grok/policies/execution-contract.md`, `.grok/policies/source-authority.md`, and `.grok/policies/context-management.md` at task startup.
-- Coordinating phases: `.grok/policies/coordinator-mandate.md`, `.grok/policies/conversation-protocol.md`, `.grok/policies/worklog.md`, `.grok/policies/reviewer-mandate.md`.
+- Coordinating a phase, dispatch, or status update: `.grok/policies/coordinator-mandate.md`, `.grok/policies/conversation-protocol.md`, `.grok/policies/worklog.md`, `.grok/policies/reviewer-mandate.md`, `.grok/policies/supervision.md`.
 - Authoring prompts/rules/skills: `.grok/policies/yaml-frontmatter.md`, `.grok/policies/writing-quality-standard.md`, `.grok/policies/prompt-engineering-patterns.md`, `.grok/policies/reasoning-and-self-critique.md`, `.grok/policies/output-structure.md`.
 - Selecting native runtime/context: `.grok/policies/grok-agent-config.md`, `.grok/policies/grok-runtime-config.md`, `.grok/policies/context-isolation.md`, `.grok/policies/context-tier.md`.
 - Proposing hooks: `.grok/policies/grok-hooks.md`. Proposing/retaining non-obvious safeguards: `.grok/policies/proportional-design.md`. Making recommendations: `.grok/policies/anti-sycophancy.md`.

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a-team.local/schemas/task-board.schema.json",
+  "title": "A-Team task board",
+  "description": "Machine-readable status the coordinator updates. Cost and token values are recorded only when the host reports them.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "team", "updated_at", "tasks"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "team": {"type": "string", "minLength": 1},
+    "updated_at": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "tasks": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/task"}
+    }
+  },
+  "$defs": {
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "owner_role",
+        "phase",
+        "status",
+        "blockers",
+        "human_decision_needed",
+        "artifacts",
+        "started_at",
+        "finished_at"
+      ],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "owner_role": {"type": "string", "minLength": 1},
+        "phase": {"type": "string", "minLength": 1},
+        "status": {"enum": ["DONE", "DONE_WITH_CONCERNS", "BLOCKED", "NEEDS_CONTEXT"]},
+        "blockers": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "human_decision_needed": {"type": "boolean"},
+        "artifacts": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "started_at": {"type": ["string", "null"], "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z|\\d{4}-\\d{2}-\\d{2})$"},
+        "finished_at": {"type": ["string", "null"], "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z|\\d{4}-\\d{2}-\\d{2})$"},
+        "deadline": {"type": ["string", "null"], "pattern": "^(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z|\\d{4}-\\d{2}-\\d{2})$"},
+        "cost": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["currency", "amount"],
+          "properties": {
+            "currency": {"type": "string", "minLength": 1},
+            "amount": {"type": "number", "minimum": 0}
+          }
+        },
+        "tokens": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["input", "output"],
+          "properties": {
+            "input": {"type": ["integer", "null"], "minimum": 0},
+            "output": {"type": ["integer", "null"], "minimum": 0}
+          }
+        },
+        "summary": {"type": "string"}
+      }
+    }
+  }
+}

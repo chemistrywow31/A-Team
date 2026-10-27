@@ -59,7 +59,7 @@ The default preflight only validates and inspects. It never calls a model, copie
 - Roles omit model and effort pins. Source supports parent-model inheritance; effort omission retains the installed session/default behavior. No cross-provider quality equivalence is assumed.
 - The coordinator uses only the lifecycle exposed by the running client. Default model-facing names include `spawn_subagent` and `get_command_or_subagent_output`. Use `subagent_type` only when the live schema advertises it, and `background`, not the internal `run_in_background`.
 - Project `.grok/config.toml` contributes only the supported permission, MCP and plugin sections. It cannot set the project's model, effort or compatibility defaults.
-- One short automatic rule points to 19 full policies. The role's explicit startup references preserve detailed contracts without automatically loading every policy for every task.
+- One short automatic rule points to 20 full policies. The role's explicit startup references preserve detailed contracts without automatically loading every policy for every task.
 - Skills are native instructions and assets. Their `allowed-tools`, `model` and `effort` metadata are not effective permission or routing controls.
 
 ## Generate and maintain teams

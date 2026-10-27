@@ -13,7 +13,7 @@ Review one coherent frozen batch from fresh context. The producer never accepts 
 - Classify layout separately from runnable surfaces; record stamp, authority, mapping and activation/reference state. Missing authority permits assessment only.
 - Read `JUDGMENT.md` J5 and `.grok/policies/reviewer-mandate.md`. A green parser cannot override a semantic quality failure or promote a reference-only surface.
 - Grok source at a pinned revision, installed CLI parsing/discovery, and effective model/tool execution are different evidence. Skills cannot enforce model/effort/tool restrictions; unknown metadata may be ignored.
-- Repo-self requires the documented 13 roles/11 skills/19 policies. Generated teams use their accepted roster and actual requirements; do not force designer counts onto them.
+- Repo-self requires the documented 13 roles/11 skills/20 policies. Generated teams use their accepted roster and actual requirements; do not force designer counts onto them.
 
 ## Workflow
 

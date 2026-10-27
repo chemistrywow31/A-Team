@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path, PurePosixPath
@@ -31,7 +32,12 @@ NAME = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
 TOOL_IDS = frozenset("run_terminal_cmd task get_task_output wait_tasks kill_task read_file grep list_dir search_replace write todo_write web_search web_fetch search_tool use_tool ask_user_question".split())
 AGENT_KEYS = frozenset("name description promptMode model effort tools disallowedTools skills agentsMd discoverSkills inheritSkills injectDefaultTools maxTurns mcpInheritance permissionMode isolation background capabilityMode".split())
 SKILL_KEYS = frozenset("name description when-to-use allowed-tools argument-hint user-invocable disable-model-invocation model effort license compatibility metadata".split())
-REPO_COUNTS = {"roles": 13, "skills": 11, "policies": 19}
+REPO_COUNTS = {"roles": 13, "skills": 11, "policies": 20}
+SCHEMA_PATH = ROOT / "schemas" / "task-board.schema.json"
+OWNER_REPORT_LABELS = (
+    "Team:", "Board:", "Updated:", "Needs human:", "Blocked:", "Needs context:", "Done:", "Next:",
+)
+_renderer_module = None
 FOREIGN_ROOTS = ("CLAUDE.md", ".claude", ".codex", ".agents", "agents", ".cursor")
 # This one documented, ignored skill-discovery settings file is user-local data,
 # not an authored projection. Do not generalize to ignored paths or config.json
@@ -447,9 +453,154 @@ def validate(root, repo_self=False):
         check("mapping", lambda: validate_mapping(root, read_json(mapping), inventory, repo_self))
     elif repo_self:
         report["errors"].append("repo-self requires .grok/docs/format-mapping.json")
+    check("supervision", lambda: check_supervision(root, agents, repo_self))
     if not report["errors"]:
         report["status"] = "SCHEMA_REVIEW_REQUIRED" if config and config[1] else "STATIC_VALID"
     return report
+
+
+def load_renderer():
+    global _renderer_module
+    if _renderer_module is None:
+        path = ROOT / "scripts" / "render_helper_briefs.py"
+        spec = importlib.util.spec_from_file_location("render_helper_briefs", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        _renderer_module = module
+    return _renderer_module
+
+
+def load_task_board_schema():
+    require(SCHEMA_PATH.is_file(), f"missing canonical task-board schema: {SCHEMA_PATH}")
+    data = read_json(SCHEMA_PATH)
+    require(isinstance(data, dict), "task-board schema must be an object")
+    return data
+
+
+def _json_type_ok(value, declared):
+    kinds = [declared] if isinstance(declared, str) else list(declared)
+    checks = {
+        "null": lambda item: item is None,
+        "boolean": lambda item: type(item) is bool,
+        "integer": lambda item: type(item) is int,
+        "number": lambda item: type(item) in (int, float) and type(item) is not bool,
+        "string": lambda item: isinstance(item, str),
+        "array": lambda item: isinstance(item, list),
+        "object": lambda item: isinstance(item, dict),
+    }
+    return any(checks[kind](value) for kind in kinds)
+
+
+def _validate_instance(instance, schema, root, path):
+    if "$ref" in schema:
+        ref = schema["$ref"]
+        require(isinstance(ref, str) and ref.startswith("#/$defs/"), f"{path}: unsupported $ref")
+        name = ref.removeprefix("#/$defs/")
+        require(name in root.get("$defs", {}), f"{path}: unknown $ref {ref}")
+        schema = root["$defs"][name]
+    if "const" in schema:
+        require(instance == schema["const"], f"{path}: expected const {schema['const']!r}")
+    if "enum" in schema:
+        require(instance in schema["enum"], f"{path}: value not in enum")
+    if "type" in schema:
+        require(_json_type_ok(instance, schema["type"]), f"{path}: type mismatch")
+    if instance is None:
+        return
+    if isinstance(instance, str):
+        if "minLength" in schema:
+            require(len(instance) >= schema["minLength"], f"{path}: shorter than minLength")
+        if "pattern" in schema:
+            require(re.fullmatch(schema["pattern"], instance) is not None, f"{path}: pattern mismatch")
+    if type(instance) in (int, float) and type(instance) is not bool and "minimum" in schema:
+        require(instance >= schema["minimum"], f"{path}: below minimum")
+    if isinstance(instance, dict) and (
+        "properties" in schema or "required" in schema or schema.get("additionalProperties") is False
+    ):
+        if schema.get("additionalProperties") is False:
+            extra = sorted(set(instance) - set(schema.get("properties", {})))
+            require(not extra, f"{path}: unknown properties {extra}")
+        for key in schema.get("required", []):
+            require(key in instance, f"{path}: missing {key}")
+        for key, subschema in schema.get("properties", {}).items():
+            if key in instance:
+                _validate_instance(instance[key], subschema, root, f"{path}.{key}")
+    if isinstance(instance, list) and "items" in schema:
+        for index, item in enumerate(instance):
+            _validate_instance(item, schema["items"], root, f"{path}[{index}]")
+
+
+def validate_task_board(data, schema=None):
+    if schema is None:
+        schema = load_task_board_schema()
+    require(isinstance(data, dict), "task board must be a JSON object")
+    _validate_instance(data, schema, schema, "$")
+    seen = set()
+    for task in data["tasks"]:
+        require(task["id"] not in seen, f"duplicate task id: {task['id']}")
+        seen.add(task["id"])
+        for artifact in task["artifacts"]:
+            artifact_path = PurePosixPath(artifact)
+            require(not artifact_path.is_absolute() and ".." not in artifact_path.parts,
+                    f"{task['id']}: artifact escapes board root: {artifact}")
+        status = task["status"]
+        if status in ("DONE", "DONE_WITH_CONCERNS"):
+            require(task["finished_at"] is not None, f"{task['id']}: {status} requires finished_at")
+        if status in ("BLOCKED", "NEEDS_CONTEXT"):
+            require(task["finished_at"] is None, f"{task['id']}: {status} leaves finished_at null")
+            require(len(task["blockers"]) > 0, f"{task['id']}: {status} requires a blocker")
+
+
+def owner_report_errors(text):
+    return [label for label in OWNER_REPORT_LABELS if re.search(rf"(?m)^- {re.escape(label)} \S", text) is None]
+
+
+def check_supervision(root, agents, repo_self):
+    renderer = load_renderer()
+    expected = {}
+    for name, path in sorted(agents.items()):
+        data, body = frontmatter(path)
+        rendered, sections = renderer.render_agent_text(data, body)
+        expected[f"briefs/{name}.md"] = rendered
+        if "Identity" in sections:
+            missing = [title for title in renderer.REQUIRED_SECTIONS if title not in sections]
+            require(not missing, f"{name}: helper brief missing sections {missing}")
+    brief_dir = root / "briefs"
+    actual = {}
+    if brief_dir.exists():
+        require(brief_dir.is_dir(), "briefs path must be a directory")
+        for path in sorted(brief_dir.rglob("*")):
+            if path.is_dir():
+                continue
+            relative = path.relative_to(root).as_posix()
+            require(path.parent == brief_dir and path.suffix == ".md", f"unexpected brief path: {relative}")
+            actual[relative] = path.read_text(encoding="utf-8")
+    missing_files = sorted(set(expected) - set(actual))
+    extra_files = sorted(set(actual) - set(expected))
+    require(not missing_files and not extra_files,
+            f"brief inventory mismatch missing={missing_files} extra={extra_files}")
+    for relative, text in expected.items():
+        require(actual[relative] == text, f"stale helper brief: {relative}")
+    schema = load_task_board_schema()
+    if not repo_self:
+        copy_path = root / "docs" / "task-board.schema.json"
+        require(copy_path.is_file(), "missing docs/task-board.schema.json")
+        require(read_json(copy_path) == schema, "task-board schema drifted from schemas/task-board.schema.json")
+    example_board = root / "docs" / "task-board.example.json"
+    if example_board.is_file():
+        validate_task_board(read_json(example_board), schema)
+    example_report = root / "docs" / "owner-report.example.md"
+    if example_report.is_file():
+        gaps = owner_report_errors(example_report.read_text(encoding="utf-8"))
+        require(not gaps, f"owner report missing labels {gaps}")
+
+
+def refresh_supervision(root):
+    """Write derived briefs and the generated-team schema copy. Used by tests and maintainers."""
+    root = Path(root)
+    load_renderer().write_briefs(root)
+    destination = root / "docs" / "task-board.schema.json"
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(SCHEMA_PATH.read_text(encoding="utf-8"), encoding="utf-8")
 
 
 def maintenance_change(root, baseline):
@@ -553,10 +704,15 @@ def main(argv=None):
     parser.add_argument("--baseline", type=Path, help="read-only maintenance classification against validated prior root")
     parser.add_argument("--preflight", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--grok-bin", help="explicit installed Grok binary for preflight")
+    parser.add_argument("--board", type=Path, help="validate one task-board JSON file and exit")
     args = parser.parse_args(argv)
     root = args.root.resolve()
     try:
-        if args.preflight:
+        if args.board:
+            validate_task_board(read_json(args.board.resolve()))
+            result = {"status": "BOARD_VALID", "board": str(args.board)}
+            code = 0
+        elif args.preflight:
             code, result = preflight(root, args.repo_self, args.grok_bin)
         elif args.baseline:
             result = maintenance_change(root, args.baseline.resolve()); code = 0
