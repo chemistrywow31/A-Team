@@ -65,6 +65,8 @@ Your team is saved under `teams/{team-name}/`, with:
 
 You keep the files and run them in Grok Build. A-Team designs the team; your client provides the models, tools, permissions, and execution environment.
 
+The same files also run as a lead plus short-lived helpers. The lead gives each helper that role's file in `briefs/` as a self-contained assignment. The helper starts with no earlier conversation, returns one result, and does not hand work onward. The lead keeps a task board and a short report for the person supervising the team. `examples/research-desk/` is a small team that passes validation in both layouts. Authenticated model runs remain unverified.
+
 ### Get started
 
 With Grok Build installed and authenticated, open a terminal at this branch's repository root and run:
@@ -150,6 +152,8 @@ A-Team 幫你把一個想法，變成可以重複使用的 AI 團隊：有清楚
 - 啟動說明，列出使用方式，以及仍需設定或驗證的項目。
 
 你保留這些檔案，並在 Grok Build 中執行。A-Team 負責設計團隊；模型、工具、權限與執行環境由你使用的 AI 工具提供。
+
+同一組檔案也可以由一位負責人加上短暫的助手來執行。負責人把 `briefs/` 裡該角色的檔案當成完整任務交給助手。助手沒有先前的對話，只交回一份結果，不再把工作交給其他人。負責人維護一份任務板，並向監督者提交一份簡短報告。`examples/research-desk/` 是一個通過驗證的小團隊，兩種執行方式都使用同一組檔案。登入後的實際模型執行仍未驗證。
 
 ### 開始使用
 

@@ -36,9 +36,17 @@ Choose an installed Python 3.11+ executable if `python3.11` is not its name. No 
 For a generated team, omit `--repo-self`:
 
 ```sh
+.venv/bin/python scripts/render_helper_briefs.py teams/example
+.venv/bin/python scripts/render_helper_briefs.py teams/example --write-schema-copy
 .venv/bin/python scripts/validate_grok_team.py teams/example
+.venv/bin/python scripts/validate_grok_team.py examples/research-desk
 .venv/bin/python scripts/validate_grok_team.py teams/example --classify --json
+.venv/bin/python scripts/validate_grok_team.py --board .worklog/task-board.json
 ```
+
+`examples/research-desk/` is a tracked three-role sample with native agent files, rendered briefs, a schema copy, and a sample board. Its `docs/RUNTIME-SETUP.md` keeps model access NOT_PROBED.
+
+`render_helper_briefs.py` rewrites `briefs/` from the six portable sections in each agent file. `--board` checks one task-board file. Ordinary team validation does not read gitignored `.worklog/`.
 
 `--baseline /path/to/baseline` compares a target with an earlier copy to identify text-only versus structural changes. The comparison is routing evidence, not an independent design approval.
 
@@ -59,7 +67,7 @@ The default preflight only validates and inspects. It never calls a model, copie
 - Roles omit model and effort pins. Source supports parent-model inheritance; effort omission retains the installed session/default behavior. No cross-provider quality equivalence is assumed.
 - The coordinator uses only the lifecycle exposed by the running client. Default model-facing names include `spawn_subagent` and `get_command_or_subagent_output`. Use `subagent_type` only when the live schema advertises it, and `background`, not the internal `run_in_background`.
 - Project `.grok/config.toml` contributes only the supported permission, MCP and plugin sections. It cannot set the project's model, effort or compatibility defaults.
-- One short automatic rule points to 19 full policies. The role's explicit startup references preserve detailed contracts without automatically loading every policy for every task.
+- One short automatic rule points to 20 full policies. The role's explicit startup references preserve detailed contracts without automatically loading every policy for every task.
 - Skills are native instructions and assets. Their `allowed-tools`, `model` and `effort` metadata are not effective permission or routing controls.
 
 ## Generate and maintain teams

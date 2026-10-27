@@ -1,0 +1,3 @@
+# Minimal project config. Empty rules preserve inherited approval defaults.
+[permission]
+rules = []

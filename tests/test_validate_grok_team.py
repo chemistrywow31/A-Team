@@ -41,6 +41,7 @@ def complete_team(root):
         deny = "disallowedTools: [Task]\n" if name == "checker" else ""
         write(root, f".grok/agents/{name}.md", f"---\nname: {name}\ndescription: {'Coordinate work' if name == 'coordinator' else 'Verify artifacts'}\ncapabilityMode: all\nskills: [check]\n{deny}---\nRead `.grok/policies/execution.md`.\nReasoning: identify evidence. Workflow: perform assigned check. Self-Critique: report gaps.\n")
     write(root, "docs/RUNTIME-SETUP.md", "Static fixture only. Trust NOT_PROBED; effective tools/model/effort UNVERIFIED. No model calls.\n")
+    validator.refresh_supervision(root)
     return root
 
 
@@ -216,6 +217,7 @@ class NativeContractTests(unittest.TestCase):
         baseline = Path(self.temp.name) / "baseline"
         shutil.copytree(self.root, baseline)
         self.modify_agent("report gaps.", "report unresolved gaps clearly.")
+        validator.refresh_supervision(self.root)
         text_change = validator.maintenance_change(self.root, baseline)
         self.assertEqual(text_change["classification"], "text-only")
         self.assertEqual(text_change["required_gates"], ["artifact-review"])
@@ -310,7 +312,7 @@ class RepoLocalConfigInventoryTests(unittest.TestCase):
         for i in range(10):
             name = "skill-discovery" if i == 0 else f"skill-{i}"
             write(self.root, f".grok/skills/{name}/SKILL.md", f"---\nname: {name}\ndescription: Fixture skill\n---\nRun the assigned check.\n")
-        for i in range(18):
+        for i in range(19):
             write(self.root, f".grok/policies/policy-{i}.md", "Fixture policy.\n")
         write(self.root, ".grok/skills/skill-discovery/config.example.json", '{"sources": {}}\n')
         write(self.root, ".grok/docs/RUNTIME-SETUP.md", "Fixture: runtime UNVERIFIED.\n")
@@ -340,6 +342,7 @@ class RepoLocalConfigInventoryTests(unittest.TestCase):
             mappings[family].append({"id": name, "sources": [], "target": path, "mode": "native"})
         self.mapping["mappings"] = mappings
         self.mapping_path = write(self.root, ".grok/docs/format-mapping.json", json.dumps(self.mapping))
+        validator.refresh_supervision(self.root)
 
     def test_documented_user_local_config_does_not_require_mapping_or_expose_values(self):
         self.assertEqual(validator.validate(self.root, repo_self=True)["status"], "STATIC_VALID")
@@ -1023,6 +1026,7 @@ def authored_research_team(root):
     """Build the complete authored V7 target from tracked test data."""
     for relative, contents in COMPLETE_RESEARCH_TEAM.items():
         write(root, relative, contents)
+    validator.refresh_supervision(root)
     return root
 
 
@@ -1097,6 +1101,7 @@ class CompleteResearchTeamIntegrationTests(unittest.TestCase):
         shutil.copytree(self.root, baseline)
         checker = self.root / ".grok/agents/artifact-checker.md"
         checker.write_text(checker.read_text().replace("the prose sounds plausible", "the wording sounds plausible"))
+        validator.refresh_supervision(self.root)
         text_change = validator.maintenance_change(self.root, baseline)
         self.assertEqual(text_change["classification"], "text-only")
         self.assertEqual(text_change["required_gates"], ["artifact-review"])
@@ -1108,6 +1113,132 @@ class CompleteResearchTeamIntegrationTests(unittest.TestCase):
         self.assertEqual(structural["classification"], "structural-runtime")
         self.assertEqual(structural["required_gates"], ["recommendation", "mapping", "runtime-preflight", "artifact-review"])
         self.assertIn("no gate execution", structural["note"])
+
+
+def sample_board():
+    return {
+        "schema_version": 1,
+        "team": "fixture",
+        "updated_at": "2026-10-27T00:00:00Z",
+        "tasks": [{
+            "id": "task-1",
+            "owner_role": "checker",
+            "phase": "review",
+            "status": "DONE",
+            "blockers": [],
+            "human_decision_needed": False,
+            "artifacts": ["notes/result.md"],
+            "started_at": "2026-10-27T00:00:00Z",
+            "finished_at": "2026-10-27T00:05:00Z",
+            "cost": None,
+            "tokens": None,
+            "summary": "Sample row. Cost and tokens stay null until the host reports them.",
+        }],
+    }
+
+
+class SupervisionContractTests(unittest.TestCase):
+    def setUp(self):
+        SCRATCH.mkdir(parents=True, exist_ok=True)
+        self.temp = tempfile.TemporaryDirectory(dir=SCRATCH)
+        self.root = complete_team(Path(self.temp.name) / "team")
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def check_bad(self, expected):
+        result = validator.validate(self.root)
+        self.assertEqual(result["status"], "INVALID_METADATA", result)
+        self.assertIn(expected, "\n".join(result["errors"]))
+
+    def test_missing_and_stale_briefs_fail(self):
+        brief = self.root / "briefs/checker.md"
+        brief.unlink()
+        self.check_bad("brief inventory mismatch")
+        validator.refresh_supervision(self.root)
+        brief.write_text(brief.read_text() + "extra\n")
+        self.check_bad("stale helper brief: briefs/checker.md")
+
+    def test_schema_copy_is_required_for_generated_teams(self):
+        (self.root / "docs/task-board.schema.json").unlink()
+        self.check_bad("missing docs/task-board.schema.json")
+        (self.root / "docs/task-board.schema.json").write_text("{}\n", encoding="utf-8")
+        self.check_bad("task-board schema drifted")
+
+    def test_task_board_accepts_reported_fields_and_rejects_invented_status(self):
+        board = sample_board()
+        validator.validate_task_board(board)
+        board["tasks"][0]["status"] = "IN_PROGRESS"
+        with self.assertRaisesRegex(validator.Invalid, "value not in enum"):
+            validator.validate_task_board(board)
+        board = sample_board()
+        board["tasks"][0]["finished_at"] = None
+        with self.assertRaisesRegex(validator.Invalid, "requires finished_at"):
+            validator.validate_task_board(board)
+        board = sample_board()
+        board["tasks"][0]["status"] = "BLOCKED"
+        board["tasks"][0]["finished_at"] = None
+        board["tasks"][0]["blockers"] = []
+        with self.assertRaisesRegex(validator.Invalid, "requires a blocker"):
+            validator.validate_task_board(board)
+        board = sample_board()
+        board["tasks"][0]["tokens"] = {"input": True, "output": 3}
+        with self.assertRaisesRegex(validator.Invalid, "type mismatch"):
+            validator.validate_task_board(board)
+        board = sample_board()
+        board["tasks"][0]["cost"] = {"currency": "USD", "amount": -1}
+        with self.assertRaisesRegex(validator.Invalid, "below minimum"):
+            validator.validate_task_board(board)
+
+    def test_owner_report_requires_each_label(self):
+        text = "\n".join(f"- {label} none" for label in validator.OWNER_REPORT_LABELS) + "\n"
+        self.assertEqual(validator.owner_report_errors(text), [])
+        self.assertIn("Needs human:", validator.owner_report_errors(text.replace("- Needs human: none\n", "")))
+
+    def test_identity_role_must_include_portable_sections(self):
+        path = self.root / ".grok/agents/checker.md"
+        path.write_text(
+            "---\nname: checker\ndescription: Verify artifacts\ncapabilityMode: all\n"
+            "skills: [check]\ndisallowedTools: [Task]\n---\n## Identity\nCheck artifacts.\n",
+            encoding="utf-8",
+        )
+        validator.refresh_supervision(self.root)
+        self.check_bad("helper brief missing sections")
+
+    def test_repo_self_accepts_this_branch(self):
+        result = validator.validate(REPO_ROOT, repo_self=True)
+        self.assertEqual(result["status"], "STATIC_VALID", result["errors"])
+        self.assertEqual(len(result["inventory"]["roles"]), 13)
+        self.assertEqual(len(result["inventory"]["policies"]), 20)
+        briefs = list((REPO_ROOT / "briefs").glob("*.md"))
+        self.assertEqual(len(briefs), 13)
+        for brief in briefs:
+            text = brief.read_text(encoding="utf-8")
+            self.assertIn("## Identity", text)
+            self.assertNotIn("## Portable sections", text)
+            self.assertIn("## Return format", text)
+
+
+class ResearchDeskExampleTests(unittest.TestCase):
+    def test_tracked_example_is_a_valid_native_team_with_portable_briefs(self):
+        root = REPO_ROOT / "examples" / "research-desk"
+        result = validator.validate(root)
+        self.assertEqual(result["status"], "STATIC_VALID", result["errors"])
+        self.assertEqual(result["effective_runtime"], "UNVERIFIED")
+        self.assertEqual(result["model_access"], "NOT_PROBED")
+        self.assertEqual(len(result["inventory"]["roles"]), 3)
+        self.assertEqual(len(result["inventory"]["skills"]), 2)
+        self.assertLessEqual(len((root / ".grok/rules/core.md").read_text().splitlines()), 40)
+        for name in ("research-lead", "source-researcher", "brief-editor"):
+            brief = (root / "briefs" / f"{name}.md").read_text(encoding="utf-8")
+            self.assertIn(f"# Helper brief: {name}", brief)
+            for heading in ("## Identity", "## Responsibilities", "## Input and Output",
+                            "## Workflow", "## Boundaries", "## Completion Contract", "## Return format"):
+                self.assertIn(heading, brief)
+            self.assertNotIn("disallowedTools", brief)
+        report = (root / "docs" / "owner-report.example.md").read_text(encoding="utf-8")
+        self.assertEqual(validator.owner_report_errors(report), [])
+        self.assertIn("NOT_PROBED", (root / "docs" / "RUNTIME-SETUP.md").read_text())
 
 
 if __name__ == "__main__":

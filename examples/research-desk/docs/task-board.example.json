@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "team": "research-desk",
+  "updated_at": "2026-10-27T00:00:00Z",
+  "tasks": [
+    {
+      "id": "sources-1",
+      "owner_role": "source-researcher",
+      "phase": "research",
+      "status": "DONE",
+      "blockers": [],
+      "human_decision_needed": false,
+      "artifacts": ["notes/sources.md"],
+      "started_at": "2026-10-27T00:00:00Z",
+      "finished_at": "2026-10-27T00:10:00Z",
+      "deadline": null,
+      "cost": null,
+      "tokens": null,
+      "summary": "Sample row for an opened source note. Cost and tokens are null because no host reported them."
+    },
+    {
+      "id": "draft-1",
+      "owner_role": "brief-editor",
+      "phase": "edit",
+      "status": "DONE_WITH_CONCERNS",
+      "blockers": [],
+      "human_decision_needed": false,
+      "artifacts": ["notes/review.md"],
+      "started_at": "2026-10-27T00:10:00Z",
+      "finished_at": "2026-10-27T00:20:00Z",
+      "cost": null,
+      "tokens": null,
+      "summary": "Sample row. The brief is usable and one citation is secondary."
+    },
+    {
+      "id": "scope-1",
+      "owner_role": "research-lead",
+      "phase": "intake",
+      "status": "NEEDS_CONTEXT",
+      "blockers": ["audience reading level was not in the dispatch"],
+      "human_decision_needed": false,
+      "artifacts": [],
+      "started_at": "2026-10-27T00:00:00Z",
+      "finished_at": null,
+      "summary": "Sample row. The lead can attach the missing audience; a person has not been asked to choose."
+    },
+    {
+      "id": "sources-2",
+      "owner_role": "source-researcher",
+      "phase": "research",
+      "status": "BLOCKED",
+      "blockers": ["the two cited studies disagree and a person must choose which one to use"],
+      "human_decision_needed": true,
+      "artifacts": ["notes/sources.md"],
+      "started_at": "2026-10-27T00:20:00Z",
+      "finished_at": null,
+      "deadline": "2026-10-28",
+      "cost": null,
+      "tokens": null,
+      "summary": "Sample row showing a human decision. The deadline is illustrative, not a live commitment."
+    }
+  ]
+}

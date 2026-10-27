@@ -13,7 +13,7 @@ description: Mandatory phase-level documentation in .worklog/ for verifiability,
 
 ### Every Task Must Have a Worklog
 
-Every task executed by the team must maintain a worklog under the `.worklog/` directory. The worklog records reference information, key findings, and decision rationale for each phase, ensuring all work is verifiable, traceable, and continuable.
+Every task executed by the team must maintain a worklog under the `.worklog/` directory. Record phase references, findings, and decisions there, and keep machine-readable status in `.worklog/task-board.json` per `.grok/policies/supervision.md`.
 
 ### Directory Structure and Naming
 

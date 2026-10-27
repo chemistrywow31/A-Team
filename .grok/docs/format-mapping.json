@@ -356,6 +356,12 @@
         "mode": "adapted"
       },
       {
+        "id": "supervision",
+        "sources": [],
+        "target": ".grok/policies/supervision.md",
+        "mode": "native"
+      },
+      {
         "id": "worklog",
         "sources": [
           "reference/platform-sources/.claude/rules/worklog.md"
@@ -868,6 +874,12 @@
         ],
         "target": "scripts/preflight-grok-runtime.sh",
         "mode": "adapted"
+      },
+      {
+        "id": "scripts::render_helper_briefs.py",
+        "sources": [],
+        "target": "scripts/render_helper_briefs.py",
+        "mode": "native"
       },
       {
         "id": "scripts::validate-team.sh",

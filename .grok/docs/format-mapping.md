@@ -22,7 +22,7 @@ Archive paths in JSON are relative to the delivery root. In this document, `refe
 | --- | --- | --- |
 | 13 nested `.claude/agents/` roles | 13 flat `.grok/agents/*.md` | Preserve responsibilities, task contracts, authority and review duties; use native metadata and lifecycle |
 | 11 canonical skills | `.grok/skills/*/SKILL.md` and maintained assets | Native loading and instructions; self-contained skill helpers |
-| 19 shared rules | `.grok/policies/*.md` | Full contracts, role-specific on-demand loading |
+| 20 shared rules | `.grok/policies/*.md` | Full contracts, role-specific on-demand loading |
 | Automatically loaded shared bootstrap | `.grok/rules/core.md` | Small native entry pointing to complete policies |
 | Root entries | `AGENTS.md` | Explicit Grok authority and main-session coordinator |
 | Shared judgment and dispatch templates | `JUDGMENT.md`, `templates/`, `.grok/templates/` | Preserve decision quality with native dispatch semantics |
@@ -44,7 +44,7 @@ Root `CLAUDE.md`, `.claude/`, `.codex/`, `.agents/` and `agents/` are removed fr
 
 ## Validation and future maintenance
 
-Run the commands in [`GROK.md`](../../GROK.md). The validator checks path confinement, uniqueness, complete source coverage, snapshot hashes/modes and active inventories. It does not infer effective models, permissions or tool exposure from mappings.
+Run the commands in [`GROK.md`](../../GROK.md). The validator checks path confinement, uniqueness, complete source coverage, snapshot hashes/modes and active inventories. It does not infer effective models, permissions or tool exposure from mappings. `briefs/` and `schemas/task-board.schema.json` are checked by renderer parity and the task-board schema. They stay outside the native-file inventory because they are not agent files under `.grok/agents/` or rules under `.grok/rules/`.
 
 Edit the native canonical family for later Grok changes, then update only its affected mappings and evidence. A main-branch sync is an explicit comparison against the pinned snapshot, not a blind directory copy. Retained foreign source does not authorize foreign runtime activation or a second canonical authority.
 

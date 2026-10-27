@@ -48,6 +48,14 @@ Maintain `.worklog/{yyyymm}/{task-name}/phase-{n}-{label}/` with traceable refer
 
 Generated teams must include a main-session coordinator, explicit ownership and completion contracts, independent artifact/code review when appropriate, process review duties under `.grok/policies/reviewer-mandate.md`, the required worklog/context/execution/reasoning/proportional policies, and `docs/RUNTIME-SETUP.md`. Apply the documented small-team review exception when adequate; do not copy A-Team's entire designer roster into every target.
 
+## Supervision surfaces
+
+Generated teams keep the Grok Build layout above and also ship one portable brief per role at `briefs/{role}.md`, rendered by `scripts/render_helper_briefs.py`. A lead that runs the team as short-lived specialists hands the brief plus a task envelope to a specialist that starts with no conversation. The specialist returns one result to the lead and does not spawn or message peers or the user. Native Grok sessions still load `.grok/agents/` and `.grok/rules/`. Briefs are assignments, not agent definitions.
+
+The lead maintains `.worklog/task-board.json` against `schemas/task-board.schema.json` and writes the owner report defined in `.grok/policies/supervision.md`. Cost and token fields stay empty until the host reports them. `.worklog/` remains runtime state and is gitignored. `disallowedTools: [Task]` is the source-backed specialist limit when a Grok client loads the agent file. The brief repeats that limit. This repository does not treat either one as proof that a live session enforced it.
+
+`examples/research-desk/` is a tracked three-role sample that passes the validator in the native layout and ships the briefs, schema copy, sample board, and sample owner report. Its setup notes keep model access NOT_PROBED.
+
 ## Existing-team evolution
 
 Record layout and runnable surfaces separately: Grok-only, foreign-only, multiple surfaces, reference-only, non-team or incomplete/activation-gated. Read generation stamps, declarations and required mappings before mutation. This repository's authority never overrides a target's own declaration, and a reference-only surface is never promoted implicitly.

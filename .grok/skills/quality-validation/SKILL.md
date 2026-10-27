@@ -13,7 +13,7 @@ Review one coherent frozen batch from fresh context. The producer never accepts 
 - Classify layout separately from runnable surfaces; record stamp, authority, mapping and activation/reference state. Missing authority permits assessment only.
 - Read `JUDGMENT.md` J5 and `.grok/policies/reviewer-mandate.md`. A green parser cannot override a semantic quality failure or promote a reference-only surface.
 - Grok source at a pinned revision, installed CLI parsing/discovery, and effective model/tool execution are different evidence. Skills cannot enforce model/effort/tool restrictions; unknown metadata may be ignored.
-- Repo-self requires the documented 13 roles/11 skills/19 policies. Generated teams use their accepted roster and actual requirements; do not force designer counts onto them.
+- Repo-self requires the documented 13 roles/11 skills/20 policies. Generated teams use their accepted roster and actual requirements; do not force designer counts onto them.
 
 ## Workflow
 
@@ -24,7 +24,7 @@ Review one coherent frozen batch from fresh context. The producer never accepts 
    - Policies: metadata, actionable contract, Violation Determination and Exceptions. Keep the always-loaded core small and resolve all role startup policy paths.
    - Size: agent/skill/policy above 300/200/100 lines is REVIEW_REQUIRED. Inspect the usefulness rationale and independently accept or reject the current file. Parser success alone does not resolve it.
    - Reports: six EC-1 fields in order, conclusions at most ten lines, evidence for DONE, substantive references/findings/decisions and current source links.
-   - Root: actual objectives/scope, main coordinator, precedence, worklog, declared `.grok/` authority and generation stamp. Configuration must use supported project sections and preserve approval/trust boundaries.
+   - Root: actual objectives/scope, main coordinator, precedence, worklog, declared `.grok/` authority and generation stamp. Configuration must use supported project sections and preserve approval/trust boundaries. `briefs/{role}.md` matches `scripts/render_helper_briefs.py`. `docs/task-board.schema.json` matches `schemas/task-board.schema.json`. The coordinator contract keeps `.worklog/task-board.json` and the owner report current.
 3. Check `.grok/policies/source-authority.md` against declarations, mapping roots, exact coverage and snapshot states. Inspect native bodies for semantic fidelity, not just renamed paths. Treat the archive as provenance, never active runtime evidence.
 4. When a non-obvious safeguard is proposed or retained, apply `.grok/policies/proportional-design.md` and return verdicts for its five fields and ordinary-path preservation. Use this review stage, not an added approval ladder.
 5. Run current native validation for the scoped root: `python scripts/validate_grok_team.py --repo-self` for the designer, or `python scripts/validate_grok_team.py {team-root}` for a target. Use the configured Python environment (Python >=3.11 plus PyYAML). Retain output; missing or failed evidence is a failed criterion.
