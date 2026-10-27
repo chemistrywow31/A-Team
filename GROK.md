@@ -39,9 +39,12 @@ For a generated team, omit `--repo-self`:
 .venv/bin/python scripts/render_helper_briefs.py teams/example
 .venv/bin/python scripts/render_helper_briefs.py teams/example --write-schema-copy
 .venv/bin/python scripts/validate_grok_team.py teams/example
+.venv/bin/python scripts/validate_grok_team.py examples/research-desk
 .venv/bin/python scripts/validate_grok_team.py teams/example --classify --json
 .venv/bin/python scripts/validate_grok_team.py --board .worklog/task-board.json
 ```
+
+`examples/research-desk/` is a tracked three-role sample with native agent files, rendered briefs, a schema copy, and a sample board. Its `docs/RUNTIME-SETUP.md` keeps model access NOT_PROBED.
 
 `render_helper_briefs.py` rewrites `briefs/` from the six portable sections in each agent file. `--board` checks one task-board file. Ordinary team validation does not read gitignored `.worklog/`.
 

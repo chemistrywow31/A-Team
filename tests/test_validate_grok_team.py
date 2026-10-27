@@ -1219,5 +1219,27 @@ class SupervisionContractTests(unittest.TestCase):
             self.assertIn("## Return format", text)
 
 
+class ResearchDeskExampleTests(unittest.TestCase):
+    def test_tracked_example_is_a_valid_native_team_with_portable_briefs(self):
+        root = REPO_ROOT / "examples" / "research-desk"
+        result = validator.validate(root)
+        self.assertEqual(result["status"], "STATIC_VALID", result["errors"])
+        self.assertEqual(result["effective_runtime"], "UNVERIFIED")
+        self.assertEqual(result["model_access"], "NOT_PROBED")
+        self.assertEqual(len(result["inventory"]["roles"]), 3)
+        self.assertEqual(len(result["inventory"]["skills"]), 2)
+        self.assertLessEqual(len((root / ".grok/rules/core.md").read_text().splitlines()), 40)
+        for name in ("research-lead", "source-researcher", "brief-editor"):
+            brief = (root / "briefs" / f"{name}.md").read_text(encoding="utf-8")
+            self.assertIn(f"# Helper brief: {name}", brief)
+            for heading in ("## Identity", "## Responsibilities", "## Input and Output",
+                            "## Workflow", "## Boundaries", "## Completion Contract", "## Return format"):
+                self.assertIn(heading, brief)
+            self.assertNotIn("disallowedTools", brief)
+        report = (root / "docs" / "owner-report.example.md").read_text(encoding="utf-8")
+        self.assertEqual(validator.owner_report_errors(report), [])
+        self.assertIn("NOT_PROBED", (root / "docs" / "RUNTIME-SETUP.md").read_text())
+
+
 if __name__ == "__main__":
     unittest.main()
