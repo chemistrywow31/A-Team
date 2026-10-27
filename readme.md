@@ -10,6 +10,10 @@ Tailored to your goals and the way you work.
 
 [English](#english) · [繁體中文](#繁體中文)
 
+The Grok-adapted version of A-Team lives on the branch `chemistrywow31/grok-native`. It designs teams for **Grok Build**. To get it, run `git checkout chemistrywow31/grok-native`.
+
+為 Grok 改編的 A-Team 在分支 `chemistrywow31/grok-native`。這一版為 **Grok Build** 設計團隊。取得方式：`git checkout chemistrywow31/grok-native`。
+
 ---
 
 ## English
