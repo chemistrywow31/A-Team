@@ -36,7 +36,7 @@ These are starting ideas. A-Team designs the roles and workflow around your requ
 ### Make it yours
 
 - **Goals and deliverables:** a weekly brief, a set of lesson materials, or a testing plan.
-- **Roles and team size:** a compact team for focused work, or more specialized roles where they help.
+- **Shape and size:** one agent with a set of skills for work that stays in one thread, or several agents where the work really runs in parallel or needs an independent check.
 - **Workflow and handoffs:** who starts, what each role passes on, and when you review the result.
 - **Style and quality:** your language, tone, audience, source requirements, and what counts as a finished result.
 - **Tools and platform:** the tools available in your environment and the team format your client supports.
@@ -47,9 +47,9 @@ You can bring a detailed process or just a goal. A-Team helps you work out the r
 
 > “I publish a weekly newsletter for busy teachers. Help me build a small team that finds useful research, drafts in Traditional Chinese, and checks sources. Keep the tone practical, and let me approve the final draft.”
 
-A possible plan gives a coordinator responsibility for the schedule and handoffs, a researcher responsibility for sources, a writer responsibility for the draft, and an editor responsibility for clarity and source checks.
+A-Team first decides the shape of the work. Here the steps run one after another on the same issue, and you approve every draft, so the plan is one agent with skills for finding research, drafting in Traditional Chinese, and checking sources. It is not four agents passing notes to each other.
 
-The handoff could be **research notes → draft → editorial review → your approval**. If you already have a researcher, the plan can focus on writing and review. If the newsletter becomes a lesson series, the roles and outputs can evolve with it.
+The flow is **find research → draft → check sources → your approval**. If drafts later go out without your review, the plan adds a separate checker that has not seen how the draft was written. If the newsletter becomes a lesson series, the skills and outputs can evolve with it.
 
 ### How it works
 
@@ -62,8 +62,8 @@ The handoff could be **research notes → draft → editorial review → your ap
 
 Your team is saved under `teams/{team-name}/`, with:
 
-- Role instructions that explain who does what and how work moves between people and agents.
-- Reusable skills and working rules tailored to the task.
+- Reusable skills tailored to the task: how your work is done, step by step.
+- When the work needs more than one agent, role instructions that explain who does what and how work moves between them.
 - Native configuration for the format you chose.
 - A setup guide explaining how to start the team and what still needs configuring or verifying.
 
@@ -120,7 +120,7 @@ A-Team 幫你把一個想法，變成可以重複使用的 AI 團隊：有清楚
 ### 哪些地方可以客製化？
 
 - **目標與產出：** 每週摘要、一套教材，或一份測試計畫。
-- **角色與團隊規模：** 集中處理特定工作的精簡團隊，或有需要時再細分專業角色。
+- **型態與規模：** 工作在同一條脈絡中完成時，用一個代理人搭配一組技能；確實需要平行進行或獨立查核時，才分成多個代理人。
 - **流程與交接：** 誰先開始、每個角色要交出什麼，以及何時由你檢視成果。
 - **風格與品質：** 語言、語氣、讀者、資料來源要求，以及完成標準。
 - **工具與平台：** 依照你的環境中可用的工具，以及所選 AI 工具支援的團隊格式設計。
@@ -131,9 +131,9 @@ A-Team 幫你把一個想法，變成可以重複使用的 AI 團隊：有清楚
 
 >「我每週會發一份給忙碌教師看的電子報。幫我設計一個小團隊，找實用的研究、用繁體中文寫稿，並查核來源。語氣要務實，最後由我確認稿件。」
 
-一種可能的規劃是：由協調角色掌握進度與交接，研究角色整理來源，寫作角色完成初稿，編輯角色檢查表達與引用。
+A-Team 會先判斷這份工作的型態。這個例子裡，各步驟依序處理同一期內容，而且每份稿件都由你確認，所以規劃是一個代理人，搭配找研究、用繁體中文寫稿、查核來源三項技能，而不是四個互相交接的代理人。
 
-交接流程可以是 **研究筆記 → 初稿 → 編輯審查 → 你確認稿件**。如果你已經有人負責研究，就可以把設計重心放在寫作與審稿；日後若改做系列教材，也能一起調整角色與產出。
+流程是 **找研究 → 寫初稿 → 查核來源 → 你確認稿件**。如果之後稿件不再經過你確認就發出，規劃會加入一個獨立的查核者，它不會看到稿件的寫作過程。日後若改做系列教材，技能與產出也能一起調整。
 
 ### 如何打造你的團隊？
 
@@ -146,8 +146,8 @@ A-Team 幫你把一個想法，變成可以重複使用的 AI 團隊：有清楚
 
 團隊會儲存在 `teams/{team-name}/`，包含：
 
-- 角色指引，說明誰負責什麼，以及人與 AI 角色之間如何交接。
-- 依任務設計的可重用技能與工作規則。
+- 依任務設計的可重用技能：一步一步說明你的工作怎麼做。
+- 工作需要多個代理人時，另有角色指引，說明誰負責什麼，以及彼此如何交接。
 - 所選格式的原生設定。
 - 啟動說明，列出使用方式，以及仍需設定或驗證的項目。
 

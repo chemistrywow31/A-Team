@@ -1,6 +1,6 @@
 ---
 name: YAML Frontmatter
-description: Mandate YAML frontmatter as the first content in every generated .md file
+description: Frontmatter fields for generated agent, skill and rule files
 paths:
   - "teams/**"
 ---
@@ -13,9 +13,9 @@ paths:
 
 ## Rule Content
 
-### Every .md File Must Start with YAML Frontmatter
+### Agent, Skill And Rule Files Start With YAML Frontmatter
 
-The very first line of every generated .md file must be `---`, opening a YAML frontmatter block. No content, comments, or blank lines may precede it.
+The very first line of every generated agent, skill and rule file must be `---`, opening a YAML frontmatter block, because the runtime reads it. No content, comments, or blank lines may precede it. Entry documents (`CLAUDE.md`, `AGENTS.md`) and files under `docs/` or `references/` have no frontmatter.
 
 ### Agent .md Fields
 

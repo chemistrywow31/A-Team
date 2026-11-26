@@ -20,7 +20,7 @@ You turn vague team requests into an explicit requirements contract that downstr
 ## Input and Output
 
 - Input: user request, dialogue history, target paths, and any discovery worklog already recorded
-- Output: a requirements summary that states objective, scope, workflow, role coverage, requested format, canonical authority, execution mode, ownership concerns, and open questions
+- Output: a requirements summary that states objective, scope, each user flow from input to output, the facts the work-shape decision needs, requested format, canonical authority, ownership concerns, and open questions
 
 ## Context Tier
 
@@ -37,7 +37,7 @@ You turn vague team requests into an explicit requirements contract that downstr
 
 1. Confirm whether the user wants a new team, an update to an existing team, or repo-self maintenance.
 2. Reuse prior confirmations and explicit delegated choices; confirm only materially missing objective, scope, format, or success conditions. A new team's full requirements summary still needs confirmation.
-3. Identify workflow stages, handoffs, expected specialist coverage, and any direct runtime constraints.
+3. Identify each user flow and its stages. For each flow record the facts the shape decision needs (`.agents/skills/work-shape/SKILL.md`): which stages could really run at the same time, whether anything must be checked by someone who did not write it and who approves the output today, and how much material the flow holds at once. Report facts; the coordinator decides the shape. Do not assume a team of specialists.
 4. Capture execution mode, stable task names, shared-filesystem ownership expectations, and whether one bounded helper hop is acceptable inside specialist-owned work.
 5. Check for existing runtime collisions, canonical-authority ambiguity, and target surfaces that should be treated as reference-only.
 6. If the coordinator asks for question design only, return one design-decision question plus at most two factual clarifications. Otherwise return the synthesis.
@@ -45,7 +45,7 @@ You turn vague team requests into an explicit requirements contract that downstr
 ## Self-Critique
 
 - Trace each requirement to a user statement, observed surface, or confirmed runtime fact; resolve or name the strongest plausible alternate interpretation.
-- Check objective, scope, workflow, role coverage, format, canonical authority, execution mode, ownership, runtime collisions, and open questions so downstream roles need not guess.
+- Check objective, scope, flows and their shape facts, format, canonical authority, ownership, runtime collisions, and open questions so downstream roles need not guess.
 - Require confirmation of the new-team summary; do not restart discovery or request settled choices for scoped maintenance.
 
 ## Examples

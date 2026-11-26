@@ -2,6 +2,71 @@
 
 ---
 
+# Work Shape And Lean Teams (2026-11-26)
+
+Trigger: the same 2026-07-24 context-engineering post as the realignment below, plus
+[when to fold subagents into the main loop](https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop)
+and [safely scaling multi-agent teams](https://claude.dev/blog/safely-scaling-multi-agent-teams-with-fable-5-2/).
+The July pass made A-Team's own spec executable. This pass stops A-Team handing that spec to
+every team it builds, and makes it decide whether a team is needed at all.
+
+## Shape before roles
+
+- `.claude/skills/work-shape/SKILL.md`: for each user flow, one agent that loads skills by default;
+  an agent group only for parallel work, a check isolated from the author, or overflow.
+- `docs/work-shape.json` in every team records the decision and its evidence.
+  `scripts/check_work_shape.py` checks the record against the rule and the tree (W1-W3), and both
+  validators run it.
+- Wired into the `/A-Team` entry skill, the coordinator playbook, discovery, role design, skill
+  planning, restructuring, the interview skill and the conversation protocol, on both surfaces.
+- Shown on two flows already in the repo: the README newsletter (now one skill workflow, fixture in
+  `tests/fixtures/newsletter-team/`) and A-Team's own optimization lane (a two-role group because
+  of the isolated check, recorded in `docs/work-shape.json`).
+
+## The pack is no longer copied forward
+
+A team with a work-shape record is validated against a small floor instead of the old one:
+
+| Was mandatory in every team | Now |
+|---|---|
+| worklog, context-management, reasoning rules (R1-R3) | optional; added when a flow needs them |
+| execution-contract with EC-1..EC-5 numbering (R4, X1) | a group writes its own short handoff contract; a skill workflow has none |
+| coordinator, entry skill, agents (S3, S4, E1-E6) | group only |
+| process reviewer and QA/code reviewer roles | a reviewer role only for a recorded isolated check; process review is a skill |
+| six agent sections and a rejection example (F3, F4) | no mandatory sections or examples |
+| rule Violation Determination and Exceptions sections (R5) | frontmatter only |
+| CLAUDE.md worklog and precedence sections (C3, C4) | optional; a skill workflow also drops C1, C2 |
+| four worklog hooks | only when the team keeps a worklog |
+
+Kept in every team: the settings `ask` and `deny` baseline, the generator stamp, the authority
+statement, `docs/RUNTIME-SETUP.md`, and the output style with its first-run hook. Teams stamped
+before 2026-11-26 without a record are still checked against the contract they were built under.
+
+## A-Team's own context
+
+- Always-loaded text (CLAUDE.md plus rules without `paths:`): 47,728 B to 15,440 B (-68%).
+  CLAUDE.md is now what the repo is, gotchas and three standing rules. Six rules moved from
+  always-on to path-scoped.
+- `writing-quality-standard.md` is now the single writing standard (six checks). Removed from it:
+  the imperative-tone mandate, the banned vague-word list, the mandatory rejection example, the
+  structural-over-instructional mandate and "this rule has no exceptions".
+- `anti-sycophancy.md` lost its nine banned phrases; it now asks for a position, evidence and what
+  would change it.
+- "Concision is secondary; preserve useful examples, XML, steps" is replaced at every site by
+  "keep what changes behaviour, cut what does not".
+- The authority-gate paragraph repeated in four agents now lives only in
+  `dual-platform-parity.md`.
+
+## Not done
+
+- A-Team's own 13 roles are unchanged. The rule says the discovery interview is one context with
+  one owner and should be the coordinator loading a skill, not a `requirements-analyst` relay.
+  That fold is a finding for a follow-up with a before/after comparison, not part of this change.
+- The Codex projection received the shape decision and the lean floor. Its GPT-facing wording was
+  not otherwise rewritten.
+
+---
+
 # Context-Engineering Realignment (2026-07-25)
 
 Trigger: Anthropic's 2026-07-24 post "The new rules of context engineering for Claude 5 generation

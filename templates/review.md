@@ -33,8 +33,8 @@ BUDGET: max {{lines}} normal report lines or the explicit INLINE-FALLBACK cap / 
 
 ```
 TASK ID: demo-15   TIER: strong; Claude opus example, preserve the selected runtime profile   RETRY BUDGET: per EC-2 (§7.2)
-OBJECTIVE: Verify the 6 generated agent files for teams/demo-team/ meet the agent floor and the Phase 2 plan.
-RUBRIC: JUDGMENT.md J5.1 (agent floor) + rules/reasoning-and-self-critique.md violation list
+OBJECTIVE: Verify the 3 generated agent files for teams/demo-team/ meet the agent floor and the Phase 2 plan.
+RUBRIC: JUDGMENT.md J5.1 and J5.8 + the six checks in rules/writing-quality-standard.md
 CONTEXT (absolute paths only): /Users/{user}/{repo}/.worklog/202607/demo-team/phase-2-planning/decisions.md (criteria source);
   /Users/{user}/{repo}/teams/demo-team/.claude/agents/ — DO NOT send producer reasoning (EC-3.2)
 SCOPE — IN: all .md under teams/demo-team/.claude/agents/
@@ -42,7 +42,7 @@ SCOPE — OUT (do not touch): the reviewer modifies nothing; findings only
 FINDINGS FORMAT: one line per finding — {severity} | {file:line} | {issue} | {remedy}
 ACCEPTANCE CRITERIA (mechanically checkable):
   1. Every agent file has per-criterion PASS/FAIL with file:line evidence (EC-3.3).
-  2. Section-order checks were executed via grep -n '^## ', output cited (EC-3.4).
+  2. scripts/check_work_shape.py was run and each role is traced to a trigger in the record, output cited (EC-3.4).
 VERDICT: overall PASS only when every criterion on every file is PASS (EC-3.6)
 REPORT: EC-1 schema (§7.1); findings → .worklog/202607/demo-team/phase-3-generation/verification.md, send the path
 INLINE-FALLBACK: report-write block only; max 100 lines; coordinator persists the REPORT path before acceptance

@@ -12,7 +12,7 @@ OBJECTIVE: {{one sentence, one deliverable}}
 CONTEXT (absolute paths only): {{BRIEF absolute path}}; {{upstream decisions.md absolute paths}}; {{template/spec absolute paths to read first}}
 SCOPE — IN: {{exact files to create or edit}}
 SCOPE — OUT (do not touch): {{dirs/files owned by other agents this phase}}
-CONSTRAINTS: {{size review targets or explicit task caps, mandatory sections, native metadata — cite the rule file}}
+CONSTRAINTS: {{the team's work-shape profile, size review marks or explicit task caps, native metadata — cite the rule file}}
 ACCEPTANCE CRITERIA (mechanically checkable):
   1. {{e.g. file passes the J5 floor for its artifact type}}
   2. {{e.g. grep/wc check specific to this task}}
@@ -33,15 +33,15 @@ BUDGET: max {{lines}} normal report lines or the explicit INLINE-FALLBACK cap / 
 
 ```
 TASK ID: demo-11   TIER: strong; Claude opus example, preserve the selected runtime profile   RETRY BUDGET: per EC-2 (§7.2)
-OBJECTIVE: Generate the 4 mandatory rule files for teams/demo-team/.claude/rules/.
-CONTEXT (absolute paths only): /Users/{user}/{repo}/.worklog/202607/demo-team/brief.md; /Users/{user}/{repo}/.worklog/202607/demo-team/phase-2-planning/decisions.md; /Users/{user}/{repo}/.claude/rules/execution-contract.md (Claude example; use the target runtime contract)
-SCOPE — IN: teams/demo-team/.claude/rules/{worklog,context-management,reasoning-and-self-critique,execution-contract}.md
+OBJECTIVE: Write the handoff contract rule for the agent-group team teams/demo-team/.
+CONTEXT (absolute paths only): /Users/{user}/{repo}/.worklog/202607/demo-team/brief.md; /Users/{user}/{repo}/.worklog/202607/demo-team/phase-2-planning/decisions.md; /Users/{user}/{repo}/teams/demo-team/docs/work-shape.json; /Users/{user}/{repo}/.claude/rules/writing-quality-standard.md
+SCOPE — IN: teams/demo-team/.claude/rules/handoff-contract.md
 SCOPE — OUT (do not touch): teams/demo-team/.claude/agents/, skills/, CLAUDE.md (agent-writer owns these)
-CONSTRAINTS: each rule has Violation Determination + Exceptions; >100 lines triggers independent usefulness review, per JUDGMENT.md J5.3
+CONSTRAINTS: the team's own contract, not a copy of A-Team's; >100 lines triggers independent review, per JUDGMENT.md J5.3
 ACCEPTANCE CRITERIA (mechanically checkable):
-  1. All 4 files exist and pass J5.3 (frontmatter, both sections, and any size review explicitly resolved).
-  2. execution-contract.md keeps EC-1..EC-5 clause numbering so agents can cite it.
-CHECKS TO RUN BEFORE REPORTING: head -1 each file; grep -n '^## Violation' each; wc -l each
+  1. The file passes J5.3 (frontmatter, one home for its content, any size review resolved).
+  2. It states what a dispatch carries, what a return carries, and who accepts; bash scripts/validate-team.sh teams/demo-team reports R4 PASS.
+CHECKS TO RUN BEFORE REPORTING: head -1; wc -l; bash scripts/validate-team.sh teams/demo-team
 NO PLACEHOLDERS: delivered files contain zero TODO/TBD markers
 VERIFICATION: fresh-context verifier re-runs the checks and reads back each criterion, per EC-3 (§7.3)
 REPORT: EC-1 schema (§7.1); check outputs → .worklog/202607/demo-team/phase-3-generation/findings.md, send the path

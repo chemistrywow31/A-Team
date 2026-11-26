@@ -10,40 +10,17 @@ argument-hint: "[team description | A-Team capability maintenance | named-target
 
 ## Description
 
-Adopt the Team Architect workflow in the current session and run the full A-Team process: Phases 1-6 for a new team, or scoped A-Team capability maintenance and named-target optimization or restructuring.
-
-## Users
-
-- Main-session invocation of `/A-Team`
-
-## Core Knowledge
-
-- A-Team repo-self keeps `.claude/` as its canonical source; its Codex surfaces are regenerated projections.
-- Generated teams do not inherit A-Team's canonical authority automatically. Discovery must confirm each generated team's requested format, and existing-team work must respect the target team's own canonical declaration.
-- Choose task intent first: A-Team capability maintenance, named-target maintenance, or explicitly requested fleet work. Capability improvement alone does not authorize target inventory or mutation; use bounded read-only target examples only when needed to reproduce a designer defect.
-- Named-target work starts with deterministic classification: direct `teams/*` root, layout, runnable surfaces, activation or reference-only state, generation stamp, canonical authority, and mapping state.
-- The optimization lane is text-only. Any structural, runtime, ownership, mapping, canonical-authority, or parity change belongs to restructuring.
-- A `Codex-only runtime gap` stays inside already-allowed platform-only surfaces. A `cross-platform design gap` starts at the target team's canonical source and regenerates only affected projections.
+Adopt the Team Architect workflow in the current session and run the A-Team process: design a new team, maintain A-Team itself, or optimize or restructure a named existing team.
 
 ## Application Guide
 
 1. If `/A-Team` is invoked inside a dispatched task instead of the main user session, stop and return `BLOCKED: wrong-context invocation - /A-Team must run in the main session.`
-2. Read `CLAUDE.md` and `.claude/agents/team-architect.md`, then adopt that workflow for the rest of the task.
-3. Initialize the worklog and keep the dialogue log current. Reuse requirements and authorization already supplied in the session; interim summaries communicate progress without another approval gate.
-4. For a new team, confirm objective, scope, workflow, role coverage, requested format, execution mode, canonical authority, surface activation, mapping retention, and requirements summary before leaving Discovery. An explicit user delegation of routine decisions can supply confirmation within that scope.
-5. For maintenance, choose capability-only, named-target, or explicitly requested fleet scope. Capability-only work stays in A-Team source and needs no downstream authority question or target inventory. For named-target work, classify the target and use the scoped maintenance lane. If canonical authority is ambiguous, limit work to assessment until it is confirmed; do not restart new-team Discovery.
-6. Route text-only prompt improvements for the selected runtime that leave roles, rules, runtime, ownership, mapping, canonical authority, and parity unchanged to `prompt-optimizer`. Route other changes to `team-restructuring-master` and require recommendation audit before implementation. Proceed within existing authorization; request user approval only for a proposal that exceeds it.
-7. Ask only for material missing decisions, unresolved authority, or required authorization. Use asynchronous clarification when the host supports it and continue independent work while awaiting the answer; dependent work waits for required input.
-8. Give every dispatch a stable task path, exact owned and forbidden paths, acceptance criteria, and the shared-filesystem non-reversion rule. Apply `.claude/rules/dual-platform-parity.md` authority and path-confinement gates before mutation.
-9. Backport generator defects to A-Team's canonical `.claude/` design, then regenerate the affected Codex projections sequentially under the same family owner.
-10. Freeze one coherent artifact batch for independent review. After corrections, rerun every criterion citing a changed file and dependent mapping/parity checks. Run runtime preflight after runtime freeze for new delivery, changed active runtime artifacts, or missing current readiness evidence; reuse its current validation evidence for each selected runtime. Keep dialogue review retrospective.
+2. Read `CLAUDE.md` and `.claude/agents/team-architect.md`, then adopt that workflow for the rest of the task. Create the task worklog (`.claude/rules/worklog.md`) and keep `dialogue-log.md` current.
+3. Choose the lane from the request: a new team, A-Team capability maintenance, a named existing team, or explicitly requested fleet work. Capability maintenance stays in A-Team source. It does not authorize a target inventory or writes to any team; read one target only when you need it to reproduce a designer defect.
+4. For a new team, interview with `.claude/skills/structured-interview/SKILL.md`. Then decide the shape of each user flow with `.claude/skills/work-shape/SKILL.md` and write `teams/{team-name}/docs/work-shape.json` before any role is designed. Confirm the objective, the flows, the shape, the delivery format, the canonical authority and the requirements summary with the user before planning.
+5. Build what the shape calls for. A skill-workflow team needs no role design and no rule pack: plan and write its skills, settings and a short `CLAUDE.md`. An agent-group team gets only the roles its triggers justify. `.claude/rules/output-structure.md` lists what each shape ships.
+6. For a named existing team, classify it first: surfaces, activation state, stamp, canonical authority, mapping. Ambiguous authority allows assessment only. Wording-only improvement goes to `prompt-optimizer`. Anything that changes roles, rules, runtime, ownership, mapping or parity goes to `team-restructuring-master`, whose recommendation is audited before implementation; that lane also applies the work-shape test to the team's flows.
+7. Freeze one coherent batch and get one fresh-context review with `.claude/skills/quality-validation/SKILL.md`. After a correction, recheck what the correction touched. Run runtime preflight after runtime files freeze.
+8. When the work exposes a generator defect, fix A-Team's canonical `.claude/` design first and port the change to the Codex projection in the same task.
 
-## Examples
-
-### Capability Maintenance
-
-For “Improve A-Team so it can restructure older teams,” improve the assigned generator contracts and tests. A generated team may supply a bounded read-only reproduction; do not inventory or migrate teams without a separate request.
-
-### Rejection Case
-
-Reject a proposed runtime change that promotes an existing team's reference-only surface without explicit authorization and consistent authority/mapping declarations. Continue the authorized assessment and obtain the missing decision before mutation.
+Work within the authorization the user has already given. Ask only for a material missing decision, unresolved authority, or an action outside that authorization, and keep independent work moving while you wait.

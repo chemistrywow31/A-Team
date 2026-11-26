@@ -1,6 +1,6 @@
 ---
 name: Output Structure
-description: Define requested runtime surfaces, native deliverables, and per-format mapping artifacts
+description: Define what a generated team ships for its work shape, requested runtime surfaces, and mapping artifacts
 paths:
   - "teams/**"
 ---
@@ -15,82 +15,69 @@ paths:
 
 ### Generated Deliverables Live Under `teams/{team-name}/`
 
-Discovery must confirm the requested delivery format before generation: `codex-native`, `claude-compatible`, `dual-format`, or `let A-Team decide`.
+Before generation, Discovery confirms the work shape (`.claude/skills/work-shape/SKILL.md`) and the delivery format: `codex-native`, `claude-compatible`, `dual-format`, or `let A-Team decide`.
 
-Every generated team must record its requested delivery format, canonical authority, runnable or activation state, and mapping artifacts needed for regeneration or future conversion.
+Every team records its shape decision in `docs/work-shape.json`, and its entry document declares the team's canonical authority and carries the generator stamp. The shape selects what else ships. `scripts/validate-team.sh` and `scripts/validate_codex_team.py` enforce the lists below, so read their output rather than a longer description here.
 
-### Required Surface Layouts
+### Skill-Workflow Team
 
-#### Claude Runnable Surface
+One agent that loads skills. For a Claude surface:
 
-If the requested format includes a runnable Claude surface, generate:
+- `CLAUDE.md`: what the project is for, plus gotchas
+- `.claude/skills/{skill-name}/SKILL.md`, with `references/` for detail that is loaded on demand
+- `.claude/settings.json` from `.claude/templates/settings-baseline.json`, keeping its `ask` and `deny` lists; `hooks` holds only the first-run output-style hook unless a flow needs another
+- `.claude/output-styles/adhd-friendly.md`, copied verbatim
+- `docs/work-shape.json` and `docs/RUNTIME-SETUP.md`
 
-- `CLAUDE.md` at team root
-- `.claude/agents/**/*.md`
-- `.claude/skills/{skill-name}/SKILL.md`
-- `.claude/rules/**/*.md`
-- `.claude/settings.json` with the required `hooks`, `permissions`, and `env` keys and the baseline hook set from `.claude/templates/hooks-baseline.json`
-- `.claude/output-styles/adhd-friendly.md`, copied verbatim from A-Team's canonical output style
-- the first-run `outputStyle` ask hook from `.claude/templates/hooks-baseline.json` inside `.claude/settings.json`
+It has no agent definitions, no coordinator entry skill, and no rule pack. Add a rule only for a constraint that must load by path and cannot live in a skill.
 
-The Claude surface entry document must declare the team's canonical authority and carry the generator stamp.
-The output style and first-run hook are mandatory for teams stamped 2026-07-28 or later. They shape the main-session coordinator output only; do not apply them to specialist EC reports or add them to a Codex-only surface.
+For a Codex surface: `AGENTS.md`, `.agents/skills/` with its `.codex/skills/` mirror, `docs/work-shape.json` and `docs/RUNTIME-SETUP.md`. `.codex/config.toml` is optional and no agent registry is needed.
 
-#### Codex Runnable Surface
+### Agent-Group Team
 
-If the requested format includes a runnable Codex surface, generate:
+A coordinator in the main session plus the roles the record's triggers justify. For a Claude surface, everything a skill-workflow team ships, and:
 
-- `AGENTS.md` and `docs/RUNTIME-SETUP.md`
-- `agents/coordinator.toml` and `agents/{group}/{agent-name}.toml`
-- `.codex/config.toml`, `.codex/rules/`, and `.codex/skills/{skill-name}/SKILL.md`
-- `.agents/skills/{skill-name}/SKILL.md`
-- `.codex/docs/format-mapping.md` and `.codex/docs/format-mapping.manifest.yaml` when mapping artifacts are required
+- `.claude/agents/{coordinator}.md` in the agents root and specialists in group subfolders
+- one coordinator entry skill that makes the main session adopt the coordinator playbook
+- one short handoff contract rule written for this team (`execution-contract.md` or `handoff-contract.md`): what a dispatch carries, what a return carries, who accepts
+- a `CLAUDE.md` deployment section stating that the coordinator runs in the main session and is never spawned
+- other rules, a worklog, and hooks beyond the first-run hook only when a flow needs them
 
-The Codex surface entry document must declare the team's canonical authority and carry the generator stamp.
+For a Codex surface: `AGENTS.md`, `agents/coordinator.toml`, `agents/{group}/{agent-name}.toml`, `.codex/config.toml`, `.codex/rules/`, `.codex/skills/` with its `.agents/skills/` mirror, and `docs/RUNTIME-SETUP.md`.
 
-#### Dual-Format Teams
+### Apply The Selected Runtime's Specification
 
-Dual-format teams must ship both runnable surfaces or explicitly mark one as reference-only. They must also ship the mapping artifacts in `.codex/docs/`.
+For Claude output, apply `.claude/rules/settings-json.md`, `.claude/rules/hooks-integration.md` and `.claude/rules/frontmatter-optional-patterns.md`. A Claude-only target does not require Codex runtime checks.
 
-### Apply Specifications For The Selected Runtime
+Only when the output includes a runnable Codex surface, read `.codex/rules/codex-runtime-config.md`, `.codex/rules/codex-agent-config-patterns.md` and `.codex/rules/context-isolation.md`, and validate that surface against them without copying their content into Claude guidance.
 
-For Claude output, apply `.claude/rules/settings-json.md`, `.claude/rules/hooks-integration.md`, and `.claude/rules/frontmatter-optional-patterns.md` to the native artifacts above. Verify Claude metadata and behavior; a Claude-only target does not require Codex runtime checks.
-
-Only when the requested output includes a runnable Codex surface, load `.codex/rules/codex-runtime-config.md` for runtime defaults/schema and setup constraints, `.codex/rules/codex-agent-config-patterns.md` for agent metadata/registration validation, and `.codex/rules/context-isolation.md` for lifecycle adaptation. Generate and validate that surface against those specifications without copying their payload into active Claude guidance.
-
-Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring without fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort.
-
-Keep one adjacent Reasoning/Workflow/Self-Critique contract in each authoritative role; do not add duplicate forms. Include worklog, context-management, execution-contract, and reasoning/self-critique rules or documented equivalents for multi-agent or multi-phase teams.
+Keep explicit user or target model and effort pins during unrelated regeneration or restructuring.
 
 ### Naming And Placement
 
-- Team, folder, and rule names use kebab-case.
-- For a Codex surface, agent registry ids use snake_case.
-- `CLAUDE.md`, `AGENTS.md`, and `SKILL.md` are the only uppercase filenames.
-- The Codex coordinator TOML lives at `agents/coordinator.toml`.
-- Non-coordinator Codex agent TOMLs live under `agents/{group}/`.
+- Team, folder and rule names use kebab-case. Codex agent registry ids use snake_case.
+- `CLAUDE.md`, `AGENTS.md` and `SKILL.md` are the only uppercase filenames.
 
 ### Mapping Artifacts
 
-For a multi-surface or conversion-retained team, generate `.codex/docs/format-mapping.md` and `.codex/docs/format-mapping.manifest.yaml`. Record requested format, canonical authority, runnable vs reference-only state, platform-only files, path mappings, lossy steps, and reverse strategy.
+A multi-surface or conversion-retained team ships `.codex/docs/format-mapping.md` and `.codex/docs/format-mapping.manifest.yaml`, recording format, authority, runnable or reference-only state, platform-only files, path mappings, lossy steps and reverse strategy. A dual-format team ships both runnable surfaces or marks one reference-only.
 
 ### Runtime Setup Advisory
 
-Every runnable team must ship `docs/RUNTIME-SETUP.md` after runtime artifacts freeze. Include a probe stamp, setup, verification, rollback, and any protected-path or approval-policy limits required before first run.
+Every runnable team ships `docs/RUNTIME-SETUP.md` after runtime artifacts freeze, with a probe stamp, setup and verification steps, rollback, and any approval limits the user must handle before first run.
 
 ## Violation Determination
 
-- Generation starts without a recorded requested format and canonical-authority decision -> Violation
-- A requested runnable surface is missing its required entry document or artifact tree -> Violation
-- A Claude runnable surface omits `.claude/settings.json`, any required top-level key, or the baseline hook set -> Violation
-- A Claude runnable team stamped 2026-07-28 or later omits `.claude/output-styles/adhd-friendly.md` or the first-run `outputStyle` hook -> Violation
-- A selected Codex runnable surface fails its referenced runtime, agent metadata, or lifecycle specification -> Violation
-- A Claude-only delivery is gated on Codex runtime checks, or a target's explicit model/effort pins change outside authorization -> Violation
-- A multi-surface or conversion-retained team omits either mapping artifact, or the artifacts omit canonical authority, activation state, or platform-only files -> Violation
-- `docs/RUNTIME-SETUP.md` is missing, or lacks a probe stamp, verify steps, or rollback steps -> Violation
-- File or folder names break the naming and placement rules above -> Violation
+- Generation starts without a recorded work shape, delivery format and canonical authority -> Violation
+- The tree contradicts the work-shape record, or the record breaks the shape rule -> Violation
+- A skill-workflow team ships agent definitions, a coordinator entry, or a copied rule pack -> Violation
+- An agent-group team lacks its coordinator, entry skill, handoff contract, or main-session statement -> Violation
+- A Claude surface omits `.claude/settings.json`, drops the baseline `ask` or `deny` entries, or omits the output style and its first-run hook -> Violation
+- A Claude-only delivery is gated on Codex checks, or a target's model or effort pins change outside authorization -> Violation
+- A multi-surface or conversion-retained team omits either mapping artifact -> Violation
+- `docs/RUNTIME-SETUP.md` is missing, or lacks a probe stamp, verification steps or rollback -> Violation
 
 ## Exceptions
 
-- Single-surface teams do not need mapping artifacts unless the user explicitly requests future conversion retention.
-- Single-agent Codex teams may use the omissions explicitly allowed by their selected runtime specifications.
+- Single-surface teams need no mapping artifacts unless the user asks for conversion retention.
+- Teams stamped before 2026-11-26 without a work-shape record are validated against the contract they were built under. Teams stamped before 2026-07-28 need no output style.

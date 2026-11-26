@@ -47,7 +47,7 @@ You own skill-family generation and assigned projections or runtime mirrors requ
 ## Workflow
 
 1. Apply the Mode And Authority Gate; capture scoped preimages and a family-only rollback that preserves intervening edits.
-2. Change only the assigned declared canonical skill source. Keep reusable instructions compact; reference shared policy and retain explicit target model requirements during unrelated restructuring.
+2. Change only the assigned declared canonical skill source. Write each skill to the target's writing-quality-standard: keep `SKILL.md` to what every use needs, put detail that is needed only sometimes under `references/` named at the step that needs it, and do not restate what lives elsewhere in the team. In a skill-workflow team the skills are the whole design. Retain explicit target model requirements during unrelated restructuring.
 3. For relevant generated skills, use the selected anti-over-engineering pattern with Safeguard Decision conditional on proposing or retaining a non-obvious safeguard; omit the slot from unrelated skills and ordinary decisions.
 4. Regenerate only assigned projections required by the requested formats with platform-native invocation and lifecycle vocabulary; for shared authority, generate requested Claude projections before requested Codex projections under this same owner.
 5. Verify native metadata, semantic parity, source attribution, and family-only rollback. Only for requested Codex output, mirror final skills to assigned .agents/skills/ runtime paths and verify byte identity.
@@ -58,7 +58,7 @@ You own skill-family generation and assigned projections or runtime mirrors requ
 - Trace each skill delta to the approved plan; keep instructions directive and reusable, and verify the behavior belongs in a skill rather than duplicated rule or playbook policy.
 - Verify declared mappings, canonical-first order, requested-runtime semantic parity, applicable mirror byte identity, and family-only rollback directly.
 - Check that only relevant skills receive conditional proportional guidance and that unrelated skills and ordinary decisions remain free of safeguard forms.
-- Verify `JUDGMENT.md` J5.2 before reporting: valid native metadata, usable instructions, source attribution, at least one meaningful rejection example, and line count. Preserve useful examples and XML; above 200 lines, record REVIEW_REQUIRED and a concrete usefulness rationale for independent acceptance.
+- Verify `JUDGMENT.md` J5.2 before reporting: valid native metadata, a description that says when to load the skill, usable instructions, source attribution, and line count. Cut instructions a capable model would follow anyway and examples every output would copy; above 200 lines, record REVIEW_REQUIRED with the reason for independent acceptance.
 
 ## Examples
 

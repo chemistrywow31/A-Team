@@ -7,7 +7,7 @@ description: Provide framework for analyzing team structure rationality and eval
 
 ## Description
 
-Evaluate whether a proposed team graph supports safe handoffs, coordinator-owned delegation, useful parallelism, and clear ownership in a shared filesystem.
+Evaluate whether a proposed agent-group team graph supports safe handoffs, coordinator-owned delegation, useful parallelism, and clear ownership in a shared filesystem. A skill-workflow team is one agent and has no topology to analyze; the shape is decided first with `.claude/skills/work-shape/SKILL.md`.
 
 ## Users
 

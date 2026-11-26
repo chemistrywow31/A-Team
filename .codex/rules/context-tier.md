@@ -13,7 +13,7 @@ description: Assign GPT-6 strong roles and GPT-5.6 read-heavy roles with explici
 
 ### Assign Context By Decision Scope
 
-Every role documents its tier and exact startup inputs in the same-relative authoritative `.codex/agents/{path}.md`. Keep `agents/{path}.toml` thin: runtime fields and a nonempty bootstrap to that playbook. Do not duplicate the tier section or runtime model/effort pins in prose.
+A-Team's own roles document their tier and exact startup inputs in the same-relative authoritative `.codex/agents/{path}.md`; in a generated agent-group team, use the tier to choose model, effort and startup inputs, and add a tier section only when it says something the dispatch does not. Keep `agents/{path}.toml` thin: runtime fields and a nonempty bootstrap to that playbook. Do not duplicate the tier section or runtime model/effort pins in prose.
 
 Model/effort values below are defaults for new teams without explicit pins or explicitly authorized profile migration. Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring; retaining a pin requires no fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort.
 
@@ -44,7 +44,7 @@ Give Tier 1 only the role and immediate task. Give Tier 3/4 relevant upstream de
 
 ## Violation Determination
 
-- An authoritative playbook omits tier/startup context or gives Tier 1 judgment work without justification -> Violation
+- An A-Team playbook omits tier/startup context, or any role gives Tier 1 judgment work without justification -> Violation
 - A TOML lacks explicit model/effort or a resolvable same-relative playbook bootstrap -> Violation
 - Defaults override explicit user/target pins outside authorized migration, a model-only migration changes supported effort without authorization, or retaining a target pin triggers fresh compatibility approval -> Violation
 - A playbook duplicates runtime model/effort fields, or a dispatch claims a role override on full history -> Violation

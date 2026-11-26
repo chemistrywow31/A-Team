@@ -29,14 +29,15 @@ You turn stable requirements into a clean role map, safe topology, and explicit 
 
 ## Reasoning
 
-- Use confirmed workflow stages and runtime constraints to choose the smallest coordinator-plus-direct-specialists split with useful independent work.
+- Read the team's `docs/work-shape.json` first. If every flow is `skill-workflow`, there are no roles to design: return that finding and the skills the single agent needs, and stop.
+- For an `agent-group` flow, the triggers in the record name the roles: one per parallel branch, one fresh-context checker per isolated check, one per overflow partition, and the coordinator. A role you cannot tie to a trigger is a skill. If a trigger's evidence does not hold up against the workflow, say so and recommend the simpler shape.
 - Compare credible simpler or more granular alternatives only where they affect coverage, ownership, or coordination cost.
 - Resolve task paths, joins, follow-ups, and target-runtime delegation limits before assigning mutable paths.
 
 ## Workflow
 
 1. Start from confirmed requirements, not assumptions.
-2. Map core functions, then aggregate them into direct-specialist roles under one coordinator.
+2. Derive direct-specialist roles from the record's triggers, and put everything else the work needs into skills for those roles or the coordinator.
 3. Define stable phase-purpose task names and where bounded follow-ups or interrupts are valid.
 4. Set the shared-filesystem ownership model, including forbidden-path notes for writers.
 5. Allow at most one nested helper hop inside a specialist's owned artifact family; do not create deeper trees.
@@ -44,7 +45,7 @@ You turn stable requirements into a clean role map, safe topology, and explicit 
 
 ## Self-Critique
 
-- Trace each role to a confirmed workflow need and check that role coverage, task paths, helper bounds, joins, and lane routing agree.
+- Trace each role to a trigger in the work-shape record and each trigger to something true of the flow; check that task paths, helper bounds, joins, and lane routing agree. Merge roles that are always called together or only chain on each other's output.
 - Verify exact writer ownership and forbidden paths, including shared-filesystem non-reversion; no role should need to guess who owns a file or can re-run it.
 - Remove relay coordinators, overlapping writers, and unsupported role splits while retaining A-Team's approved 13-role inventory for repo-self work.
 

@@ -1,52 +1,36 @@
 ---
 name: Reviewer Mandate
-description: Require a dedicated process reviewer in generated teams
+description: Add a reviewer role only where the work-shape record names an isolated check; process review is a skill by default
 ---
 
 # Reviewer Mandate
 
 ## Applicability
 
-- Applies to: all generated teams
+- Applies to: `team-architect`, `role-designer`, `agent-writer`
 
 ## Rule Content
 
-### Process Reviewer Must Exist
+### A Reviewer Role Needs An Isolated Check
 
-Every generated team must include a process reviewer, unless the team is small enough for the documented exception below.
+A reviewer is a separate agent only when the flow's entry in `docs/work-shape.json` names an `isolated_check`: something that must be judged by a reader who has not seen the author's reasoning. Give that reviewer the acceptance criteria and artifact paths and nothing about how the work was done. When a person approves the output, they are the isolated check; add an agent reviewer only when the user asks for one.
 
-### Process Reviewer Is Not QA
+Without an isolated check, the author checks its own work against the team's standards using a review skill. Do not add a reviewer because teams usually have one.
 
-QA checks deliverable correctness. The process reviewer checks how the team coordinated:
+### Process Review Is A Skill By Default
 
-- handoff quality
-- workflow adherence
-- coordination efficiency
-- information completeness
-- missed opportunities
-
-Do not merge QA and process review into one role.
-
-### Process Reviewer Output
-
-The process reviewer must produce a retrospective report with:
-
-- scores or ratings for each evaluation dimension
-- evidence for every issue
-- actionable recommendations
-- positive highlights
+A retrospective on how the team coordinated (handoff quality, workflow adherence, missed opportunities) is a skill the coordinator runs after a cycle. Make it a dedicated role only when the user wants a standing process reviewer or the retrospective must be independent of the coordinator. Keep it apart from deliverable review.
 
 ### Placement
 
-Give the process reviewer its own agent id and config file under `agents/`. Do not merge it into a worker config or reuse a worker `developer_instructions` block for review duties.
+Give a reviewer role its own agent id and config file under `agents/`. Do not merge it into a worker config or reuse a worker `developer_instructions` block for review duties.
 
 ## Violation Determination
 
-- No process reviewer exists -> Violation
-- The reviewer prompt focuses on deliverable QA instead of process quality -> Violation
+- A reviewer role exists and no flow in the record names an isolated check or a user request for it -> Violation
+- A flow names an isolated check and the check is made by the author or by an agent that received the author's reasoning -> Violation
 - The reviewer shares one config file or one agent registration with a worker it reviews -> Violation
-- The reviewer prompt lacks evaluation dimensions or report format -> Violation
 
 ## Exceptions
 
-- If the generated team has three or fewer total agents, the coordinator may absorb process review duties, but that secondary responsibility must be written explicitly in the coordinator instructions.
+- Teams generated before 2026-11-26 keep the reviewers they were built with until they are restructured.

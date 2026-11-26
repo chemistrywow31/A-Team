@@ -7,8 +7,9 @@ description: Bind dispatches and specialist returns to owned paths, bounded esca
 
 ## Applicability
 
-- Applies to: the coordinator, every specialist, and generated multi-agent teams
-- Include this contract in the canonical rule family and requested runtimes. Cite EC clauses when resolving disputes; EC-1 through EC-5 map to directives §7.1 through §7.5.
+- Applies to: A-Team's coordinator and every A-Team specialist
+- Generated teams: do not copy this contract. An agent group writes its own short handoff contract (what a dispatch carries, what a return carries, who accepts); a skill-workflow team needs none.
+- Cite EC clauses when resolving disputes; EC-1 through EC-5 map to directives §7.1 through §7.5.
 
 ## EC-1 Reporting Contract
 

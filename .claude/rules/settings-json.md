@@ -21,13 +21,13 @@ Every generated runnable Claude surface must include `.claude/settings.json` at 
 
 Every generated `settings.json` must contain:
 
-1. `hooks` — baseline hook set per `rules/hooks-integration.md`
+1. `hooks` — the first-run output-mode hook, plus the worklog hooks when the team keeps a worklog, per `rules/hooks-integration.md`
 2. `permissions` — allow/ask/deny lists scoped to the team's expected operations
 3. `env` — environment variables required by the team (e.g., Agent Teams flag)
 
 ### Template
 
-Copy `.claude/templates/settings-baseline.json` (A-Team repo) as the starting file, then apply the team-specific additions below. Read-trigger: agent-writer must Read that template file before producing any settings.json. The baseline's `hooks` is an EMPTY stub `{}` — replace it entirely with the `hooks` object from `.claude/templates/hooks-baseline.json` per `rules/hooks-integration.md`; shipping the empty stub is a violation. Compliance check: the generated file parses with `jq .`, contains `hooks`, `permissions`, and `env` keys, and `hooks` contains at least the four baseline events.
+Copy `.claude/templates/settings-baseline.json` (A-Team repo) as the starting file, then apply the team-specific additions below. Read-trigger: agent-writer must Read that template file before producing any settings.json. The baseline's `hooks` is an EMPTY stub `{}` — fill it from `.claude/templates/hooks-baseline.json` per `rules/hooks-integration.md`; shipping the empty stub is a violation. Keep the baseline's `ask` and `deny` lists in every team, whatever its shape. Compliance check: the generated file parses with `jq .`, contains `hooks`, `permissions`, and `env` keys, and `hooks` contains the first-run output-mode entry.
 
 ### Agent Teams Mode Configuration
 

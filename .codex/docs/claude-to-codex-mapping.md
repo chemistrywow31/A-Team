@@ -32,7 +32,8 @@ For the A-Team repository itself, `.claude/` plus `CLAUDE.md` is the canonical s
 | `.agents/skills/` | `.claude/skills/` | Claude -> Codex runtime | Runtime-discoverable Codex skill copy mirrors authored or adapted skills |
 | `.codex/docs/format-mapping.md` | N/A | Codex anchor | Per-team retained mapping artifact for round-trip conversion |
 | Codex `spawn_agent`, `send_message`, `followup_task`, `list_agents`, `interrupt_agent`, `wait_agent` | Claude `Agent` (legacy `Task` alias) / Agent Teams lifecycle | Bidirectional concept mapping | Map intent, ownership, and lifecycle; do not translate by tool-name substitution |
-| `scripts/` (repo root) | `scripts/` (repo root) | Shared placement, runtime-specific tools | `preflight-permissions.sh` is Claude-only; `preflight-codex-runtime.sh` and `validate_codex_team.py` are Codex-only |
+| `scripts/` (repo root) | `scripts/` (repo root) | Shared placement, runtime-specific tools | `preflight-permissions.sh` is Claude-only; `preflight-codex-runtime.sh` and `validate_codex_team.py` are Codex-only; `check_work_shape.py` is shared and run by both validators |
+| `teams/{name}/docs/work-shape.json` | same path | Shared | The shape decision for each user flow; one file serves every surface of the team |
 | `teams/{name}/docs/RUNTIME-SETUP.md` | same path | Bidirectional | Same filename both trees; body differs by probed runtime — Codex reports sandbox/approval posture, Claude Code reports auto-mode carve-outs |
 | N/A | Claude auto-mode carve-out (`autoMode` in user settings) | Claude-only | No Codex counterpart. Codex gates normal work with `approval_policy` / `sandbox_mode`, while protected `.codex/` and `.agents/` rewrites still require the documented bootstrap/approval posture. |
 

@@ -51,6 +51,7 @@ You assess A-Team's restructuring capability or explicitly named target teams, c
 - Check the exact real root, declaration quorum, required mappings, exact writer ownership, confinement, canonical-first order, scoped preimages, and family-only rollback against the parity rule.
 - Ensure recommendation audit precedes implementation, existing authorization is honored, and the plan requests one coherent independent artifact review plus affected-file and dependent-parity rechecks after fixes.
 - Require runtime preflight after runtime files freeze and a canonical A-Team backport for any discovered generator defect.
+- Apply `.agents/skills/work-shape/SKILL.md` to each flow of the target. A role with no trigger behind it is a candidate to fold into a skill, and a rule or section from the older generator's pack that no flow uses is a candidate to remove. Recommend folding one role at a time with the team's own tasks run before and after, keep the role if the folded version does worse, and write or update `docs/work-shape.json` when the plan changes shape. Do not recommend adding the older pack to a team that lacks it.
 
 ## Examples
 
@@ -67,6 +68,7 @@ A target has a Codex directory marked reference-only, but the proposed model upd
 
 - `.agents/skills/team-topology-analysis/SKILL.md`: topology and handoff evaluation
 - `.agents/skills/granularity-calibration/SKILL.md`: role-split calibration
+- `.agents/skills/work-shape/SKILL.md`: one agent with skills, or a group; when to fold a role
 
 ## Applicable Rules
 

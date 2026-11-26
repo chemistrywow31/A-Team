@@ -7,7 +7,7 @@ description: Provide in-depth interview methodology for extracting clear actiona
 
 ## Description
 
-Extract precise team requirements through staged, single-direction questioning that confirms requested format, canonical policy, workflow, and operating constraints before planning starts.
+Extract precise team requirements through staged, single-direction questioning that confirms the flows, the facts the work-shape decision needs, requested format, canonical policy, and operating constraints before planning starts. How to pace the conversation and what must be confirmed is in `.claude/rules/conversation-protocol.md`; read it when the interview starts.
 
 ## Users
 
@@ -29,14 +29,14 @@ Extract precise team requirements through staged, single-direction questioning t
 4. Ask for the objective and how success will be judged.
 5. Ask what the team must not do so scope is bounded by exclusion as well as inclusion.
 6. Ask for the workflow and handoff sequence, not just the desired outcome.
-7. Ask for role coverage, execution mode, shared-worktree risks, and any task-path or ownership constraints that affect coordination.
+7. For each flow, ask what the work-shape decision needs (`.claude/skills/work-shape/SKILL.md`): whether any stages could really run at the same time, who checks or approves the output today and whether anything goes out unreviewed, and how much material one run handles. Do not ask the user how many agents they want; ask about the work. If they name roles, treat that as a description of stages.
 8. After several rounds, play back a concise requirements summary and ask for explicit confirmation before moving to planning.
 
 ## Quality Checkpoints
 
 - [ ] Requested format and runnable surfaces were confirmed explicitly.
 - [ ] Canonical authority was confirmed or marked ambiguous instead of assumed.
-- [ ] Workflow, scope exclusions, and role coverage were captured separately.
+- [ ] Each flow, its scope exclusions, and its shape facts (parallel stages, who checks the output, size) were captured.
 - [ ] Existing-team requests distinguished text-only optimization from structural/runtime/parity change.
 - [ ] The final requirements summary is specific enough for planning without further interpretation.
 

@@ -26,17 +26,17 @@ Preserve native skill names, descriptions, and invocation behavior. Codex-discov
 ## Structure And References
 
 - Put one `# Title` after the frontmatter, with task-specific `##`/`###` sections as needed. The opening YAML remains the first line.
-- For agents, keep one adjacent `Reasoning` → `Workflow` → `Self-Critique` sequence plus the required role, boundary, uncertainty, and completion sections. Do not ask for private reasoning transcripts.
-- Use imperative instructions, concrete inputs, and checkable outcomes. Preserve useful XML, steps, and examples; brevity is secondary to execution quality.
+- No section is mandatory in a generated agent, skill or rule. Add a section when it says something specific to that file. When an agent uses `Reasoning`, `Workflow` and `Self-Critique`, keep them adjacent and in that order. Do not ask for private reasoning transcripts.
+- Use concrete inputs and checkable outcomes. What to write is in the target's writing-quality-standard.
 - Use exact, resolvable relative paths. In A-Team's Codex layer, reference `.codex/agents/`, `.agents/skills/`, and `.codex/rules/` from the repository root. A generated team's references follow its actual declared layout.
 - Put evidence and conditional detail in the existing linked references when that improves task routing. Avoid duplicating a contract in several documents.
 
 ## Quality Checks
 
 1. Parse frontmatter and validate native fields separately from A-Team conventions; a schema-valid field does not prove model availability.
-2. Resolve actual references and inspect section order, scope, uncertainty, completion, and examples against J5.
-3. Verify Codex authored/runtime skill byte identity. Include at least one meaningful rejection/defer/escalation case in authored agents and skills. Add positive or contrast cases when they clarify behavior.
-4. Record line counts. Agent/skill/rule lengths above 300/200/100 are `REVIEW_REQUIRED`; record concrete usefulness and obtain independent resolution. Do not delete useful content just to turn the size indicator green. EC report caps remain separate.
+2. Resolve every path the file references.
+3. Verify Codex authored/runtime skill byte identity.
+4. Record line counts. Agent, skill and rule files above 300, 200 and 100 lines are `REVIEW_REQUIRED` until the independent reviewer accepts them. EC report caps remain separate.
 5. Keep static metadata/config validity, actual live tools, and model access separate. Schema success alone does not establish readiness.
 
 ## Examples

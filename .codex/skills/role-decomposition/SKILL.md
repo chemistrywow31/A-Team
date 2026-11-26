@@ -7,7 +7,7 @@ description: Decompose workflow responsibilities into a clean, non-overlapping r
 
 ## Description
 
-Use this skill to convert workflow stages into roles with clear ownership and limited coordination overhead.
+Use this skill to convert workflow stages into roles with clear ownership and limited coordination overhead. Use it only after `.agents/skills/work-shape/SKILL.md` has put a flow in the `agent-group` shape: the roles come from that flow's triggers, and stages of a skill-workflow flow become skills, not roles.
 
 ## Users
 

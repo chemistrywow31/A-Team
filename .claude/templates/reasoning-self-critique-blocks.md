@@ -1,6 +1,6 @@
 # Canonical Reasoning and Self-Critique Blocks
 
-Use this compact skeleton when writing an agent. Preserve the three headers and their order from `JUDGMENT.md` J5.1; replace the bullets with role-specific instructions. Do not copy generic bullets into the finished agent or add duplicate Preflight/Verification forms.
+An optional skeleton for an agent whose work has real decisions and failure modes (`.claude/rules/reasoning-and-self-critique.md`). When you use it, keep the three headers in this order and replace the bullets with role-specific instructions; leave it out when the sections would hold nothing specific to the role. Do not copy generic bullets into the finished agent or add duplicate Preflight/Verification forms.
 
 ```markdown
 ## Reasoning

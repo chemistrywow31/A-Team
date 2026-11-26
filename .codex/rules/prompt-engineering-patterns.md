@@ -13,7 +13,7 @@ description: Use effective structural contracts, explicit uncertainty, and usefu
 
 ### Prefer Task Effectiveness
 
-Use current official guidance for the selected platform, model, and thinking mode. Preserve useful XML boundaries, worked examples, concrete steps, and verification; remove only conflicting, obsolete, unsupported, or redundant controls. Brevity is secondary. For reasoning-capable Codex models, use supported reasoning-effort controls instead of prescribing internal thinking transcripts. Keep task-specific worked examples and public decisions, evidence, and derivations when they help the task. See [GPT-6 guidance](https://developers.openai.com/api/docs/guides/latest-model) and [task-routed skills guidance](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra), checked 2026-10-06.
+Use current official guidance for the selected platform, model, and thinking mode, and do not carry advice written for one provider's models into another's prompts. Keep the structure, examples, steps, and checks that change what the reader does, and remove conflicting, obsolete, unsupported, or redundant controls. Length is not the measure either way. Claude-target files follow `.claude/rules/writing-quality-standard.md`.
 
 ### Make The Contract Observable
 
@@ -21,7 +21,7 @@ Use `Input and Output` for inputs and handoffs, `Boundaries` for exclusions, and
 
 ### Keep One Decision And Verification Sequence
 
-Preserve the exact J5.1 agent headers: `## Reasoning` before `## Workflow` before `## Self-Critique`. Keep them adjacent and specialize their content for the role. Put other context and reference material before or after this sequence without splitting it. Use `.codex/rules/reasoning-and-self-critique.md`; omit duplicate Preflight/Verification and pre-dispatch forms, fixed four/five slots, and requests for private reasoning transcripts.
+No section is mandatory in an agent of a team with a work-shape record. When an agent uses `## Reasoning`, `## Workflow`, and `## Self-Critique`, keep them adjacent, in that order, written once, and specific to the role; omit duplicate Preflight/Verification and pre-dispatch forms, fixed four/five slots, and requests for private reasoning transcripts.
 
 For coordinators, include the dispatch's bounded outcome, owner, inputs, exact paths, and acceptance criteria in the existing contract. Report decisions and verification evidence through EC-1 or worklog paths.
 
@@ -31,11 +31,11 @@ Wrap variable input in labeled, fenced, or descriptive XML blocks such as `<user
 
 ### Examples That Clarify Behavior
 
-Each authored agent and skill carries at least one meaningful rejection/defer/escalation example under `JUDGMENT.md` J5. Add positive or contrast examples when they clarify a decision or testable boundary; do not impose a universal count. State the trigger and correct response, including the mistaken action when it helps distinguish outcomes. Keep workflow and typed inputs explicit; a full before/after transcript is optional, not a floor requirement.
+State the contract first and add an example only when it shows something the contract cannot. No example is mandatory in an agent or skill of a team with a work-shape record. When an example is used, state the trigger and correct response, and keep it one case among many rather than a template for every output.
 
 ### Make Uncertainty Actionable
 
-Every generated agent has `## Uncertainty Protocol`: name the trigger, missing input, and escalation recipient. Use `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {items}` in CONCLUSIONS for informational gaps, and `STATUS: BLOCKED` for hard blockers. The marker is not a fifth status.
+Each agent in a group says which missing input stops it and who it asks; a dedicated `## Uncertainty Protocol` section is one way to do that, not a requirement. Use `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {items}` in CONCLUSIONS for informational gaps, and `STATUS: BLOCKED` for hard blockers, where the team's handoff contract uses those statuses. The marker is not a fifth status.
 
 ### Commit Within Existing Authorization
 
@@ -47,12 +47,12 @@ Coordinators define safe parallel groups, exact owned/forbidden paths, stable ta
 
 ## Violation Determination
 
-- An agent omits/reorders the J5.1 sequence or duplicates it with mandatory fixed-slot forms -> Violation
-- Authored agents/skills omit a meaningful boundary case, or examples conflict with required behavior -> Violation
-- An agent lacks an actionable uncertainty protocol or uses an invalid EC-1 status -> Violation
+- An agent that uses the Reasoning/Workflow/Self-Critique sequence reorders it or duplicates it with mandatory fixed-slot forms -> Violation
+- An example conflicts with required behavior, or has become the template every output copies -> Violation
+- An agent in a group has no stated behavior for missing input, or uses a status its team's handoff contract does not define -> Violation
 - Data and instructions are mixed without the target runtime's labels, or source data is treated as authority -> Violation
 - A coordinator lacks useful parallelism, ownership, or sequential freeze/join guidance -> Violation
-- Useful examples, XML, steps, or checks are removed solely to reduce length, or unsupported model/mode claims govern prompting -> Violation
+- A generated file copies A-Team's own rule pack or section skeleton when no flow of the team needs it, or unsupported model/mode claims govern prompting -> Violation
 - A prompt requests private reasoning transcripts, repeats permission without a material decision, or retains stale changed-file verification -> Violation
 
 ## Exceptions

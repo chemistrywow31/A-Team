@@ -98,29 +98,33 @@ Wrong direction means the approach is wrong, not the effort. Retrying into a wro
 
 ## J5 Quality Floor Per Artifact Type
 
-Each floor lists the exact check that proves it. A verifier runs these checks; a producer runs them before reporting. J5 is the CANONICAL floor definition — `skills/quality-validation/SKILL.md` compiles these floors into its team-sweep checklist; when the two disagree, J5 wins and quality-validation must be updated in the same change.
+Each floor lists the check that proves it. A verifier runs these checks; a producer runs them before reporting. J5 is the canonical floor definition. `skills/quality-validation/SKILL.md` compiles it into the team-sweep checklist; when the two disagree, J5 wins and quality-validation is updated in the same change.
 
-Prioritize task effectiveness using current official platform/model guidance. Preserve useful XML structure, examples, concrete steps, and checks; concision is secondary. Use one role-specific Reasoning/Workflow/Self-Critique contract; the headings below do not require fixed four/five slots, duplicate Preflight/Verification forms, or private reasoning transcripts. One independent review may cover a coherent frozen artifact batch. After corrections, invalidate and rerun every criterion citing a changed file plus dependent mapping/parity criteria; preserve only unaffected current evidence.
+The floor is small on purpose. It covers what a runtime needs and what a validator can prove. Whether a file is well written is judged against `.claude/rules/writing-quality-standard.md` by the independent reviewer, not by counting sections. Which floors apply depends on the team's work-shape profile, read from `docs/work-shape.json` by `scripts/check_work_shape.py`:
 
-The existing 300/200/100-line targets for authored agent/skill/rule files are review triggers, not permission to discard useful instructions. An over-target file is `REVIEW_REQUIRED`: the producer records its size and concrete usefulness rationale; an independent reviewer accepts or rejects the current file in the criterion report. An author-only marker or shorter file is not evidence of quality. Keep EC report caps separately bounded. Retain at least one meaningful rejection/defer/escalation example in authored agents and skills; add positive or contrast examples when they clarify behavior or a testable boundary. Do not force a universal example count.
+- `skill-workflow`: J5.2, J5.4, J5.7 and J5.8. There are no agents, and rules are optional.
+- `agent-group`: all of J5.
+- `legacy` (stamped before 2026-11-26, no record): the validator applies the contract the team was built under, including the six-section agent floor, the four mandatory rules and the rule section floor. Do not apply that contract to new teams.
+
+The 300/200/100-line marks for agent, skill and rule files trigger a look, not a cut. An over-mark file is `REVIEW_REQUIRED`: the producer records its size and why the content earns it, and the independent reviewer accepts or rejects the current file.
 
 ### J5.1 Agent .md
-- SIGNAL: Artifact is an agent file.
-- ACTION: Enforce: line-1 frontmatter with `name` and `description`; sections `## Reasoning` before `## Workflow` before `## Self-Critique`; `## Boundaries`; `## Uncertainty Protocol`; `## Examples` containing at least one meaningful rejection/defer/escalation case, with useful positive/contrast examples allowed; lengths above 300 lines require the independent review above. For a Claude-runnable agent, frontmatter additionally has `model`. For a Codex playbook paired with `agents/**/*.toml`, frontmatter has `agent_type` and its directly paired TOML has `model`; do not require or duplicate `model` in that playbook. A platform-neutral shared role source has no runtime-model requirement; verify its runnable projection or runtime config carries the required platform fields. Check: `head -1` = `---`; `grep -cE '^(name|description):'` returns 2; `grep -n '^## '` for order and presence; inspect `## Examples` for boundary coverage and usefulness; `wc -l` and resolve any size review; then directly inspect the paired runnable artifact: Claude frontmatter `model`, Codex playbook `agent_type` plus paired TOML `model`, or shared projection/runtime config platform fields.
-- POSITIVE: A 240-line Codex playbook has line-1 `name`, `description`, and `agent_type`, all required sections in order, and exactly one rejection case; its directly paired `agents/reviewer.toml` declares `model`. Floor met.
-- NEGATIVE: All sections present but Self-Critique appears before Workflow. Floor failed — order is part of the floor, not a style preference.
+- SIGNAL: Artifact is an agent file in a team with a work-shape record.
+- ACTION: Enforce: line-1 frontmatter with `name` and `description`; for a Claude-runnable agent, `model`; for a Codex playbook paired with `agents/**/*.toml`, `agent_type` in the playbook and `model` in the paired TOML. The role exists because a trigger in the record justifies it. The body says what this role owns, what it receives and returns, and what stops it; no section is mandatory. Check: `head -1` = `---`; `grep -cE '^(name|description):'` returns 2; inspect the paired runnable artifact for the platform fields; find the role's trigger in `docs/work-shape.json`; `wc -l` and resolve any size review.
+- POSITIVE: A 60-line source checker has name, description and model, and the record's `isolated_check` describes its job. Floor met.
+- NEGATIVE: A well-written "process reviewer" agent exists, and no flow in the record names an isolated check or a user request for it. Floor failed: the role has no trigger, whatever the file looks like.
 
 ### J5.2 Skill SKILL.md
 - SIGNAL: Artifact is a skill file.
-- ACTION: Enforce: lives at `skills/{name}/SKILL.md`; frontmatter name/description; at least one meaningful rejection/defer/escalation example with useful positive/contrast examples allowed; lengths above 200 lines require independent usefulness review. Check all skills for path, frontmatter, an Examples section naming a refusal/defer/escalate case, and line count. Identify a Claude coordinator entry from its declared workflow purpose or coordinator-adoption contract, independent of folder/name, invocation flag, or whether required fields and adoption are valid. A Claude runnable team must have exactly one such entry; missing or ambiguous entries fail. Then separately verify the actual entry has `disable-model-invocation: true`, `allowed-tools` granting Agent, `argument-hint`, and a resolvable coordinator playbook that it adopts in the main session without spawning the coordinator. These are A-Team entry requirements, not universal platform metadata requirements. The manual-only flag controls invocation and does not identify an entry; ordinary manual-only review/deploy skills are exempt from entry-only checks. Never hide a malformed genuine entry by requiring its fields or adoption to pass before it becomes a candidate. Source: [Claude Code skill frontmatter](https://code.claude.com/docs/en/skills#frontmatter-reference).
-- POSITIVE: A renamed coordinator-entry skill plus an ordinary manual-only review skill produces exactly one entry candidate; the coordinator entry passes its metadata and main-session adoption checks.
-- NEGATIVE: A skill declares that it launches the team's coordinator workflow but lacks `allowed-tools` or tells the session to spawn the coordinator. It remains an entry candidate and fails the corresponding check; the invocation flag cannot make it valid or exempt.
+- ACTION: Enforce: lives at `skills/{name}/SKILL.md`; frontmatter name and a description that says when to load it; lengths above 200 lines require independent review, and detail used only sometimes sits under `references/`. In an agent-group team, identify the Claude coordinator entry from its declared workflow purpose or coordinator-adoption contract, independent of folder name or invocation flag. Exactly one such entry must exist, and it must have `disable-model-invocation: true`, `allowed-tools` granting Agent, `argument-hint`, and a resolvable coordinator playbook that it adopts in the main session without spawning the coordinator. These are A-Team entry requirements, not universal platform metadata. A malformed genuine entry stays a candidate and fails; ordinary manual-only skills are exempt. A skill-workflow team has no entry skill. Source: [Claude Code skill frontmatter](https://code.claude.com/docs/en/skills#frontmatter-reference).
+- POSITIVE: A group's renamed coordinator-entry skill plus an ordinary manual-only review skill produce exactly one entry candidate, and it passes its metadata and main-session adoption checks.
+- NEGATIVE: A skill declares that it launches the team's coordinator workflow but lacks `allowed-tools` or tells the session to spawn the coordinator. It remains an entry candidate and fails the corresponding check.
 
 ### J5.3 Rule .md
-- SIGNAL: Artifact is a rule file.
-- ACTION: Enforce: frontmatter name/description; `## Violation Determination` present with at least one observable condition; `## Exceptions` present (or states "no exceptions"); lengths above 100 lines require independent usefulness review. Check: grep headers, `wc -l`.
-- POSITIVE: 80 lines, both sections, checkable violations. Floor met.
-- NEGATIVE: Violation section says "output is low quality" — not observable. Floor failed — rewrite as a checkable condition.
+- SIGNAL: Artifact is a rule file in a team with a work-shape record.
+- ACTION: Enforce: frontmatter name and description; the rule exists because a flow needs it and its content is not stated anywhere else in the team; an agent-group team has exactly one handoff contract rule; lengths above 100 lines require independent review. Check: grep frontmatter; search the team for the rule's key instruction to confirm it has one home; `wc -l`.
+- POSITIVE: A group ships one 30-line handoff contract and one path-scoped rule about a billing directory. Floor met.
+- NEGATIVE: A team ships worklog, context-management and reasoning rules copied from A-Team, and nothing in its flows uses them. Floor failed: the pack was copied forward.
 
 ### J5.4 settings.json
 - SIGNAL: Artifact is a settings file.
@@ -142,6 +146,12 @@ The existing 300/200/100-line targets for authored agent/skill/rule files are re
 
 ### J5.7 Generated CLAUDE.md
 - SIGNAL: Artifact is a generated team's CLAUDE.md.
-- ACTION: Enforce: team objectives + scope; deployment-mode section containing the coordinator-runs-in-main-session statement; worklog and context management section; precedence order; generator version stamp `Generated by A-Team on`. Check: grep each of the five markers; `wc -l` sanity (non-trivial content, not a stub).
-- POSITIVE: All five markers grep-hit and the file describes the actual team. Floor met.
-- NEGATIVE: All sections present but the deployment section says to spawn the coordinator via the Agent tool. Floor failed — the main-session statement is load-bearing, not boilerplate (production dead-lock evidence).
+- ACTION: Enforce: what the project is for; gotchas the tree does not show; the canonical-authority statement; the generator stamp `Generated by A-Team on`. For an agent-group team, also a deployment section stating that the coordinator runs in the main session and is never spawned. No directory listing, role table or copied rule text. Check: grep the stamp and, for a group, the main-session statement; read the file for content the tree already shows.
+- POSITIVE: A 14-line CLAUDE.md states the purpose, four gotchas, the authority and the stamp for a skill-workflow team. Floor met.
+- NEGATIVE: A group's deployment section says to spawn the coordinator via the Agent tool. Floor failed: the main-session statement is load-bearing (production dead-lock evidence).
+
+### J5.8 Work-shape record
+- SIGNAL: Artifact is a team's `docs/work-shape.json`.
+- ACTION: Enforce: one entry per user flow; every `agent-group` flow has evidence for at least one trigger and no `skill-workflow` flow has any; the tree matches the record. Check: `python3 scripts/check_work_shape.py <team-root>`; then read each trigger's evidence and judge whether it is true of this flow.
+- POSITIVE: A fact-checking flow records `isolated_check: "nobody reads the brief before it is sent"` and ships an author and a checker. Floor met.
+- NEGATIVE: The checker passes, and the `parallel` evidence reads "researcher, writer and editor each do their part", three stages that run in sequence. Floor failed: the evidence does not describe parallel work.

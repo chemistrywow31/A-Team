@@ -1,13 +1,17 @@
 ---
 name: Worklog
-description: Mandatory phase-level documentation in .worklog/ for verifiability, traceability, and continuity of all work
+description: Phase-level evidence in .worklog/ for A-Team's own design tasks
+paths:
+  - ".worklog/**"
+  - "teams/**"
 ---
 
 # Worklog
 
 ## Applicability
 
-- Applies to: All agents (every agent must read from and write to the worklog during task execution)
+- Applies to: A-Team's own design tasks, where every agent reads from and writes to the worklog
+- Generated teams: a worklog is not part of every team. Add one, sized to the need, when a flow must be resumable across sessions or audited afterwards. Do not copy this rule into a team.
 
 ## Rule Content
 
@@ -76,12 +80,7 @@ When no external reference exists for a decision, `references.md` must explicitl
 - Each agent writes to the worklog during and at the end of their phase work
 - The coordinator verifies worklog completeness at each phase boundary before proceeding
 
-### Worklog as Context Offloading
-
-Once information is written to the worklog, agents do not need to retain it in context. The worklog serves as persistent external memory:
-- Downstream agents read upstream phase worklogs instead of receiving full context in the task dispatch
-- Phase completion summaries reference worklog paths, not inline content
-- When resuming interrupted work, the worklog provides full context for continuation
+Once something is in the worklog, pass its path instead of its content; `.claude/rules/context-management.md` covers dispatch and resume.
 
 ## Violation Determination
 
@@ -96,4 +95,4 @@ Once information is written to the worklog, agents do not need to retain it in c
 
 - Phases that produce no decisions (e.g., a phase that only collects user input without making design choices) may have an empty `decisions.md` with a note: "No decisions made in this phase — input collection only."
 - For tasks with a single phase, the phase folder is still required (e.g., `phase-1-execution/`).
-- Generated teams running high-frequency operational pipelines may declare per-phase worklog profiles in their own worklog rule: decision-making phases keep the full three-file chain; mechanical phases (deterministic transforms that decide nothing) log one line per run to `phase-log.jsonl` (inputs, outputs, status) instead. A-Team's own design phases always use the full triad.
+- A generated team that keeps a worklog chooses its own format. A-Team's own design phases use the full triad.

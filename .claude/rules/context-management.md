@@ -1,13 +1,18 @@
 ---
 name: Context Management
 description: Keep multi-agent work path-driven, minimally scoped, and resumable in Claude subagent mode without replaying whole conversations
+paths:
+  - ".worklog/**"
+  - "teams/**"
+  - ".claude/agents/**"
 ---
 
 # Context Management
 
 ## Applicability
 
-- Applies to: all agents; the coordinator owns dispatch shape and resume discipline
+- Applies to: A-Team's coordinator and specialists. The required dispatch fields are in `rules/execution-contract.md` EC-1.10; this rule adds how context is passed and resumed.
+- Generated teams: do not copy this rule. A group states its dispatch fields once in its own handoff contract.
 
 ## Rule Content
 

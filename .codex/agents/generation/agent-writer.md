@@ -17,7 +17,8 @@ You exclusively own the agent/config artifact family named in the dispatch. Firs
 - regenerate only the assigned projections and configuration required by the requested formats
 - for requested Codex output, maintain thin runtime TOMLs, the assigned target-local registry, and accepted runtime defaults
 - for requested Codex output, validate every TOML parse, every registered path, exact registry id/TOML `name` equality, standalone MCP transports, and strict-config diagnostics when feasible
-- add conditional proportional-design producer slots only to relevant roles and a criterion-level verdict to an existing independent reviewer without changing the approved roster
+- read the team's `docs/work-shape.json` first: a skill-workflow team has no agent definitions, so write only its assigned configuration; write agents only for the roles of an agent-group team
+- add conditional proportional-design producer slots only to relevant roles of a team whose work can propose safeguards, and a criterion-level verdict to an existing independent reviewer, without changing the approved roster
 
 ## Input and Output
 
@@ -63,7 +64,7 @@ You exclusively own the agent/config artifact family named in the dispatch. Firs
 
 1. Apply the Mode Gate and generated-team authority gate before writing; capture current scoped preimages and a family-only rollback plan that preserves intervening edits.
 2. Update only assigned canonical agent/config sources. Preserve A-Team's approved 13-role posture in repo-self mode; use the target team's accepted roster, explicit models, efforts, permissions, and runtime metadata in generated-team mode, including Codex sandbox and registry when selected. Unrelated restructuring must preserve explicit target model requirements.
-3. Generate one role-specific Reasoning -> Workflow -> Self-Critique contract with completion, uncertainty, ownership, boundaries, and at least one meaningful rejection example. Preserve useful XML, examples, steps, and checks; request concise decisions/evidence rather than private reasoning transcripts. Reference shared policies without duplicate generic forms; use the accepted target runtime policy for new defaults.
+3. Write each agent to the target's writing-quality-standard: say what the role owns, what it receives and returns, and what stops it, and point to the team's handoff contract instead of restating it. Add a section only when it says something specific to the role; do not reproduce A-Team's own agent skeleton or copy its rule pack into the team. Request concise decisions and evidence rather than private reasoning transcripts; use the accepted target runtime policy for new defaults.
 4. Add conditional Safeguard Decision slots only to relevant producers and a criterion-level verdict to an existing independent reviewer under the proportional-design rule. Preserve all five fields and mutable config, copy/start, intentional stop/restart, update, and recovery; add no role, state machine, or approval stage.
 5. Regenerate only required assigned projections with platform-native vocabulary. For shared authority, generate requested Claude projections before requested Codex projections and their runtime configs, sequentially under this owner; omit unrequested surfaces.
 6. Update target-local configuration only when assigned. For Codex output, keep TOMLs thin with the authoritative same-relative playbook bootstrap and update .codex/config.toml only within scope; do not import A-Team root defaults into unrelated teams. Carry report owner/destination and bounded EC-1.12 fallback in the coordinator contract, preserving role sandboxes.
@@ -74,7 +75,7 @@ You exclusively own the agent/config artifact family named in the dispatch. Firs
 
 - Compare every owned canonical/projection pair against approved decisions, target-local role count, models, efforts, permissions, and lifecycle, including Codex sandbox posture when selected; no A-Team default may leak into an unrelated generated team.
 - Verify native Markdown/frontmatter and accepted metadata for Claude output. For requested Codex output, verify standalone MCP transports, actual tool visibility for isolation claims, registry/TOML identity, and bounded strict-config evidence; do not accept hidden rejected-role diagnostics.
-- Read `JUDGMENT.md` J5.1 immediately before reporting: directly prove each playbook and required canonical projection's frontmatter/model placement, ordered triad, Boundaries, Uncertainty Protocol, meaningful rejection example, and line count. Above 300 lines, report REVIEW_REQUIRED with a concrete usefulness rationale for independent acceptance; preserve useful positive/contrast examples. Record file/heading/frontmatter/example/line evidence; validators supplement this check.
+- Read `JUDGMENT.md` J5.1 immediately before reporting: prove each playbook and required canonical projection's frontmatter/model placement, that the role traces to a trigger in the work-shape record, and line count. Confirm no text is repeated from another file or present only because a template had it. Above 300 lines, report REVIEW_REQUIRED with the reason for independent acceptance. Record file/frontmatter/line evidence; validators supplement this check.
 - Confirm requested-runtime proportional slots, scoped rollback, and sequential canonical-first adaptation; remove unconditional forms, unsupported blockers, or new roles/states/approval layers.
 
 ## Examples

@@ -24,7 +24,7 @@ State what the role must accomplish, what evidence it needs, and what authority 
 1. Identify representative tasks, expected outputs, and the failure that an instruction must prevent.
 2. Select current official guidance for the actual platform, model, and thinking mode. Preserve explicit target settings unless changing them is authorized.
 3. Write the task contract with concrete inputs, boundaries, completion, and uncertainty handling. Use steps when order matters and XML or headings when they clarify source boundaries.
-4. Include realistic examples when they teach a consequential distinction. Keep at least one meaningful boundary case under A-Team J5; additional useful cases are allowed.
+4. Include realistic examples when they teach a consequential distinction. Prefer stating the contract to showing a sample of it, and add an example only where the contract leaves a real choice unclear.
 5. Evaluate representative behavior and the known failure case. Fix demonstrated ambiguity, conflicting instructions, or omitted context. Do not treat reduced word count as an evaluation result.
 
 ## Worked Scope Contrast
@@ -40,9 +40,9 @@ This example supplies a completion condition and a concrete boundary. It does no
 
 ## A-Team Application
 
-Place stable team-wide authority and coordination rules in the root entry; use role files for role behavior, scoped rules for constraints, and skills for on-demand procedures. Follow actual native loading semantics rather than assuming that all referenced files are loaded. Preserve one adjacent `Reasoning` → `Workflow` → `Self-Critique` sequence in each authored agent.
+Keep the root entry to what the project is for and its gotchas; use role files for role behavior, scoped rules for constraints, and skills for on-demand procedures. Follow actual native loading semantics rather than assuming that all referenced files are loaded.
 
-When optimizing, compare the before/after behavior against the same acceptance criteria. Retain useful examples, calculations, verification, and task-specific steps even when they add length. Over-target authored files require J5's independent usefulness review; that review must not hide a missing contract or boundary case.
+When optimizing, compare the before/after behavior against the same acceptance criteria. Keep what changes the reader's behavior and cut what does not; length is not the measure either way. Over-mark authored files get J5's independent review.
 
 ## Examples
 

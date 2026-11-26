@@ -44,7 +44,7 @@ Expected worked result: 240 / 20 = 12 workers before any separately justified re
 
 ## A-Team Application
 
-Preserve one role-specific `Reasoning` → `Workflow` → `Self-Critique` contract under `.claude/rules/reasoning-and-self-critique.md`. It defines decision criteria, work, and checks; it is not an instruction to print internal thought. Use the existing EC-1 evidence and conclusions fields for public results. Do not insert a second thinking/scratchpad form.
+When an agent uses the `Reasoning` → `Workflow` → `Self-Critique` sections from `.claude/rules/reasoning-and-self-critique.md`, write them once and make them specific to the role. The sequence defines decision criteria, work, and checks; it is not an instruction to print internal thought. Use the existing EC-1 evidence and conclusions fields for public results. Do not insert a second thinking/scratchpad form.
 
 ## Examples
 
