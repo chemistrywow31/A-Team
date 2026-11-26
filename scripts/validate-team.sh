@@ -406,9 +406,15 @@ check_mandatory_rules() {
 		optional_absent R3 rule-reasoning-self-critique
 	fi
 
-	_h=$(find_rule "$_rd" 'execution.?contract|handoff' '(execution|handoff).?contract') &&
-		pass R4 rule-execution-contract "$_h" ||
-		fail R4 rule-execution-contract "no handoff contract rule (filename/name 'execution-contract' or 'handoff-contract') under $_rd/"
+	if is_legacy; then
+		_h=$(find_rule "$_rd" 'execution.?contract' 'execution.?contract') &&
+			pass R4 rule-execution-contract "$_h" ||
+			fail R4 rule-execution-contract "no rule matching 'execution-contract' under $_rd/"
+	else
+		_h=$(find_rule "$_rd" '(execution|handoff).?contract' '(execution|handoff).?contract') &&
+			pass R4 rule-execution-contract "$_h" ||
+			fail R4 rule-execution-contract "no handoff contract rule (filename/name 'execution-contract' or 'handoff-contract') under $_rd/"
+	fi
 }
 
 check_claude_md() {

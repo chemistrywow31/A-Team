@@ -35,7 +35,7 @@ State the contract first and add an example only when it shows something the con
 
 ### Make Uncertainty Actionable
 
-Every generated agent has `## Uncertainty Protocol`: name the trigger, missing input, and escalation recipient. Use `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {items}` in CONCLUSIONS for informational gaps, and `STATUS: BLOCKED` for hard blockers. The marker is not a fifth status.
+Each agent in a group says which missing input stops it and who it asks; a dedicated `## Uncertainty Protocol` section is one way to do that, not a requirement. Use `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {items}` in CONCLUSIONS for informational gaps, and `STATUS: BLOCKED` for hard blockers, where the team's handoff contract uses those statuses. The marker is not a fifth status.
 
 ### Commit Within Existing Authorization
 
@@ -49,7 +49,7 @@ Coordinators define safe parallel groups, exact owned/forbidden paths, stable ta
 
 - An agent that uses the Reasoning/Workflow/Self-Critique sequence reorders it or duplicates it with mandatory fixed-slot forms -> Violation
 - An example conflicts with required behavior, or has become the template every output copies -> Violation
-- An agent lacks an actionable uncertainty protocol or uses an invalid EC-1 status -> Violation
+- An agent in a group has no stated behavior for missing input, or uses a status its team's handoff contract does not define -> Violation
 - Data and instructions are mixed without the target runtime's labels, or source data is treated as authority -> Violation
 - A coordinator lacks useful parallelism, ownership, or sequential freeze/join guidance -> Violation
 - A generated file copies A-Team's own rule pack or section skeleton when no flow of the team needs it, or unsupported model/mode claims govern prompting -> Violation

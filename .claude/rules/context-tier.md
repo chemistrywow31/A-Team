@@ -15,7 +15,7 @@ paths:
 
 ### Assign Context By Decision Scope
 
-This rule applies to the agents of an agent-group team; a skill-workflow team has none. Every generated agent documents its tier and exact startup inputs in its authoritative role file. Tier measures decision scope; provide the relevant workflow, constraints, and worklog chain rather than automatically copying all history.
+This rule applies to the agents of an agent-group team; a skill-workflow team has none. Use the tier to choose each agent's model, effort and startup inputs. The model and effort go in frontmatter; a `Context Tier` section in the agent file is optional, and A-Team's own agents keep one. Tier measures decision scope; provide the relevant workflow, constraints, and worklog chain rather than automatically copying all history.
 
 The Claude model/effort values below are defaults for new teams without explicit pins or explicitly authorized profile migration. Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring; retaining a pin requires no fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort.
 
@@ -41,7 +41,7 @@ Give Tier 1 only the role and task input. Give Tier 3/4 relevant upstream decisi
 
 ## Violation Determination
 
-- An authoritative role file omits tier/startup context or assigns judgment work to Tier 1 without justification -> Violation
+- Judgment work is assigned to Tier 1 without justification -> Violation
 - Required Claude frontmatter model/effort is absent, or a default overrides an explicit user/target pin outside authorized migration -> Violation
 - Context prose duplicates frontmatter model/effort, or another platform's role label determines a Claude tier without decision-scope evidence -> Violation
 - A model-only migration changes supported effort without authorization, or retaining a target pin triggers fresh compatibility approval -> Violation

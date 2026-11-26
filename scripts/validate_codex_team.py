@@ -1003,8 +1003,14 @@ def j5_has_observable_violation(body: list[str]) -> bool:
     )
 
 
-def validate_generated_j5_markdown(root: Path) -> tuple[str, str]:
-    """Validate J5.1/J5.3, including runtime-specific agent metadata."""
+def validate_generated_j5_markdown(root: Path, sections_required: bool = True) -> tuple[str, str]:
+    """Validate J5.1/J5.3, including runtime-specific agent metadata.
+
+    ``sections_required`` is the legacy floor: six agent sections, a boundary
+    example, and rule Violation Determination/Exceptions sections. A team with
+    a work-shape record is checked for metadata, a handoff contract and size
+    only; its prose is reviewed against the writing standard.
+    """
     claude_agent_paths = sorted(root.glob(".claude/agents/**/*.md"))
     codex_agent_paths = sorted(root.glob(".codex/agents/**/*.md"))
     shared_agent_paths = sorted(root.glob("shared/agents/**/*.md"))
@@ -1029,6 +1035,12 @@ def validate_generated_j5_markdown(root: Path) -> tuple[str, str]:
                 problems.append(f"paired TOML parse/missing: {relpath(paired_toml)}")
             elif not isinstance(paired.get("model"), str) or not paired["model"].strip():
                 problems.append(f"paired TOML missing model: {relpath(paired_toml)}")
+        if not sections_required:
+            if len(lines) > 300:
+                reviews.append(f"{relpath(path)}: {len(lines)} lines exceeds 300")
+            if problems:
+                issues.append(f"{relpath(path)}: {', '.join(problems)}")
+            continue
         headings = j5_sections(text)
         required = ("Reasoning", "Workflow", "Self-Critique", "Boundaries", "Uncertainty Protocol", "Examples")
         duplicates = [
@@ -1078,10 +1090,20 @@ def validate_generated_j5_markdown(root: Path) -> tuple[str, str]:
 
     if not rule_paths:
         issues.append("missing .codex/rules/*.md")
+    elif not sections_required and not any(
+        re.search(r"(?:execution|handoff)[-_]?contract", path.stem, re.IGNORECASE) for path in rule_paths
+    ):
+        issues.append("no handoff contract rule (execution-contract.md or handoff-contract.md) under .codex/rules/")
     for path in rule_paths:
         text = read_text(path)
         lines = text.splitlines()
         problems = j5_frontmatter_problems(text, ("name", "description"))
+        if not sections_required:
+            if len(lines) > 100:
+                reviews.append(f"{relpath(path)}: {len(lines)} lines exceeds 100")
+            if problems:
+                issues.append(f"{relpath(path)}: {', '.join(problems)}")
+            continue
         headings = j5_sections(text)
         for heading in ("Violation Determination", "Exceptions"):
             if heading not in headings:
@@ -2093,7 +2115,7 @@ def validate_team(reporter: Reporter, root: Path, classify_only: bool, assigned_
     skill_verdict, skill_evidence = validate_skill_mirror(root, required=False)
     reporter.emit("G8", "skill-mirror-parity", skill_verdict, skill_evidence)
     if codex_ok:
-        j5_verdict, j5_evidence = validate_generated_j5_markdown(root)
+        j5_verdict, j5_evidence = validate_generated_j5_markdown(root, sections_required=shape_profile == "legacy")
         reporter.emit("G10", "generated-j5-markdown-quality", j5_verdict, j5_evidence)
     else:
         reporter.emit("G10", "generated-j5-markdown-quality", "SKIP", "Codex runtime is not runnable (see G3)")

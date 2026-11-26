@@ -286,6 +286,36 @@ class LeanPackTests(TeamCase):
         for check in ("R1", "F3"):
             self.assertIn("| FAIL |", lines[check])
 
+    def test_codex_validator_applies_the_same_floor_as_the_claude_validator(self) -> None:
+        root = self.copy_newsletter()
+        self.make_group(root)
+        rules = root / ".codex/rules"
+        rules.mkdir(parents=True)
+        (rules / "handoff-contract.md").write_text(HANDOFF_RULE, encoding="utf-8")
+
+        # With a record: metadata, a handoff contract and size. No section floor.
+        verdict, evidence = codex_validator.validate_generated_j5_markdown(root, sections_required=False)
+        self.assertEqual(verdict, "PASS", evidence)
+        # Without one, the contract the team was built under still applies.
+        verdict, evidence = codex_validator.validate_generated_j5_markdown(root)
+        self.assertEqual(verdict, "FAIL")
+        self.assertIn("missing H2", evidence)
+
+        (rules / "handoff-contract.md").rename(rules / "tone.md")
+        verdict, evidence = codex_validator.validate_generated_j5_markdown(root, sections_required=False)
+        self.assertEqual(verdict, "FAIL")
+        self.assertIn("no handoff contract rule", evidence)
+
+    def test_legacy_team_does_not_get_the_widened_contract_name(self) -> None:
+        root = self.copy_newsletter()
+        self.make_group(root)
+        (root / "docs/work-shape.json").unlink()
+        claude_md = root / "CLAUDE.md"
+        claude_md.write_text(claude_md.read_text(encoding="utf-8").replace("2026-11-26", "2026-10-06"), encoding="utf-8")
+
+        _, lines = self.run_claude_validator(root)
+        self.assertIn("| FAIL |", lines["R4"])
+
     def test_codex_skill_workflow_team_needs_no_registry(self) -> None:
         root = self.copy_newsletter()
         skill = root / ".claude/skills/weekly-newsletter"
