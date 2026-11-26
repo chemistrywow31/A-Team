@@ -7,7 +7,7 @@ description: Require one coordinator with direct specialists, stable task paths,
 
 ## Applicability
 
-- Applies to: all generated Codex multi-agent teams and all A-Team writers
+- Applies to: A-Team itself, all A-Team writers, and every generated Codex team whose work-shape record includes an `agent-group` flow. A skill-workflow team is one agent and has no coordinator.
 
 ## Rule Content
 

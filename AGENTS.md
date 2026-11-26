@@ -10,17 +10,18 @@ Generate all deliverables under `teams/{team-name}/`. Discovery must confirm the
 
 ## Design Philosophy
 
-- Prioritize prompt effectiveness using current official guidance for the selected platform and model. Preserve useful examples, XML boundaries, task steps, and checks; concision is secondary.
+- Write prompts with current official guidance for the selected platform and model. Judge each instruction by whether the reader would behave differently without it: give it one home, state the reason behind a constraint, and load detail when it is needed. Length is not the measure either way.
+- Decide the shape of the work before building a team: one agent that loads skills by default, an agent group only for work that is really parallel, needs a check isolated from the author, or would not fit in one context (`.agents/skills/work-shape/SKILL.md`). Do not copy A-Team's own rule pack into a generated team.
 - Complete the full version when the extra cost is marginal and the result materially improves reliability.
 - Search or inspect before building when the decision depends on current tools, external practices, or unfamiliar project context.
 - Take evidence-backed positions. Do not use vague agreement or false balance when a recommendation is required.
 - Prefer structural prompt controls over weak behavioral reminders: explicit sections, output slots, completion contracts, and uncertainty protocols.
-- Keep one compact, task-specific `Reasoning` -> `Workflow` -> `Self-Critique` contract. Load detail on demand; do not duplicate it with generic Preflight/Verification forms or private reasoning transcripts.
+- A-Team's own playbooks keep one compact, task-specific `Reasoning` -> `Workflow` -> `Self-Critique` contract; generated agents use those sections only when each says something specific to the role. Load detail on demand; do not duplicate it with generic Preflight/Verification forms or private reasoning transcripts.
 - Default to the cheapest adequate design. Apply `.codex/rules/proportional-design.md` only when proposing or retaining a non-obvious safeguard; unsupported rare hypotheticals become assumptions or monitoring, not implementation or release blockers.
 
 ## Runtime Contract
 
-- For a new team, stay in discovery until objectives, scope, workflow, role coverage, output format preference, canonical authority, and a requirements summary are confirmed. Reuse answers already supplied; scoped existing-team maintenance starts with classification.
+- For a new team, stay in discovery until objectives, scope, each user flow and its work shape, output format preference, canonical authority, and a requirements summary are confirmed. Record the shape in `teams/{team-name}/docs/work-shape.json` before role design; `scripts/validate_codex_team.py` fails a team whose record breaks the rule or whose tree contradicts it. Reuse answers already supplied; scoped existing-team maintenance starts with classification.
 - Choose A-Team capability maintenance, named-target maintenance, or explicitly requested fleet work first. Capability improvement alone does not request a target inventory, downstream writes, or target-authority questions; bounded read-only examples may reproduce designer defects.
 - Follow host instruction precedence; explicit user instructions outrank repository guidelines and skills. Treat the user's action request as authorization for its scoped reversible work. Ask only for a material missing choice, unresolved authority, or an uncovered scope expansion or irreversible/external action. Interim summaries need no repeated approval; continue independent work while answers are pending, without inferring required answers from silence.
 - Act as the sole user-facing coordinator. Use direct specialists; do not create a sub-coordinator. A specialist may create one nested helper only for bounded, independent evidence or verification inside its owned artifact family, and that helper may not delegate again.
@@ -39,12 +40,13 @@ Generate all deliverables under `teams/{team-name}/`. Discovery must confirm the
 - Use `.codex/docs/claude-to-codex-mapping.md` as the bidirectional format mapping reference and retain per-team mapping artifacts for later conversion work.
 - Use `.worklog/{yyyymm}/{task-name}/phase-{n}-{label}/` for phase evidence when designing or modifying teams. Keep `references.md`, `findings.md`, and `decisions.md` traceable.
 - Communicate in the user's language.
+- Keep secrets out of generated files, worklogs, and reports. Do not merge, push, deploy, or write outside the authorized team root without an explicit yes for that action. Do not delete or overwrite work you were not asked to; do not revert an edit you did not make.
 - `.claude/` is the canonical shared design, not legacy. Shared changes land there first and are regenerated here. Codex-specific runtime input changes stay within their inventoried scopes and mapped targets; they neither authorize projection-only shared design changes nor require copying Codex controls into Claude instructions.
 - Standard `workspace-write` protects `.codex/` and `.agents/`. Do not claim that project config can authorize its own protected-metadata rewrite; use the Codex preflight/setup path.
 
 ## Phase Order
 
-1. Discovery
+1. Discovery, ending with the work-shape decision for each user flow
 2. Planning
 3. Generation
 3.5. Runtime preflight — probe the live runtime, write `teams/{name}/docs/RUNTIME-SETUP.md`
@@ -58,7 +60,7 @@ Generate all deliverables under `teams/{team-name}/`. Discovery must confirm the
 - Classify the target first as Claude-only, Codex-only, dual, non-team, or incomplete/activation-gated. Record layout and runnable surfaces separately.
 - Read generation stamps, mapping artifacts, and the target team's canonical declaration before proposing mutation. A-Team's own `.claude/` authority does not override a generated team's explicit Codex or dual authority.
 - Use `prompt-optimizer` only for text-only Codex improvements that leave roles, rules, runtime, ownership, mapping, canonical authority, and parity behavior unchanged.
-- Use `team-restructuring-master` for every structural/runtime/parity change. It classifies `Codex-only runtime gap` versus `cross-platform design gap`, proposes the smallest change, and supplies writer ownership plus verification and rollback plans.
+- Use `team-restructuring-master` for every structural/runtime/parity change, including folding a role into a skill. It applies the work-shape test to the target's flows, classifies `Codex-only runtime gap` versus `cross-platform design gap`, proposes the smallest change, and supplies writer ownership plus verification and rollback plans.
 - Require a `decision-auditor` recommendation gate before implementation. Record the existing user authorization covering the scoped plan; seek approval only for uncovered material changes. After targeted writers freeze, require one fresh-context artifact gate for the coherent batch and runtime preflight when runtime files changed.
 - After a correction, invalidate and rerun every criterion citing a changed file plus dependent mapping/parity criteria. Preserve unrelated current evidence. Run checks proportional to the change; broaden only for new failures, changes, or unresolved concerns.
 - Never promote a reference-only surface implicitly. Ambiguous canonical authority blocks mutation until confirmed.

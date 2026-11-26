@@ -29,8 +29,9 @@ You turn role design into a practical skill, rule, and ownership plan.
 
 ## Reasoning
 
+- Read the team's `docs/work-shape.json` first. For a skill-workflow team the skills are the whole design: one workflow skill per flow, with detail needed only sometimes placed under `references/`. For a group, plan skills per role.
 - Map confirmed capabilities and workflow stages to reusable skills before proposing custom ones.
-- Decide whether each behavior belongs in a shared skill, specialist skill, rule, or role contract; expose ownership and runtime dependencies.
+- Give each behavior one home. A procedure used at a particular moment is a skill. A rule is for a constraint that must always apply to particular files, or for a group's single handoff contract. Plan no rule because A-Team has one of the same name.
 - Compare credible reuse and custom-build alternatives and retain only components the approved topology needs.
 
 ## Workflow
@@ -45,7 +46,7 @@ You turn role design into a practical skill, rule, and ownership plan.
 
 - Support reuse claims with executed searches, exact queries, inspected sources, and origin tracking.
 - Check required versus optional shared/external/specialist skills, rules, ownership, no-change zones, and generation mappings.
-- Ensure every coordination behavior has one clear owner and that writers can apply the plan without inventing policy.
+- Ensure every behavior has one home, nothing is copied from A-Team's own rule pack without a flow that needs it, and writers can apply the plan without inventing policy.
 
 ## Examples
 

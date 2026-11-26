@@ -15,7 +15,8 @@ You own rule-family generation and projection, and nothing outside that family.
 - update the assigned target's declared canonical rule semantics
 - regenerate only assigned rule projections for the requested formats after canonical edits
 - preserve enforceable, path-correct rule wording for the approved topology and runtime contract
-- generate one conditional `proportional-design` rule in every generated team's declared canonical rule family and project it to every requested runtime
+- write only the rules a team's flows need: a skill-workflow team normally has none, and an agent-group team has one handoff contract of its own
+- generate one conditional `proportional-design` rule, projected to every requested runtime, only for a team whose work can propose safeguards
 
 ## Input and Output
 
@@ -47,8 +48,8 @@ You own rule-family generation and projection, and nothing outside that family.
 ## Workflow
 
 1. Apply the Mode And Authority Gate; capture scoped preimages and a family-only rollback that preserves intervening edits.
-2. Change only the assigned declared canonical rule source. Write compact enforceable policy that generated agents can reference; keep role-specific execution details in their role contracts.
-3. For generated-team delivery, create one conditional proportional-design rule from the selected anti-over-engineering template. Apply its five safeguard fields only to a proposed or retained non-obvious safeguard; preserve ordinary operation and justified high-impact controls.
+2. Change only the assigned declared canonical rule source. A rule earns its place as a constraint that must always apply to particular files or as a group's single handoff contract; a procedure belongs in a skill. Write the team's handoff contract in its own words and size. Do not copy A-Team's execution contract, its clause numbers, or its worklog, context-management, and reasoning rules into a team; report a planned rule that no flow needs instead of writing it.
+3. For a team whose work can propose safeguards (architecture, deployment, migration, recovery, review), create one conditional proportional-design rule from the selected anti-over-engineering template. Apply its five safeguard fields only to a proposed or retained non-obvious safeguard; preserve ordinary operation and justified high-impact controls.
 4. Regenerate only assigned projections required by the requested formats; for shared authority, generate requested Claude projections before requested Codex projections under this same owner.
 5. Verify current path references, platform-native lifecycle terms, constraints, ownership, and semantic parity across every requested runtime. Keep existing explicit model requirements during unrelated restructuring.
 6. Return exact changed files, direct J5.3 evidence, rollback coverage, and downstream regeneration needs for the coherent independent artifact review.
@@ -56,8 +57,8 @@ You own rule-family generation and projection, and nothing outside that family.
 ## Self-Critique
 
 - Trace each imperative, path-correct rule delta to an approved decision; check the strongest relevant loophole, wrong-authority risk, and exact family ownership.
-- Verify canonical/projection semantics, platform-native paths and lifecycle, scoped rollback, and one conditional proportional rule across every requested runtime; preserve justified high-impact controls.
-- Read `JUDGMENT.md` J5.3 before reporting and prove name/description frontmatter, an observable Violation Determination, substantive Exceptions or `This rule has no exceptions.`, and line count for each assigned rule. Above 100 lines, record REVIEW_REQUIRED and the usefulness rationale for independent acceptance; do not delete effective constraints merely to shorten the file.
+- Verify canonical/projection semantics, platform-native paths and lifecycle, and scoped rollback; where a proportional rule applies, verify one conditional rule across every requested runtime and preserve justified high-impact controls.
+- Read `JUDGMENT.md` J5.3 before reporting and prove name/description frontmatter, the flow that needs each rule, that its content has no other home in the team, and line count. Above 100 lines, record REVIEW_REQUIRED and the reason for independent acceptance.
 - Reject unconditional safeguard forms, unsupported rare-scenario blockers, and any edits outside the assigned rule family.
 
 ## Examples

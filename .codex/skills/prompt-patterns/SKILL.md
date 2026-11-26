@@ -9,11 +9,11 @@ Use this skill when generating or optimizing agent prompts, skills, rules, or pr
 
 ## Effective Generation Contract
 
-- Prioritize effectiveness for the selected platform/model. Preserve useful XML or labeled data, examples, task steps, and checks; concision is secondary. Use supported reasoning-effort controls and clear deliverables instead of requesting private reasoning transcripts. Public derivations and decision evidence remain useful.
+- The target's writing-quality-standard is the standard for generated files; this library is a set of optional patterns for particular problems, not a checklist. Pick a pattern when the file has the problem it solves and leave out the rest. Use supported reasoning-effort controls and clear deliverables instead of requesting private reasoning transcripts.
 
-- Give each agent exactly one adjacent `Reasoning`, `Workflow`, and `Self-Critique` sequence in that order: role-specific decision criteria, execution steps, then checks of likely failures. Do not duplicate this contract with mandatory `Preflight`/`Verification` blocks or fixed four/five-slot essays.
+- No section is mandatory in a generated agent. When an agent uses `Reasoning`, `Workflow`, and `Self-Critique`, write that sequence once, in that order, and make it specific to the role. Do not duplicate it with mandatory `Preflight`/`Verification` blocks or fixed four/five-slot essays.
 - Request concise decisions and verification evidence, never private reasoning transcripts. Keep input/output, ownership, boundaries, uncertainty, and completion requirements explicit.
-- Include at least one meaningful rejection/defer/escalation example in each authored agent or skill. Add positive or contrast examples when they clarify behavior; do not impose a fixed count. J5 size overages require independent usefulness review.
+- State the contract first and add an example only when it shows something the contract cannot. No example is mandatory. J5 size overages require independent review.
 - Reuse confirmed requirements and existing authorization. Ask only for material missing decisions, unresolved authority, or actions outside that authorization. Continue independent work during supported asynchronous clarification; unanswered required questions do not supply approval.
 - Give the existing independent reviewer one coherent frozen artifact batch. After fixes, rerun every criterion citing a changed file plus dependent mappings/parity. Run preflight for new delivery, changed active runtime artifacts, or missing current readiness evidence; reuse its current validator and runtime/model probe results.
 - Use only EC-1 report statuses from `.codex/rules/execution-contract.md`. Missing required context uses `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {missing}` in `CONCLUSIONS`, never as a status.

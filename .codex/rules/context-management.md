@@ -7,7 +7,7 @@ description: Keep Codex multi-agent work path-driven, target-lifecycle correct, 
 
 ## Applicability
 
-- Applies to: `team-architect` and every generated Codex multi-agent coordinator or specialist
+- Applies to: `team-architect` and A-Team specialists. Do not copy this rule into a generated team; a group states its dispatch fields once in its own handoff contract.
 
 ## Rule Content
 

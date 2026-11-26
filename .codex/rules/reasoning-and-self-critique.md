@@ -8,7 +8,7 @@ description: Require compact role-specific decision and verification instruction
 ## Applicability
 
 - Applies to: A-Team specialists, coordinators, and generated agents that produce artifacts or decisions
-- Include this rule or an equivalent in every generated team's canonical rule family and requested runtime projections.
+- Generated teams: the three sections are optional structure, used when each would say something specific to the role. Do not copy this rule into a team; teams generated before 2026-11-26 without a work-shape record keep the section floor the validator applies to them.
 
 ## Rule Content
 

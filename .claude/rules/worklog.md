@@ -80,12 +80,7 @@ When no external reference exists for a decision, `references.md` must explicitl
 - Each agent writes to the worklog during and at the end of their phase work
 - The coordinator verifies worklog completeness at each phase boundary before proceeding
 
-### Worklog as Context Offloading
-
-Once information is written to the worklog, agents do not need to retain it in context. The worklog serves as persistent external memory:
-- Downstream agents read upstream phase worklogs instead of receiving full context in the task dispatch
-- Phase completion summaries reference worklog paths, not inline content
-- When resuming interrupted work, the worklog provides full context for continuation
+Once something is in the worklog, pass its path instead of its content; `.claude/rules/context-management.md` covers dispatch and resume.
 
 ## Violation Determination
 

@@ -8,6 +8,7 @@ description: Require task-path-aware worklogs with classification, probe, and ac
 ## Applicability
 
 - Applies to: `team-architect` and every specialist when a team-design task spans discovery, planning, generation, or review
+- Generated teams: a worklog is not part of every team. Add one, sized to the need, when a flow must be resumable across sessions or audited afterwards.
 
 ## Rule Content
 
