@@ -1,107 +1,34 @@
 # A-Team
 
-A-Team is a **team designer**, not a target team. It interviews users, decomposes responsibilities, plans skills and rules, and generates ready-to-run multi-agent team structures under `teams/{team-name}/`.
-
-## Design Philosophy
-
-### Complete Deliverables, Focused Context
-
-Optimize prompt effectiveness first using current official guidance for the selected platform and model. Preserve useful examples, XML boundaries, task steps, and verification even when they require more context; concision is secondary. Complete the requested outcome and verify the behavior that matters. Add tests, detail, or safeguards when they cover a concrete requirement or credible failure; stop broadening checks once the applicable acceptance criteria pass.
-
-Keep one authoritative statement of each policy. Load role-specific references on demand; use compact task-specific decision notes and checks instead of repeated generic reasoning forms. Preserve executable contracts and meaningful examples when shortening prompts.
-
-### Search Before Building
-
-Inspect unfamiliar project context and verify current tools or external facts before decisions that depend on them. Use evidence and first-principles analysis to choose the smallest adequate design; routine implementation choices do not require a new research phase.
-
-### Position Over Hedging
-
-Every recommendation must state a clear position with evidence. Vague agreement, false balance, and non-committal language are prohibited. See `.claude/rules/anti-sycophancy.md`.
-
-### Proportional Design
-
-Default to the cheapest adequate design. Only when proposing or retaining a non-obvious safeguard, apply `.claude/rules/proportional-design.md`: show the evidence and likelihood, protected impact, cheapest adequate alternative, ordinary-path cost and new failure modes, and removal, override, or monitoring trigger. Unsupported rare hypotheticals become assumptions or monitoring, not code or release blockers. Preserve justified high-impact controls without breaking routine configuration, update, deployment, restart, or recovery paths.
+A-Team designs AI teams; it is not the team it designs. It interviews the user, decides the shape of the work, and writes a ready-to-run team to `teams/{team-name}/` for Claude Code, Codex, or both.
 
 ## Deployment Mode
 
-This project uses **subagent mode**. The coordinator (`team-architect`) delegates specialist work via the Agent tool (`Task` is its legacy alias). All agents run within a single Claude Code session.
+`/A-Team` makes the current session the coordinator: the MAIN session adopts `.claude/agents/team-architect.md` as its playbook and dispatches the specialists under `.claude/agents/` with the Agent tool. Never spawn the coordinator as a subagent. Only the coordinator talks to the user and dispatches. A specialist that needs an answer returns `NEEDS_CONTEXT` with its questions, and the coordinator relays them.
 
-The coordinator role executes in the MAIN session: when `/A-Team` is invoked, the current session adopts `.claude/agents/team-architect.md` as its playbook. Never spawn the coordinator as a subagent. Claude Code supports nested subagents; A-Team's native policy keeps delegation and user conversation with the main-session coordinator, enforced by `disallowedTools: [Agent]` on its direct specialists. A specialist that needs user input ends its run with `NEEDS_CONTEXT` and a QUESTIONS block; the coordinator relays the questions, appends every exchange to the task's `.worklog/{yyyymm}/{task-name}/dialogue-log.md`, and re-dispatches with the answers.
+The phases, lanes and gates live in the playbook and the `a-team` skill, which load when `/A-Team` runs. Specialist returns, retries, acceptance and precedence follow `.claude/rules/execution-contract.md`; judgement rubrics are in `JUDGMENT.md`; dispatch templates are in `templates/`.
 
-## Execution Contract and Precedence
+## Gotchas
 
-Follow `.claude/rules/execution-contract.md` for specialist reports, retries, fresh-context acceptance, precedence, and context economy. Host system/developer instructions and explicit user instructions take precedence over repository guidance and skills. Local rule precedence is defined by EC-4. Judgment rubrics live in `JUDGMENT.md`; dispatch templates live in `templates/`.
+- **Shape before roles.** For each user flow, decide between one agent that loads skills and an agent group before designing anything (`.claude/skills/work-shape/SKILL.md`). The default is one agent. The decision is recorded in the team's `docs/work-shape.json`, and both validators fail a team whose record breaks the rule or whose tree contradicts the record.
+- **Do not copy A-Team's own rules into a team.** A generated team gets what its flows need, written to `.claude/rules/writing-quality-standard.md`. `.claude/rules/output-structure.md` says what each shape ships.
+- **`.claude/` and this file are canonical. `AGENTS.md`, `.codex/`, `agents/` and `.agents/skills/` are the Codex projection.** Change shared design here first, then port it by hand (`.claude/rules/dual-platform-parity.md`); copying text across breaks the Codex vocabulary check. `.codex/skills/` and `.agents/skills/` must stay byte-identical. A generated team declares its own authority and does not inherit this one.
+- **Most rules load by path.** A rule with `paths:` in its frontmatter loads only when a matching file is read (`teams/**`, `.worklog/**`, `.claude/agents/**`). Agents name the rules they need under Applicable Rules. Do not restate rule content here.
+- **Existing teams do not share one layout.** Before changing one, read its entry document, generation stamp and mapping. Ambiguous authority allows assessment only. Wording-only changes go to `prompt-optimizer`; anything that changes roles, rules, runtime, ownership or mapping goes to `team-restructuring-master`.
+- **Auto-mode carve-outs cannot ship inside a team.** Claude Code honours them only from user settings, and no agent may write them. A-Team probes the runtime and writes `docs/RUNTIME-SETUP.md` with a command the user runs (`scripts/preflight-permissions.sh`).
+- **Design tasks keep a worklog.** `.claude/rules/worklog.md` has the layout; create `brief.md` and an empty `dialogue-log.md` before the first dispatch. `.worklog/` is gitignored evidence, not source, and the hooks in `.claude/settings.json` append raw user prompts to `session-events.jsonl` there.
+- **Cheapest adequate design.** Before proposing or keeping a non-obvious safeguard, read `.claude/rules/proportional-design.md` and record its five fields. An unsupported rare hypothetical is an assumption to monitor, not code or a release blocker.
+- **Checks:** `python3 -m pytest`, `bash scripts/validate-team.sh <team>`, and `python3 scripts/validate_codex_team.py --repo-self` (the last needs the Codex CLI).
 
-Accept coherent frozen artifact batches with an independent reviewer. After a correction, invalidate every criterion citing a changed file and dependent mapping/parity criteria; recheck them before acceptance. Preserve valid unrelated evidence.
+## Standing Rules
 
-Assign evidence persistence at dispatch. When the selected runtime prevents a specialist from writing its report, use the bounded `INLINE-FALLBACK` in the execution contract and let the coordinator persist the returned evidence. Keep the specialist's sandbox intact.
+- Keep secrets out of generated files, worklogs and reports. Every team ships the settings denies for `.env`, `secrets/**` and `*.pem`.
+- Do not merge, push, deploy, or write outside the authorized team root without an explicit yes for that action.
+- Do not delete or overwrite work you were not asked to. Agents share this filesystem: do not revert an edit you did not make.
 
-## Communication
+## Working With The User
 
-Communicate in the user's language. Detect and match the language the user is using. Technical terms may remain in English.
-
-Point out issues directly when the user's ideas are unreasonable — always provide alternative solutions alongside.
-
-Treat an action request as authorization for its scoped reversible work. Reuse confirmed requirements and existing authorization; ask only for a material missing choice, unresolved authority, or an unapproved scope expansion or irreversible/external action. Interim summaries are nonblocking. Continue independent work while a question is pending; a required answer is never inferred from silence.
-
-## Phase Overview
-
-| Phase | Purpose | Agent(s) |
-|-------|---------|----------|
-| 1. Discovery | Requirements interview + role decomposition + domain research | `requirements-analyst`, `role-designer`, `domain-researcher` |
-| 2. Planning | Skill/rule planning with external skill search | `skill-planner` |
-| 3. Generation | Canonical entry document + requested runtime projection | `rule-writer`, `skill-writer`, `agent-writer` |
-| 3.5 Preflight | Probe the selected live runtime, write `docs/RUNTIME-SETUP.md` | `runtime-preflight-advisor` |
-| 4. Optimization | Prompt review and refinement (optional) | `prompt-optimizer` |
-| 5. Review | Structure validation + user feedback | `team-architect` |
-| 6. Dialogue Review | Retrospective after substantial discovery or when requested | `dialogue-reviewer` |
-| 7. Evolution | Optimize or restructure an existing generated team, including its Codex runtime (on-demand) | `prompt-optimizer`, `team-restructuring-master` |
-
-Cross-phase support agents (available at any phase):
-- `domain-researcher` — External domain investigation and best practice research
-- `decision-auditor` — Independent audit of design decisions at phase boundaries
-
-## Existing-Team Evolution
-
-Choose the requested scope first: A-Team capability maintenance, maintenance of named target teams, or explicitly requested fleet work. Improving A-Team's ability to restructure prior teams authorizes designer changes; it does not itself request a target inventory, downstream writes, or target-authority questions. Use a bounded read-only example only when needed to reproduce a designer defect.
-
-Existing A-Team outputs are not assumed to share one runtime layout or one canonical authority. Before changing a team, classify its layout and runnable surfaces, compare generation stamps, and read its mapping/manifest. Respect the team's explicit canonical declaration; an ambiguous declaration permits assessment only, and a reference-only mirror is never promoted implicitly.
-
-Use the optimization lane only when roles, rules, runtime, ownership, mapping, canonical authority, and parity behavior stay unchanged: `prompt-optimizer` tightens the owned text, then `decision-auditor` verifies it. Structural, runtime, ownership, mapping, or parity changes use `team-restructuring-master` for the smallest-change plan, an independent recommendation audit, targeted writers, a fresh artifact audit, and runtime preflight when runtime files changed. Record how existing user authorization covers the plan; obtain approval for any uncovered material change before implementing it. Scoped maintenance does not restart a new-team interview.
-
-Classify every restructuring gap as either `Codex-only runtime gap` or `cross-platform design gap`. A platform-only change must already be allowed by the team's mapping inventory. A cross-platform gap starts at that team's declared canonical source and regenerates only affected projections. If the gap exposes an A-Team generator defect, backport the fix to this repository's canonical `.claude/` design and regenerate A-Team's Codex surfaces in the same maintenance task.
-
-Generated-team work normally stays under `teams/{team-name}/`. A writer may work at an external target root only when the user explicitly authorizes that exact real root, the dispatch names exact owned paths, and one canonical authority is declared consistently: Claude authority uses `CLAUDE.md` as its declaration, Codex authority uses `AGENTS.md`, and platform-neutral authority uses `shared/team.yaml`. Every other runnable entry and every required mapping artifact must agree; multi-surface or conversion-retained teams require `.codex/docs/format-mapping.manifest.yaml`. Missing or conflicting authority, dual-canonical claims, reference-only promotion, incomplete required mappings, `..` traversal, an outside absolute path, or a root/owned-path/nearest-parent symlink escape fails closed without writing. Edit the declared canonical family first and regenerate only mapped projections sequentially under the same owner, with scoped verification and rollback evidence.
-
-## Worklog
-
-Structure, required files, and the evidence chain live in `.claude/rules/worklog.md`; context-offloading behavior in `.claude/rules/context-management.md`. Both load unconditionally, so this section points rather than restates — a second copy is paid on every session and every dispatch, and drifts.
-
-## Output
-
-All generated teams go to `teams/{team-name}/`. The structure follows `.claude/rules/output-structure.md`.
-
-Every generated team must include:
-- A coordinator (flat architecture, no sub-coordinators; runs in the main session, never spawned)
-- Process review duties separate from QA, with a dedicated reviewer unless the small-team exception in `reviewer-mandate.md` applies
-- A code reviewer (separate from QA testing) when the team's deliverables include executable artifacts; a deliverable-QA reviewer otherwise
-- Worklog, context management, reasoning/self-critique, and execution contract rules in the selected runtime tree
-- A proportional-design rule in the declared canonical family, projected to every requested runtime; relevant producers use the conditional safeguard slot and an existing independent reviewer returns its criterion-level verdict
-- Worklog/context, precedence, deployment, and generator-stamp sections in the selected root entry document
-- A format mapping and machine-readable manifest whenever conversion retention or dual-format output is requested
-- `docs/RUNTIME-SETUP.md` from Phase 3.5 — what the user must configure outside the team before first run
-
-Claude-runnable output additionally includes the output-mode component: `.claude/output-styles/adhd-friendly.md` copied verbatim from A-Team, plus the first-run ask hook in `settings.json`. Codex-runnable output instead includes project `.codex/config.toml`, a runtime agent registry, runtime-discoverable `.agents/skills/`, strict-config validation, and a current Subagents/multi-agent preflight.
-
-Some runtime configuration cannot ship inside a generated team. Claude Code's auto-mode carve-outs are honored only from user settings, and no agent may write them — attempting it is a classified violation. A-Team's answer is advisory: probe the live runtime, emit a document plus a user-run command. See `.claude/rules/settings-json.md` (Auto Mode Reality) and `scripts/preflight-permissions.sh`.
-
-## Dual-Platform
-
-This A-Team repository keeps `.claude/` plus `CLAUDE.md` canonical for shared role intent, workflow, ownership, authority, and quality. `AGENTS.md`, `.codex/`, `agents/`, and `.agents/skills/` are the Codex projection, with bounded native runtime details supplied by the inventoried Codex adaptation inputs. Shared design changes start here; platform-specific settings do not become instructions for the other host. See `rules/dual-platform-parity.md` and `.codex/docs/claude-adaptation-manifest.toml` for exact input scopes and projection targets.
-
-Generated teams follow the format and canonical authority confirmed during their own Discovery, not A-Team's self-hosting authority automatically. Their mapping artifacts control future conversion and restructuring.
-
-Only when producing or maintaining a Codex surface, read `.codex/rules/codex-runtime-config.md`, `.codex/rules/codex-agent-config-patterns.md`, and `.codex/rules/context-isolation.md` for that target's runtime specification. Claude-only work uses native Claude rules and probes; it does not load or copy Codex model profiles, schema, or dispatch controls. Preserve the target's explicit model and effort choices unless their migration is authorized.
+Reply in the user's language. Take a position and give the evidence for it; when an idea will not work, say so and offer one that will. A request to act authorizes its scoped, reversible work. Ask only for a material missing choice or for an action outside that authorization, and keep independent work moving while you wait. Silence is not an answer.
 
 ---
 

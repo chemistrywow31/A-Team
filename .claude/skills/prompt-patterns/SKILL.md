@@ -15,16 +15,11 @@ Use this skill when generating or optimizing agent prompts, skill prompts, rule 
 
 This repository-specific contract is not attributed to the Anthropic sources below. For A-Team task returns, use only the statuses in `.claude/rules/execution-contract.md` EC-1. Missing required evidence or context uses `STATUS: NEEDS_CONTEXT` with `INSUFFICIENT_DATA: {missing}` in `CONCLUSIONS`; never use `INSUFFICIENT_DATA` as a report status.
 
-## Effective Generation Contract
+## How To Use The Library
 
-- Prioritize effectiveness for the selected platform, model, and thinking mode. Retain useful XML, examples, steps, and verification; concision is secondary. For Claude, select supported native adaptive thinking/effort, and use manual worked-solution guidance only when thinking is disabled and supported. Public derivations and evidence are distinct from private reasoning.
+The writing standard for generated files is `.claude/rules/writing-quality-standard.md`; read that first. This library is a set of optional patterns for particular problems, not a checklist. Most files need none of them. Pick a pattern when the file has the problem the pattern solves, adapt it to the target model, and leave out the rest. A block copied in because its scenario tag matched is the kind of text the standard asks you to cut.
 
-- For each agent, write exactly one adjacent `Reasoning`, `Workflow`, and `Self-Critique` sequence in that order. Make it task-specific: decision criteria, execution steps, then checks of the likely failure modes. Do not duplicate this contract with mandatory `Preflight`/`Verification` blocks or fixed four/five-slot essays.
-- Request concise decisions and verification evidence, never private reasoning transcripts. Keep input/output, ownership, uncertainty, boundaries, and completion requirements explicit.
-- Include at least one meaningful rejection/defer/escalation example in each authored agent or skill. Add positive or contrast examples when they clarify behavior. Do not impose a universal example count; size overages follow J5 independent usefulness review.
-- Reuse confirmed requirements and existing authorization. Ask only for material missing decisions, unresolved authority, or actions outside that authorization. Continue independent work during supported asynchronous clarification; do not assume an unanswered required question is approval.
-- Send one coherent frozen artifact batch to the existing independent reviewer. After fixes, rerun every criterion citing a changed file plus dependent mappings/parity. Run preflight only for new delivery, changed active runtime artifacts, or missing current readiness evidence, and reuse its current validation results for each selected runtime.
-- Follow `.claude/rules/reasoning-and-self-critique.md` and `.claude/rules/prompt-engineering-patterns.md` for the contract, and `.claude/rules/context-tier.md` for Claude model routing. Only when the selected output is Codex or dual, read `.codex/rules/codex-agent-config-patterns.md` and `.codex/rules/codex-runtime-config.md` for that projection's specifications. Preserve the target's explicit model and effort choices outside an authorized migration; do not copy a generic model guide into every generated prompt.
+Check the selected model's current official guidance before using a model-specific technique, and keep the target's explicit model and effort choices. Only when the output is Codex or dual, read `.codex/rules/codex-agent-config-patterns.md` and `.codex/rules/codex-runtime-config.md` for that projection.
 
 ## Assets Structure
 
@@ -66,17 +61,11 @@ When you already know which pattern you need:
 
 Include only selected pattern paths in the writer dispatch alongside the task scope, exact owned/forbidden paths, acceptance criteria, and worklog paths. Historical patterns do not override the current generation contract.
 
-## Proportional-Design Generation Contract
+## Proportional-Design Pattern
 
-This contract is specific to A-Team and comes from the user-approved decisions D6-D9, not from the Anthropic sources below.
+A-Team policy from user-approved decisions D6-D9, not from the Anthropic sources below.
 
-Route `assets/templates/anti-over-engineering.md` to rule generation and to prompts for architecture, implementation, packaging, deployment, migration, recovery, and review work. Then:
-
-- Generate one `proportional-design` rule in the target's declared canonical rule family and project it to every requested runtime. Do not create independent platform-specific versions.
-- Add a `Safeguard Decision` producer slot only when a role proposes or retains a non-obvious safeguard. Require the five template fields; do not burden ordinary decisions with the slot.
-- Make the existing independent reviewer return a criterion-level verdict for all five fields and the ordinary-path check. Use the team's existing review stage; do not add a role, state machine, or approval ladder.
-- Reject unsupported rare hypotheticals as implementation or release blockers. Record them as assumptions or monitoring triggers instead.
-- Preserve narrowly scoped controls justified by credible corruption, security, privacy, compatibility, data-loss, compliance, or irreversible-mutation risk.
+Use `assets/templates/anti-over-engineering.md` for a team whose work can propose safeguards: architecture, implementation, packaging, deployment, migration, recovery, review. Such a team gets one short proportional-design rule in its canonical rule family, a `Safeguard Decision` slot only in roles that can propose or keep a non-obvious safeguard, and a verdict from its existing reviewer. Other teams get none of it. Unsupported rare hypotheticals are assumptions or monitoring triggers, not blockers; narrowly scoped controls backed by a credible corruption, security, privacy, data-loss, compliance or irreversible-mutation risk stay.
 
 ## Available Scenarios
 
@@ -99,14 +88,6 @@ Route `assets/templates/anti-over-engineering.md` to rule generation and to prom
 | `optimizing-prompts` | Prompt optimization pass |
 | `long-running-tasks` | Agents handling extended workflows |
 | `context-constrained` | Context budget is a concern |
-
-## Examples
-
-### Rejection Case
-
-Reject a deployment prompt that requires an unconditional whole-package checksum and residual-task gate but supplies no evidence/likelihood, protected impact, cheapest adequate alternative, ordinary-path/new-failure cost, or removal/override/monitoring. Do not let it block routine config edits, copy/start, or intentional stop/restart.
-
-This rejection does not remove a narrowly scoped integrity or task-drain control backed by credible corruption, security, data-loss, compliance, or irreversible-mutation risk. Preserve that justified high-impact control, require the same five fields, and use the existing independent reviewer.
 
 ## Sources
 

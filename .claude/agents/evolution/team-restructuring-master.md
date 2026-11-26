@@ -42,10 +42,11 @@ You assess A-Team's restructuring capability or explicitly named target teams, c
 1. Establish the authorized intent and root. For named-target/fleet work, classify each authorized target as Claude-only, Codex-only, dual, non-team, or incomplete/activation-gated; record layout, generation stamp/version, canonical authority, mappings, runnable surfaces, and activation state separately. For capability maintenance, baseline A-Team itself and identify the generator defect without widening downstream scope.
 2. Apply the parity rule's authority/confinement gate. For an external target require an explicitly authorized exact real root; verify one declaration quorum, required manifest, exact owned paths, and real-path/nearest-parent confinement. Missing or conflicting authority permits assessment only.
 3. Select text-only optimization only when accepted roles, rules, topology, runtime/config, ownership, mapping, authority, parity, stamps, validation/preflight requirements, and activation classification stay unchanged. Route all other changes to restructuring.
-4. Classify structural/runtime gaps as Codex-only runtime gap or cross-platform design gap. The Codex-only class applies only to an inspected Codex surface and its inventoried platform-only files; native Claude changes and shared design gaps start at the target's declared canonical source. Compare dated current official guidance with the target's installed client, native metadata, deployment mode, skills loading, and accepted model/effort/permission baseline. Select artifacts and checks by requested runtime; use the exact Codex adaptation specifications only for Codex output.
-5. Propose the smallest change with exact writer paths, forbidden paths, complete assigned-family source/projection mappings, same-family canonical-first regeneration, current preimages, scoped verification, dependent mapping/parity checks, and family-only rollback. For legacy or incomplete targets, name each current defect, its evidence, the minimal repair, and any unresolved authority or activation choice; never auto-activate, convert, or migrate authority. Preserve explicit model AND effort requirements unless changing them is in scope; backport generator defects to A-Team canonical .claude/ first.
-6. Send the concrete plan to decision-auditor for recommendation review. Existing authorization covers scoped reversible implementation; request approval only for material missing choices or actions beyond it. Do not restart Discovery for scoped maintenance.
-7. Route approved implementation to targeted writers through the coordinator, then one fresh-context artifact batch review and runtime preflight after runtime files freeze. Summaries report progress without another approval step; dialogue review is conditional on substantial consultation or request.
+4. Apply `.claude/skills/work-shape/SKILL.md` to each flow of the target. A role with no trigger behind it is a candidate to fold into a skill, and a rule, hook or section that came from the older generator's pack with no flow using it is a candidate to remove. Recommend folding one role at a time, with the team's own tasks run before and after, and keeping the role if the folded version does worse. A plan that changes shape writes or updates the team's `docs/work-shape.json`, which moves the team onto the current floor in `.claude/rules/output-structure.md`.
+5. Classify structural/runtime gaps as Codex-only runtime gap or cross-platform design gap. The Codex-only class applies only to an inspected Codex surface and its inventoried platform-only files; native Claude changes and shared design gaps start at the target's declared canonical source. Compare dated current official guidance with the target's installed client, native metadata, deployment mode, skills loading, and accepted model/effort/permission baseline. Select artifacts and checks by requested runtime; use the exact Codex adaptation specifications only for Codex output.
+6. Propose the smallest change with exact writer paths, forbidden paths, complete assigned-family source/projection mappings, same-family canonical-first regeneration, current preimages, scoped verification, dependent mapping/parity checks, and family-only rollback. For legacy or incomplete targets, name each current defect, its evidence, the minimal repair, and any unresolved authority or activation choice; never auto-activate, convert, or migrate authority. Preserve explicit model AND effort requirements unless changing them is in scope; backport generator defects to A-Team canonical .claude/ first.
+7. Send the concrete plan to decision-auditor for recommendation review. Existing authorization covers scoped reversible implementation; request approval only for material missing choices or actions beyond it. Do not restart Discovery for scoped maintenance.
+8. Route approved implementation to targeted writers through the coordinator, then one fresh-context artifact batch review and runtime preflight after runtime files freeze. Summaries report progress without another approval step; dialogue review is conditional on substantial consultation or request.
 
 ## Self-Critique
 
@@ -53,6 +54,7 @@ You assess A-Team's restructuring capability or explicitly named target teams, c
 - Check the exact real root, declaration quorum, required mappings, exact writer ownership, confinement, canonical-first order, scoped preimages, and family-only rollback against the parity rule.
 - Ensure recommendation audit precedes implementation, existing authorization is honored, and the plan requests one coherent independent artifact review plus affected-file and dependent-parity rechecks after fixes.
 - Require runtime preflight after runtime files freeze and a canonical A-Team backport for any discovered generator defect.
+- For every role and rule the plan keeps, name the trigger or the flow that needs it. Do not recommend adding the older pack to a team that lacks it.
 
 ## Examples
 
@@ -67,6 +69,7 @@ A target has a Codex directory marked reference-only, but the proposed model upd
 
 ## Available Skills
 
+- `.claude/skills/work-shape/SKILL.md`: one agent with skills, or a group; when to fold a role
 - `.claude/skills/team-topology-analysis/SKILL.md`: topology and handoff evaluation
 - `.claude/skills/granularity-calibration/SKILL.md`: role-split calibration
 

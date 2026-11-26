@@ -1,6 +1,6 @@
 ---
 name: Writing Quality Standard
-description: Specify writing style, language requirements, and quality standards for all generated .md files
+description: The standard every generated prompt, skill, rule and entry document is written and reviewed against
 paths:
   - "teams/**"
 ---
@@ -9,88 +9,54 @@ paths:
 
 ## Applicability
 
-- Applies to: `agent-writer`, `skill-writer`, `rule-writer`, `prompt-optimizer`
+- Applies to: `agent-writer`, `skill-writer`, `rule-writer`, `prompt-optimizer`, and the independent reviewer
+- Scope: files a Claude model will read. Codex-target files follow `.codex/rules/writing-quality-standard.md`.
 
 ## Rule Content
 
-### Tone and Style
+Write for a capable reader who has the repository open. Say what the work is for, what is particular to this team, and where the traps are. Leave the rest to the reader's judgement. Source: [the new rules of context engineering](https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/), checked 2026-11-26.
 
-All generated .md files must use imperative sentences as the primary tone.
+### Six Checks
 
-- Correct: "You must confirm input completeness after receiving a task"
-- Incorrect: "This role should confirm input completeness after receiving a task"
-- Incorrect: "It is recommended to confirm input completeness after receiving a task"
+Read each file against these. They are a rubric for judgement, not a form to fill in.
 
-### Prohibited Vague Words
+1. **Judgement before absolutes.** State the goal and the reason and let the reader apply them: "match the comment density of the surrounding code", not "never write comments". Keep an absolute only where a mistake is costly and cannot be undone, such as secrets, destructive commands, publishing and spending, and give the reason in the same sentence. Emphasis by capitals or repetition adds nothing.
+2. **Interfaces before examples.** Describe the contract directly: named inputs and outputs, a file format, a small set of statuses, tool parameters that say what they mean. Add an example only when it shows something the contract cannot, and make it clearly one case among many. A worked example becomes the shape of every answer.
+3. **Loaded when needed.** An entry document or an agent prompt holds what every run needs. Procedures for particular moments, such as review, verification, release, recovery or a rare format, are skills or reference files named at the point of use. A long skill is a short `SKILL.md` plus files under `references/`.
+4. **Said once.** Each instruction has one home, and other files point to it. How to use a tool or a skill belongs in its own description, not in every agent that uses it.
+5. **A short entry document.** `CLAUDE.md` says what the project is for and the gotchas the tree does not show. It has no directory listing, no role table and no copies of rules.
+6. **References before prose specs.** When a standard can be a test, a script, a schema, a sample file or a rubric, ship that and point to it.
 
-The following words are prohibited in .md files unless immediately followed by clear judgment criteria:
+### Do Not Carry A-Team's Contract Into A Team
 
-Prohibited words: "try to", "appropriately", "reasonably", "if needed", "as appropriate", "roughly", "probably", "things like that"
+A-Team's execution contract, worklog triad, section floors and `JUDGMENT.md` describe how A-Team builds teams. A generated team gets its own files, sized by its work-shape profile (`.claude/rules/output-structure.md`): a group writes its own short handoff contract, and a rule exists only because one of the team's flows needs it.
 
-- Violation: "Try to maintain code quality"
-- Correct: "All code must pass linter checks and have test coverage no less than 80%"
-- Allowed: "Reasonable error handling (defined as: every public function must have error return with context)"
+### Signs A File Needs Another Pass
 
-### Effectiveness And Size Review
+- The same instruction appears in two files, or twice in one.
+- Two instructions conflict, or an absolute has an obvious case where it is wrong.
+- The text repeats what the tree, the code or a tool description already shows.
+- A section is there because a template had it, and nothing in it is specific to this role.
+- An example is longer than the instruction it illustrates.
+- Always-loaded text describes something that rarely happens.
 
-Prioritize prompt effectiveness using current official platform/model guidance. Preserve useful XML, examples, task steps, and checks; concision is secondary.
+### Size
 
-- Agent, skill, and rule targets remain 300, 200, and 100 lines respectively.
-- An over-target authored file is `REVIEW_REQUIRED`. Record the current size, concrete usefulness rationale, and evidence in the ordinary worklog or criterion report. The independent reviewer accepts or rejects that current file; an author-only note cannot produce unconditional PASS.
-- Move detail to references when task routing preserves its usefulness. Do not delete effective instructions just to meet a number. EC report caps and explicit dispatch limits remain separate and bounded.
-
-### Example Requirements
-
-Every generated .md that contains examples must meet these standards:
-
-- Each authored **skill .md** and **agent .md** contains at least one meaningful rejection/defer/escalation case under `JUDGMENT.md` J5. Add useful positive or contrast examples that clarify behavior or a testable boundary; no universal example count applies.
-- Express normal behavior in `## Workflow` and named `## Input and Output` fields; examples may explain how those instructions apply.
-- Keep the rejection example concise: identify the triggering input and correct refusal, deferral, or escalation. Include the mistaken action only when it clarifies the boundary; a full before/after transcript is not required.
-- Each **rule .md** must contain at least one violation scenario description.
+The 300, 200 and 100 line marks for agents, skills and rules are a prompt to look again, not a target. The validator reports `REVIEW_REQUIRED` above them and the independent reviewer decides. A short file that leaves out a real gotcha is worse than a longer one that has it. A long file that repeats itself is worse than both.
 
 ### A Template Outranks Its Own Prose
 
-When a file contains BOTH a policy statement and a template/example block the reader copies, the copied block wins — readers fill the slots they are given, they do not diff them against the prose.
-
-After changing any policy, sweep every template block, frontmatter example, section skeleton, and checklist item that instantiates it. Two sites in the same file can disagree, and the copied one ships. Evidence: `.worklog/202607/context-engineering-realignment/phase-3-execution/decisions.md` D14.
-
-For each policy statement, grep the same file and its writers for a template or example on the same subject and confirm agreement. `scripts/validate-team.sh` cannot detect prose contradictions.
-
-### Structural Over Instructional
-
-When a behavioral constraint can be enforced by prompt structure (dedicated sections, labeled output slots, fixed templates), use structure instead of instructions. Use current model guidance and a concrete task outcome to judge whether the structure helps; do not claim a universal success rate.
-
-- Use dedicated sections (`## Boundaries`, `## Uncertainty Protocol`) instead of inline prohibitions
-- Use output templates with labeled slots instead of "output in X format" instructions
-- For informational gaps, use `STATUS: NEEDS_CONTEXT` and put `INSUFFICIENT_DATA: {missing}` in `CONCLUSIONS`; for hard blockers, use `STATUS: BLOCKED`
-
-### Tradeoff Disclosure for Rules
-
-When a generated rule's compliance cost is non-obvious, the rule must include a `## Tradeoff` line or section stating what the agent pays to comply. This complements the Exceptions section — Exceptions answer "when can I skip this", Tradeoff answers "what does following this cost".
-
-Tradeoff disclosure is required when any of the following apply:
-- Strict compliance adds measurable overhead in simple scenarios (e.g., 3x time for a trivial task)
-- Compliance consumes significant context window budget
-- The rule conflicts with speed or simplicity in predictable situations
-
-Tradeoff disclosure is not required when the cost is self-evident (e.g., "write a worklog file" obviously costs file I/O time).
-
-Format: one to two sentences after Violation Determination or within Exceptions, starting with "Tradeoff:".
+When a file has both a policy and a template the reader copies, the template wins. After changing a policy, update every template, skeleton and example that instantiates it. `scripts/validate-team.sh` cannot see prose contradictions.
 
 ## Violation Determination
 
-- Using descriptive tone instead of imperative sentences → Violation
-- Prohibited vague words appear without accompanying judgment criteria → Violation
-- An over-target file is marked PASS without independent usefulness review, or useful content is cut only to satisfy length → Violation
-- Skill .md or agent .md has no rejection-case example → Violation
-- An example contradicts the intended workflow or boundary → Violation
-- Agent .md has no Examples section → Violation
-- A file's template/example block contradicts a policy stated elsewhere in the same file, or in the rule that file implements → Violation
-- Rule .md has no violation determination → Violation
-- Behavioral constraint enforced solely by instruction when a structural alternative exists → Violation
-- Template or example uses `INSUFFICIENT_DATA` as a status, or defines a status outside the four EC-1 statuses → Violation
-- Rule with non-obvious compliance cost has no Tradeoff disclosure → Violation
+- A generated file copies A-Team's rule pack or section skeleton when no flow of the team needs it -> Violation
+- An instruction has more than one home, or two instructions in one team conflict -> Violation
+- An absolute has no stated reason, or plainly covers a case where it is wrong -> Violation
+- A template or example contradicts a policy in the same file or in the rule it implements -> Violation
+- A file over its size mark is accepted without an independent look -> Violation
 
 ## Exceptions
 
-This rule has no exceptions.
+- Vendored external skills keep their upstream text.
+- Safety rules stay absolute: no secrets in files, no merge, push, deploy or deletion without an explicit yes.

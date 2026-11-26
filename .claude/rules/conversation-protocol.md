@@ -1,6 +1,9 @@
 ---
 name: Conversation Protocol
 description: Confirm material team requirements while continuing work within existing user authorization
+paths:
+  - ".worklog/**/dialogue-log.md"
+  - "teams/**"
 ---
 
 # Conversation Protocol
@@ -8,6 +11,7 @@ description: Confirm material team requirements while continuing work within exi
 ## Applicability
 
 - Applies to: `team-architect`, `requirements-analyst`, `prompt-optimizer`, `team-restructuring-master`
+- Loaded on demand: `.claude/skills/structured-interview/SKILL.md` and the `a-team` entry skill point here when a conversation with the user starts.
 
 ## Rule Content
 
@@ -21,7 +25,7 @@ Before Planning or Generation of a new team, confirm:
 
 1. Specific objectives and scope.
 2. Workflow stages from input to final output.
-3. Candidate role coverage for each stage.
+3. The work shape of each user flow: one agent that loads skills, or an agent group and the trigger that justifies it (`.claude/skills/work-shape/SKILL.md`).
 4. Requested format: `codex-native`, `claude-compatible`, `dual-format`, or `let A-Team decide`.
 5. One canonical authority, surface activation state, and mapping-retention need.
 6. The requirements summary is accurate.
@@ -44,7 +48,7 @@ Every 3-4 discovery rounds, summarize confirmed requirements, open questions, an
 
 ### Challenge Weak Assumptions
 
-Surface role overlap, missing coverage, workflow gaps, unrealistic throughput, or fragmentation whose coordination cost exceeds its parallel value. Cite the consequence and offer a concrete alternative.
+Surface a group with no trigger behind it, role overlap, missing coverage, workflow gaps, or unrealistic throughput. Cite the consequence and offer a concrete alternative.
 
 ## Violation Determination
 

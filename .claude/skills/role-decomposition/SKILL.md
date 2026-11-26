@@ -9,6 +9,8 @@ description: Provide methodology and decision framework for decomposing team res
 
 Provide methodology and decision framework for decomposing team responsibilities into agent roles with appropriate granularity.
 
+Use this only after `.claude/skills/work-shape/SKILL.md` has put a flow in the `agent-group` shape. The roles come from that flow's triggers; this skill draws the boundaries between them. Stages of a skill-workflow flow become skills, not roles.
+
 ## Users
 
 - `role-designer`: For responsibility decomposition during role design phase

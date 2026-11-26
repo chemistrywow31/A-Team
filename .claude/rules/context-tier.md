@@ -15,7 +15,7 @@ paths:
 
 ### Assign Context By Decision Scope
 
-Every generated agent documents its tier and exact startup inputs in its authoritative role file. Tier measures decision scope; provide the relevant workflow, constraints, and worklog chain rather than automatically copying all history.
+This rule applies to the agents of an agent-group team; a skill-workflow team has none. Every generated agent documents its tier and exact startup inputs in its authoritative role file. Tier measures decision scope; provide the relevant workflow, constraints, and worklog chain rather than automatically copying all history.
 
 The Claude model/effort values below are defaults for new teams without explicit pins or explicitly authorized profile migration. Preserve explicit user or target model AND effort pins during unrelated regeneration/restructuring; retaining a pin requires no fresh compatibility approval. A model-only migration preserves existing supported effort unless the authorized scope also changes effort.
 

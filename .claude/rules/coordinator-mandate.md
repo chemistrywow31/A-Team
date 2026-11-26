@@ -1,52 +1,45 @@
 ---
 name: Coordinator Mandate
-description: Require one coordinator with direct specialists, stable task paths, and coordinator-only delegation in Claude subagent mode
+description: An agent group has one coordinator in the main session, direct specialists, and explicit path ownership
+paths:
+  - "teams/**"
+  - ".claude/agents/**"
 ---
 
 # Coordinator Mandate
 
 ## Applicability
 
-- Applies to: all agents; the coordinator carries the additional obligations below
+- Applies to: A-Team itself and every generated team whose work-shape record includes an `agent-group` flow
+- A skill-workflow team is one agent and has no coordinator.
 
 ## Rule Content
 
-### Coordinator Must Exist And Own Coordination
+### One Coordinator, Direct Specialists
 
-- Every generated multi-agent team must contain exactly one coordinator role.
-- The coordinator is the sole user-facing phase owner. It may synthesize only the artifact families explicitly assigned to it by the phase plan.
-- Specialist-owned artifact families stay specialist-owned. The coordinator must not absorb them to "move faster."
+- A group has exactly one coordinator. It runs in the main session, owns the conversation with the user, and is never spawned as a subagent.
+- Specialists are direct children of the coordinator. There is no sub-coordinator and no relay role.
+- Only the coordinator dispatches. Claude Code supports nested subagents; this is team policy, enforced with `disallowedTools: [Agent]` on each specialist. Do not change user or global spawn-depth settings. See [native subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-10-06.
+- The coordinator does not take over a specialist's artifact family to move faster.
+- Subagent mode and experimental Agent Teams are different runtimes. Choose Agent Teams only when a target needs independently collaborating sessions and the runtime supports it.
 
-### Flat Direct-Specialist Topology
+### Stable Task Paths
 
-- All phase specialists are direct children of the coordinator.
-- Sub-coordinators are prohibited.
-- In Claude subagent mode, only the coordinator delegates via the Agent tool (`Task` is the compatibility alias). Specialists must not dispatch nested helpers or other specialists.
-- Claude Code supports nested subagents; this prohibition is A-Team topology policy. Enforce it with `disallowedTools: [Agent]` on each direct specialist. Keep Agent available to the main-session coordinator; do not change user/global spawn-depth settings. See [native subagents](https://code.claude.com/docs/en/sub-agents), checked 2026-10-06.
-- Keep subagent mode distinct from experimental Agent Teams. Select Agent Teams only for a target that needs independent collaborating sessions and has confirmed runtime support; do not infer teammate skill loading or nested-team support from subagent behavior.
+Each dispatch has a stable name for its purpose, such as `generation_rules` or `review_runtime_preflight`. A corrective or resumed dispatch keeps the name and carries only what changed. The coordinator waits for a result only when its next step depends on it.
 
-### Stable Task Paths And Lifecycle Discipline
+### Shared Filesystem
 
-- Every Agent dispatch uses a stable phase-purpose task path such as `discovery_requirements`, `planning_skill_plan`, `generation_rules`, `generation_agents`, `restructure_assessment`, or `review_runtime_preflight`.
-- A resumed or corrective Agent dispatch for the same logical work keeps the same task path and carries only the delta: new evidence, corrected assumptions, updated criteria, or path changes.
-- Do not stop for an Agent result while independent coordinator work remains. Wait only at a real join boundary where the next coordinator step depends on that result.
-
-### Shared Filesystem Ownership
-
-- Assume agents share the same filesystem unless the runtime explicitly provisions isolation.
-- Every dispatch must state owned write paths, forbidden paths, acceptance criteria, and the non-reversion rule: do not revert edits you did not make.
-- Unexpected foreign edits in an owned path are handled by adapting the task or escalating a real conflict, never by blind overwrite.
+Agents share one filesystem unless the runtime isolates them. A dispatch that writes names its owned paths, its forbidden paths, and its acceptance criteria. Nobody reverts an edit they did not make; an unexpected foreign edit is adapted to or escalated, not overwritten.
 
 ## Violation Determination
 
-- A generated multi-agent team has no coordinator role, or more than one role claims coordinator authority -> Violation
-- The coordinator writes an artifact family owned by a specialist with no explicit phase-plan reassignment -> Violation
-- A sub-coordinator exists, a specialist delegates nested work in subagent mode, or its native Agent restriction is missing -> Violation
-- An Agent dispatch lacks a stable task path, or a resumed task abandons that path without invalidation rationale -> Violation
-- A file-mutating dispatch omits owned paths, forbidden paths, acceptance criteria, or the non-reversion rule -> Violation
-- The coordinator waits while independent coordinator work still remains -> Violation
+- A group has no coordinator, more than one, a sub-coordinator, or a coordinator that is spawned -> Violation
+- A specialist dispatches, or its `disallowedTools: [Agent]` restriction is missing -> Violation
+- The coordinator writes a specialist's artifact family without an explicit reassignment -> Violation
+- A writing dispatch omits owned paths, forbidden paths or acceptance criteria -> Violation
+- An agent reverts or overwrites an edit it did not make -> Violation
 
 ## Exceptions
 
-- Single-agent teams do not require a coordinator role.
-- User-facing conversation in the main session remains coordination, not specialist execution.
+- A skill-workflow team is out of scope.
+- Conversation with the user in the main session is coordination, not specialist work.

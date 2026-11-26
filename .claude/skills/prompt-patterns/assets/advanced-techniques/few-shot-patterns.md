@@ -19,7 +19,7 @@ reviewed: 2026-10-06
 
 Use realistic demonstrations when a schema or instruction leaves a consequential choice unclear. Show the expected output, relevant evidence, and a boundary response; vary the cases enough to avoid teaching an accidental rule. A schema defines shape, while examples can clarify judgment. Use both when they help.
 
-The number of examples depends on the task and observed failures. Do not impose exactly three cases, a universal minimum, or a one-example ceiling. A-Team J5 requires at least one meaningful rejection/defer/escalation case in authored agents and skills; useful positive or contrast cases can supplement it.
+The number of examples depends on the task and observed failures. Do not impose exactly three cases, a universal minimum, or a one-example ceiling. A-Team does not require an example in every agent or skill: state the contract first, and add a boundary case when it shows something the contract cannot.
 
 ## Worked Calibration Pair
 

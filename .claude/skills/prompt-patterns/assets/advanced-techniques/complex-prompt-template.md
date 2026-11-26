@@ -62,7 +62,7 @@ For an A-Team specialist, the output uses EC-1's six fields; the example's prose
 
 ## A-Team Application
 
-Use the required role sections and one `Reasoning` → `Workflow` → `Self-Critique` sequence. Skills may use a direct procedure or route to relevant references. Retain concrete task steps, XML boundaries, and examples when useful. Follow J5 for a meaningful boundary example; add positive/contrast cases when they clarify execution.
+No role section is mandatory. When an agent uses `Reasoning` → `Workflow` → `Self-Critique`, write that sequence once. Skills may use a direct procedure or route to relevant references. Keep the steps, boundaries and examples that change what the reader does, and cut the ones that do not.
 
 ## Examples
 

@@ -1,56 +1,32 @@
 ---
 name: Prompt Optimization
-description: Provide systematic prompt optimization methodology to improve instruction quality while preserving original characteristics
+description: Rewrite an existing team's prompts, skills and documents to the writing standard without changing what the team does. Use for wording-only refinement of a runnable surface.
 ---
 
 # Prompt Optimization
 
-## Description
+## What this lane is
 
-Improve prompt wording while preserving the original role, workflow, runtime intent, ownership model, and canonical policy.
+The optimization lane rewrites text inside assigned files so the team behaves the same with less to read and nothing that pulls against itself. The standard is `.claude/rules/writing-quality-standard.md`. Read it first; this skill adds only what is particular to rewriting an existing team.
 
-## Users
+It stays wording-only. Adding or removing a file, a role, a rule, a hook, or changing topology, runtime or config, ownership, mapping, canonical authority, stamps, or a surface's runnable state is restructuring. Hand those to `team-restructuring-master` through the coordinator, including folding a role into a skill.
 
-- `prompt-optimizer`
-- `team-architect`
+## How to work
 
-## Core Knowledge
+1. For a named team, classify it first: surfaces, stamp, canonical authority, mapping. For A-Team capability maintenance, stay inside the assigned A-Team paths.
+2. Read the whole surface before editing one file. Most of what needs fixing is between files: the same instruction in three places, or a skill that says the opposite of the entry document.
+3. For each passage ask whether the team would behave differently without it. Typical cuts in a team built by an older generator:
+   - an instruction repeated across agents, which gets one home and pointers
+   - a ban that is wrong in some ordinary case, rewritten as the goal and its reason
+   - sections that exist because a template had them, holding nothing specific to the role
+   - a worked example that every output now copies, replaced by the contract it was illustrating
+   - entry-document text that restates the tree, the role list, or rule content
+4. Keep exactly: safety rules, explicit model and effort settings, paths, runtime keys, acceptance criteria, and any gotcha that records something the team learned the hard way.
+5. Edit a canonical source before its projections, and keep the selected runtime's own vocabulary.
+6. Report what you removed and why, and what you routed to restructuring. A fresh-context verifier accepts the result; you do not.
 
-- Prompt effectiveness for the selected platform/model is the goal; word count is not a success metric. Preserve useful XML boundaries, examples, task steps, and verification. Use current official native guidance and label A-Team conventions separately.
-- The optimization lane is text-only. It can tighten wording, make triggers explicit, normalize terminology, and remove redundancy.
-- It cannot change roles, rules, topology, runtime or config, ownership, mapping, canonical authority, parity, stamps, validation/preflight requirements, or any surface's runnable, reference-only, or activation state.
-- Choose capability-only A-Team maintenance versus named-target work before classification. A capability request alone does not authorize target inventory or edits. Named-target optimization starts with target classification so the optimizer knows the target surface, stamp, canonical authority, and mapping state.
-- Plain prompt copy-editing on an already-runnable surface remains text-only when it preserves every structural item and the surface's state.
-- If a requested change alters any structural item or changes surface state, it belongs to restructuring instead.
-- Preserve the selected runtime's native vocabulary.
-
-## Application Guide
-
-1. Confirm task intent and the text-only lane. For a named existing team, classify that target; for capability-only maintenance, remain within assigned A-Team source paths.
-2. Stop and hand the task to `team-restructuring-master` when the requested change affects roles, rules, topology, runtime or config, ownership, mapping, canonical authority, parity, stamps, validation/preflight requirements, or a surface's runnable, reference-only, or activation state.
-3. Rewrite only owned text to make responsibilities, triggers, completion criteria, and uncertainty handling more explicit.
-4. Clarify vague instructions and remove conflicting, obsolete, or redundant controls. Keep examples and concrete steps that improve execution; do not categorically remove XML or useful public derivations. Use supported native thinking/effort controls rather than private-reasoning transcript requests, preserving existing settings outside authorized migration.
-5. Preserve valid paths and stable task-path terminology for the selected runtime.
-6. Compare the result with the same task and acceptance criteria, then hand frozen artifacts to fresh-context verification. Record J5 size overages as `REVIEW_REQUIRED` with usefulness rationale; independent review resolves them. A shorter prompt is not evidence of better behavior.
-
-## Quality Checkpoints
-
-- [ ] The edit changed wording, not runtime or topology.
-- [ ] No role, rule, config, stamp, validation/preflight, or surface-state change entered the optimization lane.
-- [ ] No ownership, mapping, or canonical-policy drift was introduced.
-- [ ] Path references and runtime vocabulary stayed valid.
-- [ ] A fresh-context verifier, not the optimizer, closes the acceptance gate.
-
-## Examples
-
-### Useful Structure
-
-Keep a document-processing skill’s XML source labels and worked missing-evidence example when they make source attribution testable. Remove a duplicate paragraph only when its requirement remains executable.
-
-### Rejection Case
-
-For `Tighten the reviewer prompt, and also move config ownership to another role`, stop the optimization lane after classification and route the request to restructuring: ownership transfer changes runtime intent, so it exceeds a wording-only edit.
+A shorter file is not the goal and neither is a longer one. The test is whether a first-time reader does the right thing.
 
 ## Sources
 
-Use [current Claude prompting guidance](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices) for the selected native model/mode (checked 2026-10-06). A-Team lane boundaries and J5 review are project policy. Codex adaptations use their inventoried native inputs.
+[The new rules of context engineering](https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/), checked 2026-11-26, for Claude targets. The lane boundary is A-Team policy. Codex targets use their own inventoried guidance.

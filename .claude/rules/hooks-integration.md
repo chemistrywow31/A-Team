@@ -1,6 +1,6 @@
 ---
 name: Hooks Integration
-description: Define the hook events and templates every generated team must configure
+description: Define the first-run hook every Claude team ships and the worklog hooks a team adds when it keeps a worklog
 paths:
   - "teams/**"
 ---
@@ -13,11 +13,11 @@ paths:
 
 ## Rule Content
 
-### Every Generated Team Must Configure Hooks
+### Hooks Follow What The Team Does
 
-Every generated team must include `.claude/settings.json` (or `.claude/hooks.json` referenced from settings) with the baseline hook set defined below. Hooks automate worklog bookkeeping and phase lifecycle — tasks that would otherwise burden the coordinator.
+Every generated Claude team ships `.claude/settings.json` with the first-run output-mode hook (the `SessionStart` entry with matcher `startup` below). The other four hooks automate worklog bookkeeping. Add them only when the team keeps a worklog; a skill-workflow team normally ships the first-run hook alone.
 
-### Baseline Hook Set
+### Hook Set
 
 | Event | Purpose | Hook type | Blocking? |
 |-------|---------|-----------|-----------|
@@ -29,7 +29,7 @@ Every generated team must include `.claude/settings.json` (or `.claude/hooks.jso
 
 ### Template
 
-Copy the `hooks` object verbatim from `.claude/templates/hooks-baseline.json` (A-Team repo). Read-trigger: agent-writer must Read that file before producing any settings.json. The baseline anchors every path to `"${CLAUDE_PROJECT_DIR:-.}"`, uses `cat` (not `jq`) to capture hook stdin, and suffixes non-blocking commands with `2>/dev/null || true`. Compliance check: the generated settings.json parses with `jq .` and its hook commands contain no bare relative `.worklog/` paths and no `jq` dependency. (Two different execution contexts: hook COMMANDS run in the user's plain shell, so they must not depend on jq. This compliance CHECK runs in the agent's Bash context, where jq is allowlisted and normally present. If jq is unavailable there too, use `python3 -m json.tool` instead.)
+Copy the entries the team needs verbatim from the `hooks` object in `.claude/templates/hooks-baseline.json` (A-Team repo): the `startup` entry always, the worklog entries when the team keeps a worklog. Read-trigger: agent-writer must Read that file before producing any settings.json. The baseline anchors every path to `"${CLAUDE_PROJECT_DIR:-.}"`, uses `cat` (not `jq`) to capture hook stdin, and suffixes non-blocking commands with `2>/dev/null || true`. Compliance check: the generated settings.json parses with `jq .` and its hook commands contain no bare relative `.worklog/` paths and no `jq` dependency. (Two different execution contexts: hook COMMANDS run in the user's plain shell, so they must not depend on jq. This compliance CHECK runs in the agent's Bash context, where jq is allowlisted and normally present. If jq is unavailable there too, use `python3 -m json.tool` instead.)
 
 ### Team-Specific Additions
 
@@ -53,13 +53,14 @@ Hooks live in the generated team's `.claude/settings.json` under the top-level `
 
 ## Violation Determination
 
-- Generated team `.claude/settings.json` missing the baseline hook set → Violation
+- Generated team `.claude/settings.json` missing the first-run output-mode hook, or a team that keeps a worklog missing its worklog hooks → Violation
+- Worklog hooks shipped in a team that keeps no worklog → Violation
 - Hook command exceeds 10 second timeout without `async: true` → Violation
 - Blocking hook on non-dangerous operation (not an API write, not a destructive Bash command) → Violation
 - Hook depends on a tool not guaranteed in the user's shell → Violation
 
 ## Exceptions
 
-- Teams explicitly designed for non-interactive batch execution (no worklog required) may omit the `SessionStart` and `PreCompact` hooks. State the reason in the team's CLAUDE.md.
+- Teams stamped before 2026-11-26 keep the full baseline they were built with.
 
 Tradeoff: Hooks add startup latency (typically < 100ms total) and can fail silently if their commands break. Test every hook in a fresh shell before shipping the team.

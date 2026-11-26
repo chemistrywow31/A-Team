@@ -1,6 +1,12 @@
 ---
 name: Proportional Design
 description: Require evidence and ordinary-path safety before adding or retaining non-obvious safeguards
+paths:
+  - "teams/**"
+  - "scripts/**"
+  - ".claude/agents/**"
+  - ".claude/rules/**"
+  - ".codex/**"
 ---
 
 # Proportional Design
@@ -9,6 +15,7 @@ description: Require evidence and ordinary-path safety before adding or retainin
 
 - Applies to: architecture, design, implementation, packaging, deployment, migration, recovery, and independent review work
 - Trigger condition: a proposal or existing design adds or retains a non-obvious safeguard
+- Generated teams: give a team its own short version only when its work can propose such safeguards (architecture, deployment, migration, recovery, review). It is not part of every team.
 
 ## Rule Content
 
