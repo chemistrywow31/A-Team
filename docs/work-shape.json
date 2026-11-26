@@ -1,0 +1,20 @@
+{
+  "flows": [
+    {
+      "name": "new-team-generation",
+      "shape": "agent-group",
+      "parallel": "rule-writer, skill-writer and agent-writer write disjoint path families at the same time from frozen planning decisions. Each returns a short report and its context is discarded.",
+      "isolated_check": "decision-auditor accepts the frozen batch from fresh context, given only acceptance criteria and artifact paths.",
+      "overflow": "",
+      "why": "Three writers have no dependency on each other once planning is frozen, and acceptance must not inherit the writers' reasoning."
+    },
+    {
+      "name": "text-only-optimization",
+      "shape": "agent-group",
+      "parallel": "",
+      "isolated_check": "decision-auditor confirms the optimizer changed wording and not behaviour, without seeing the optimizer's reasoning.",
+      "overflow": "",
+      "why": "The edit itself is one context and one owner. The group exists only for the check against the author, so it is two roles, not the full roster."
+    }
+  ]
+}

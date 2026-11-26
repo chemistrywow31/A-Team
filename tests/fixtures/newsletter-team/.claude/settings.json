@@ -1,0 +1,79 @@
+{
+  "env": {},
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Agent",
+      "Write",
+      "Edit",
+      "WebFetch",
+      "WebSearch",
+      "Bash(ls *)",
+      "Bash(mkdir *)",
+      "Bash(jq *)",
+      "Bash(date *)",
+      "Bash(test *)",
+      "Bash(tree *)",
+      "Bash(git status)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git checkout *)",
+      "Bash(git worktree list)",
+      "Bash(git worktree add *)",
+      "Bash(git worktree remove *)"
+    ],
+    "ask": [
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(rm *)",
+      "Bash(git push *)",
+      "Bash(npm *)",
+      "Bash(npx *)"
+    ],
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~*)",
+      "Bash(rm -rf $HOME*)",
+      "Bash(rm -rf .git*)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git push --force-with-lease *)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean -fd*)",
+      "Bash(git checkout -- .)",
+      "Bash(git checkout .)",
+      "Bash(git worktree remove --force *)",
+      "Bash(chmod -R 777 *)",
+      "Bash(curl * | sh)",
+      "Bash(curl * | bash)",
+      "Bash(wget * | sh)",
+      "Bash(wget * | bash)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(**/*.pem)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "L=\"${CLAUDE_PROJECT_DIR:-.}/.claude/settings.local.json\"; case \"$(cat \"$L\" 2>/dev/null)\" in *outputStyle*) : ;; *) printf '%s\n' '<output-mode-first-run>No output style is set for this project yet. Before starting the task: (1) Ask the user ONE question in their language: keep the default output style, or switch to ADHD Friendly (action-first: next action first, numbered steps, progress restated every turn, no preamble — defined in .claude/output-styles/adhd-friendly.md)? Mention the choice persists for every future session and can be changed anytime via /config or by asking. (2) Merge the answer into .claude/settings.local.json as {\"outputStyle\":\"ADHD Friendly\"} or {\"outputStyle\":\"default\"}, creating the file if absent. (3) If ADHD Friendly was chosen, read the style file now and follow it for the rest of this session; the harness applies it automatically from the next session. Then proceed with the task.</output-mode-first-run>' ;; esac",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

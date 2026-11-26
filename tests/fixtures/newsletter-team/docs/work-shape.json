@@ -1,0 +1,12 @@
+{
+  "flows": [
+    {
+      "name": "weekly-newsletter",
+      "shape": "skill-workflow",
+      "parallel": "",
+      "isolated_check": "",
+      "overflow": "",
+      "why": "Research, drafting and source checking happen in sequence on one issue, in one context, for one owner. The owner approves every draft, so no agent-side check has to be isolated from the author."
+    }
+  ]
+}

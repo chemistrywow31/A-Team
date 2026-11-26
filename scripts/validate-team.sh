@@ -12,6 +12,18 @@
 #   validate-team.sh --all            sweep every directory under teams/
 #   validate-team.sh --help
 #
+# Profiles: docs/work-shape.json records the shape decision A-Team made before
+# building the team (scripts/check_work_shape.py checks it: W1-W3). The record
+# selects which checks apply:
+#   skill-workflow  one agent that loads skills: no agents, rule pack, coordinator
+#                   entry, or agent section floor is required
+#   agent-group     coordinator + specialists: the handoff contract and entry
+#                   checks apply; worklog, context-management and reasoning rules,
+#                   the CLAUDE.md worklog/precedence sections, and the agent and
+#                   rule section floors are optional
+#   legacy          no record (team predates the decision): every check below
+#                   applies as it did before
+#
 # Output: one line per check, in the EC-3.6 verifier verdict format
 #   {check-id} {check-name} | PASS|FAIL|SKIP|REVIEW_REQUIRED | {evidence}
 # Store these lines in verifier-owned evidence files and return the criterion
@@ -89,6 +101,13 @@ pass() { emit "$1" "$2" PASS "$3"; }
 fail() { emit "$1" "$2" FAIL "$3"; }
 skip() { emit "$1" "$2" SKIP "$3"; }
 review() { emit "$1" "$2" REVIEW_REQUIRED "$3; independent usefulness verdict required"; }
+
+# Profile chosen from the team's work-shape record; see the header.
+PROFILE=legacy
+is_legacy() { [ "$PROFILE" = legacy ]; }
+is_lean() { [ "$PROFILE" = skill-workflow ]; }
+not_required() { skip "$1" "$2" "not required for a $PROFILE team"; }
+optional_absent() { skip "$1" "$2" "optional for a $PROFILE team; add it only when the flow needs it"; }
 
 # Collapse a multi-line value into one evidence-safe line.
 oneline() {
@@ -203,6 +222,32 @@ not_a_claude_team() {
 
 # ---------------------------------------------------------------- checks
 
+# W1-W3 come from scripts/check_work_shape.py so the Codex validator and the
+# tests share one implementation of the shape rule.
+check_work_shape() {
+	PROFILE=legacy
+	_ws=$(python3 "$SCRIPT_DIR/check_work_shape.py" "$1" --surface claude 2>/dev/null)
+	while IFS= read -r _line; do
+		case "$_line" in
+		"PROFILE "*) PROFILE=${_line#PROFILE } ;;
+		W[0-9]*)
+			_check=${_line%% | *}
+			_rest=${_line#* | }
+			emit "${_check%% *}" "${_check#* }" "${_rest%% | *}" "${_rest#* | }"
+			;;
+		esac
+	done <<EOF_SHAPE
+$_ws
+EOF_SHAPE
+	case "$PROFILE" in
+	skill-workflow | agent-group | legacy) ;;
+	*)
+		PROFILE=legacy
+		fail W1 work-shape-record "scripts/check_work_shape.py produced no profile for $1"
+		;;
+	esac
+}
+
 check_structure() {
 	_t="$1"
 	_cd="$_t/.claude"
@@ -226,7 +271,9 @@ check_structure() {
 		_all_n=$(find "$_cd/agents" -type f -name '*.md' 2>/dev/null | wc -l | tr -d ' ')
 		_sub_n=$((_all_n - _root_n))
 
-		if [ "$_root_n" -eq 1 ]; then
+		if is_lean; then
+			not_required S3 coordinator-single-in-agents-root
+		elif [ "$_root_n" -eq 1 ]; then
 			pass S3 coordinator-single-in-agents-root "1 file in agents/ root: $_root_names"
 		elif [ "$_root_n" -eq 0 ]; then
 			fail S3 coordinator-single-in-agents-root "0 .md files in agents/ root; coordinator must sit there"
@@ -241,6 +288,9 @@ check_structure() {
 		else
 			fail S4 specialists-in-subfolders "$_sub_n of $_all_n agents in subfolders; $_root_n in root: $_root_names"
 		fi
+	elif is_lean; then
+		not_required S3 coordinator-single-in-agents-root
+		not_required S4 specialists-in-subfolders
 	else
 		fail S3 coordinator-single-in-agents-root "no $_cd/agents/ directory"
 		fail S4 specialists-in-subfolders "no $_cd/agents/ directory"
@@ -292,6 +342,8 @@ check_structure() {
 	_rule_n=$(find "$_cd/rules" -type f -name '*.md' 2>/dev/null | wc -l | tr -d ' ')
 	if [ "$_rule_n" -gt 0 ]; then
 		pass S7 rules-dir-populated "$_rule_n rule .md files in $_cd/rules/"
+	elif is_lean; then
+		not_required S7 rules-dir-populated
 	else
 		fail S7 rules-dir-populated "no rule .md files under $_cd/rules/"
 	fi
@@ -316,23 +368,47 @@ find_rule() {
 	return 1
 }
 
+# The old pack made four rules mandatory in every team. With a work-shape
+# record only the handoff contract stays required, and only for a group: the
+# other three are added when the flow needs them, not copied forward.
 check_mandatory_rules() {
 	_rd="$1/.claude/rules"
 
-	_h=$(find_rule "$_rd" 'worklog' 'work.?log') && pass R1 rule-worklog "$_h" ||
+	if is_lean; then
+		not_required R1 rule-worklog
+		not_required R2 rule-context-management
+		not_required R3 rule-reasoning-self-critique
+		not_required R4 rule-execution-contract
+		return
+	fi
+
+	if _h=$(find_rule "$_rd" 'worklog' 'work.?log'); then
+		pass R1 rule-worklog "$_h"
+	elif is_legacy; then
 		fail R1 rule-worklog "no rule matching filename/name 'worklog' under $_rd/"
+	else
+		optional_absent R1 rule-worklog
+	fi
 
-	_h=$(find_rule "$_rd" 'context.?management|context.?econom' 'context.?(management|econom)') &&
-		pass R2 rule-context-management "$_h" ||
+	if _h=$(find_rule "$_rd" 'context.?management|context.?econom' 'context.?(management|econom)'); then
+		pass R2 rule-context-management "$_h"
+	elif is_legacy; then
 		fail R2 rule-context-management "no rule matching 'context-management' under $_rd/"
+	else
+		optional_absent R2 rule-context-management
+	fi
 
-	_h=$(find_rule "$_rd" 'reasoning.*(critique|self)|self.?critique' 'reasoning.*(critique|self)|self.?critique') &&
-		pass R3 rule-reasoning-self-critique "$_h" ||
+	if _h=$(find_rule "$_rd" 'reasoning.*(critique|self)|self.?critique' 'reasoning.*(critique|self)|self.?critique'); then
+		pass R3 rule-reasoning-self-critique "$_h"
+	elif is_legacy; then
 		fail R3 rule-reasoning-self-critique "no rule matching 'reasoning-and-self-critique' under $_rd/"
+	else
+		optional_absent R3 rule-reasoning-self-critique
+	fi
 
-	_h=$(find_rule "$_rd" 'execution.?contract' 'execution.?contract') &&
+	_h=$(find_rule "$_rd" 'execution.?contract|handoff' '(execution|handoff).?contract') &&
 		pass R4 rule-execution-contract "$_h" ||
-		fail R4 rule-execution-contract "no rule matching 'execution-contract' under $_rd/"
+		fail R4 rule-execution-contract "no handoff contract rule (filename/name 'execution-contract' or 'handoff-contract') under $_rd/"
 }
 
 check_claude_md() {
@@ -346,21 +422,39 @@ check_claude_md() {
 		return
 	fi
 
-	_h=$(firstmatch "$P_DEPLOY" "$_f")
-	[ -n "$_h" ] && pass C1 claude-md-deployment-mode "$_h" ||
-		fail C1 claude-md-deployment-mode "no heading matching /$P_DEPLOY/ in $_f"
+	if is_lean; then
+		# One agent has no coordinator to deploy and no handoffs to log or rank.
+		not_required C1 claude-md-deployment-mode
+		not_required C2 claude-md-main-session-statement
+		not_required C3 claude-md-worklog-context
+		not_required C4 claude-md-precedence-order
+	else
+		_h=$(firstmatch "$P_DEPLOY" "$_f")
+		[ -n "$_h" ] && pass C1 claude-md-deployment-mode "$_h" ||
+			fail C1 claude-md-deployment-mode "no heading matching /$P_DEPLOY/ in $_f"
 
-	_h=$(firstmatch "$P_MAINSESS" "$_f")
-	[ -n "$_h" ] && pass C2 claude-md-main-session-statement "$_h" ||
-		fail C2 claude-md-main-session-statement "no main-session statement in $_f (searched EN/zh-TW/ja variants)"
+		_h=$(firstmatch "$P_MAINSESS" "$_f")
+		[ -n "$_h" ] && pass C2 claude-md-main-session-statement "$_h" ||
+			fail C2 claude-md-main-session-statement "no main-session statement in $_f (searched EN/zh-TW/ja variants)"
 
-	_h=$(firstmatch_section "$P_WORKCTX" "$_f")
-	[ -n "$_h" ] && pass C3 claude-md-worklog-context "$_h" ||
-		fail C3 claude-md-worklog-context "no worklog/context-management content in $_f"
+		_h=$(firstmatch_section "$P_WORKCTX" "$_f")
+		if [ -n "$_h" ]; then
+			pass C3 claude-md-worklog-context "$_h"
+		elif is_legacy; then
+			fail C3 claude-md-worklog-context "no worklog/context-management content in $_f"
+		else
+			optional_absent C3 claude-md-worklog-context
+		fi
 
-	_h=$(firstmatch_section "$P_PRECED" "$_f")
-	[ -n "$_h" ] && pass C4 claude-md-precedence-order "$_h" ||
-		fail C4 claude-md-precedence-order "no precedence order in $_f (searched EN/zh-TW/ja variants)"
+		_h=$(firstmatch_section "$P_PRECED" "$_f")
+		if [ -n "$_h" ]; then
+			pass C4 claude-md-precedence-order "$_h"
+		elif is_legacy; then
+			fail C4 claude-md-precedence-order "no precedence order in $_f (searched EN/zh-TW/ja variants)"
+		else
+			optional_absent C4 claude-md-precedence-order
+		fi
+	fi
 
 	_h=$(firstmatch 'Generated by A-Team on' "$_f")
 	[ -n "$_h" ] && pass C5 claude-md-generator-stamp "$_h" ||
@@ -369,6 +463,17 @@ check_claude_md() {
 
 check_entry_skill() {
 	_t="$1"
+
+	if is_lean; then
+		# No coordinator playbook to adopt: the session reads CLAUDE.md and loads skills.
+		not_required E1 entry-skill-present
+		not_required E2 entry-disable-model-invocation
+		not_required E3 entry-allowed-tools-agent
+		not_required E4 entry-argument-hint
+		not_required E5 entry-main-session-adoption
+		not_required E6 entry-no-coordinator-spawn
+		return
+	fi
 
 	# J5.2: identify declared purpose or coordinator-adoption intent first.
 	# Manual-only is an invocation setting, not an entry identity test. Missing
@@ -830,6 +935,14 @@ EOF_NATIVE
 # useful positive/contrast examples may supplement a boundary case.
 check_agent_j5_sections() {
 	_ad="$1/.claude/agents"
+	if ! is_legacy; then
+		# The six-section floor and the mandatory rejection example belong to the
+		# old pack. Teams with a work-shape record are reviewed against
+		# .claude/rules/writing-quality-standard.md by the independent reviewer.
+		skip F3 agent-j5-section-order "section floor not imposed on a $PROFILE team; reviewed against the writing standard"
+		skip F4 agent-j5-rejection-examples "examples not mandated on a $PROFILE team; reviewed against the writing standard"
+		return
+	fi
 	if [ ! -d "$_ad" ]; then
 		skip F3 agent-j5-section-order "no agents/ directory"
 		skip F4 agent-j5-rejection-examples "no agents/ directory"
@@ -947,8 +1060,10 @@ check_rule_j5_contract() {
 			active && $0 !~ /^[[:space:]]*$/ && $0 !~ /^#/ { found=1 }
 			END { print found ? "yes" : "no" }
 		' "$_f")
-		[ "$_v" = yes ] || _issue="$_issue Violation-Determination-observable"
-		[ "$_e" = yes ] || _issue="$_issue Exceptions"
+		if is_legacy; then
+			[ "$_v" = yes ] || _issue="$_issue Violation-Determination-observable"
+			[ "$_e" = yes ] || _issue="$_issue Exceptions"
+		fi
 		[ -z "$_issue" ] || _bad="$_bad $(basename "$_f"):$_issue"
 	done
 
@@ -956,8 +1071,10 @@ check_rule_j5_contract() {
 		skip R5 rule-j5-frontmatter-and-sections "0 rule .md files found"
 	elif [ -n "$_bad" ]; then
 		fail R5 rule-j5-frontmatter-and-sections "J5.3 failures:$_bad"
-	else
+	elif is_legacy; then
 		pass R5 rule-j5-frontmatter-and-sections "all $_n rules start with name+description frontmatter and have non-empty Violation Determination + Exceptions"
+	else
+		pass R5 rule-j5-frontmatter-and-sections "all $_n rules start with name+description frontmatter; section floor not imposed on a $PROFILE team"
 	fi
 }
 
@@ -981,6 +1098,12 @@ check_counts() {
 
 check_execution_contract() {
 	_rd="$1/.claude/rules"
+	if ! is_legacy; then
+		# A team writes its own short handoff contract; A-Team's EC-1..EC-5
+		# numbering is not copied forward.
+		skip X1 execution-contract-clause-numbering "A-Team clause numbering not imposed on a $PROFILE team"
+		return
+	fi
 	_ec=$(find_rule "$_rd" 'execution.?contract' 'execution.?contract') || {
 		skip X1 execution-contract-clause-numbering "no execution-contract rule (see R4)"
 		return
@@ -1034,6 +1157,7 @@ validate_one() {
 	fi
 
 	emit T0 claude-team-detected PASS "$_team/.claude/ present; validating"
+	check_work_shape "$_team"
 	check_structure "$_team"
 	check_mandatory_rules "$_team"
 	check_claude_md "$_team"

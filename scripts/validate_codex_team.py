@@ -14,6 +14,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import check_work_shape  # noqa: E402  (shared shape rule; see docs/work-shape.json)
+
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TEAMS_ROOT = REPO_ROOT / "teams"
@@ -1344,7 +1347,11 @@ def claude_surface_runnable(root: Path) -> tuple[bool, str | None]:
     claude_md = root / "CLAUDE.md"
     if not claude_md.is_file():
         return False, "missing CLAUDE.md"
-    if not list(root.glob(".claude/agents/**/*.md")):
+    if check_work_shape.profile_of(root) == "skill-workflow":
+        # One agent that loads skills: the session reads CLAUDE.md, no agent files.
+        if not list(root.glob(".claude/skills/*/SKILL.md")):
+            return False, "skill-workflow team has no .claude/skills/*/SKILL.md"
+    elif not list(root.glob(".claude/agents/**/*.md")):
         return False, "missing .claude/agents/**/*.md"
     if not (root / ".claude/settings.json").is_file():
         return False, "missing .claude/settings.json"
@@ -1357,6 +1364,16 @@ def claude_surface_runnable(root: Path) -> tuple[bool, str | None]:
 def codex_surface_runnable(root: Path, cfg: dict, cfg_err: str | None, agent_tomls: list[Path]) -> tuple[bool, str | None]:
     if not (root / "AGENTS.md").is_file():
         return False, "missing AGENTS.md"
+    if check_work_shape.profile_of(root) == "skill-workflow":
+        # One agent that loads skills needs no multi-agent switch or registry.
+        reference_only = detect_surface_reference_only(root / "AGENTS.md", CODEX_REFERENCE_PATTERNS)
+        if reference_only:
+            return False, reference_only
+        if cfg_err:
+            return False, f".codex/config.toml parse error: {cfg_err}"
+        if not list(root.glob(".agents/skills/*/SKILL.md")):
+            return False, "skill-workflow team has no .agents/skills/*/SKILL.md"
+        return True, None
     if not (root / ".codex/config.toml").is_file():
         return False, "missing .codex/config.toml"
     reference_only = detect_surface_reference_only(root / "AGENTS.md", CODEX_REFERENCE_PATTERNS)
@@ -1910,6 +1927,12 @@ def validate_team(reporter: Reporter, root: Path, classify_only: bool, assigned_
 
     if classify_only:
         return
+    shape_profile = "legacy"
+    if classification.team_class != "non-team package/data":
+        shape_surface = "codex" if classification.runnable_codex else "claude"
+        shape_profile, shape_checks = check_work_shape.evaluate(root, shape_surface)
+        for check_id, name, shape_verdict, shape_evidence in shape_checks:
+            reporter.emit(check_id, name, shape_verdict, shape_evidence)
     if classification.team_class == "non-team package/data":
         reporter.emit("G2", "target-strict-config", "SKIP", "non-team package/data")
         reporter.emit("G3", "runnable-codex-surface", "SKIP", "non-team package/data")
@@ -1937,6 +1960,34 @@ def validate_team(reporter: Reporter, root: Path, classify_only: bool, assigned_
         return
 
     cfg, cfg_err, agent_tomls = load_codex_surface(root)
+    if shape_profile == "skill-workflow":
+        # The multi-agent runtime checks have nothing to inspect on a team that
+        # is one agent loading skills. Config is optional; check it when present.
+        reason = "not required for a skill-workflow team"
+        if (root / ".codex/config.toml").is_file():
+            strict_ok, strict_evidence = run_strict_config(root)
+            reporter.emit("G2", "target-strict-config", "PASS" if strict_ok else "FAIL", strict_evidence)
+        else:
+            reporter.emit("G2", "target-strict-config", "SKIP", f"no .codex/config.toml; {reason}")
+        codex_ok, codex_reason = codex_surface_runnable(root, cfg, cfg_err, agent_tomls)
+        reporter.emit(
+            "G3",
+            "runnable-codex-surface",
+            "PASS" if codex_ok else "FAIL",
+            "AGENTS.md + .agents/skills present" if codex_ok else codex_reason or "Codex surface incomplete",
+        )
+        for check_id, name in (
+            ("G4", "codex-registry"),
+            ("G9", "target-runtime-profile"),
+            ("G5", "model-sandbox-posture"),
+            ("G6", "write-target-posture"),
+            ("G7", "host-tool-readiness"),
+        ):
+            reporter.emit(check_id, name, "SKIP", reason)
+        skill_verdict, skill_evidence = validate_skill_mirror(root, required=False)
+        reporter.emit("G8", "skill-mirror-parity", skill_verdict, skill_evidence)
+        reporter.emit("G10", "generated-j5-markdown-quality", "SKIP", reason)
+        return
     strict_ok, strict_evidence = run_strict_config(root)
     reporter.emit("G2", "target-strict-config", "PASS" if strict_ok else "FAIL", strict_evidence)
 
